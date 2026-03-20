@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bianca — AI Portfolio">
+<meta name="theme-color" content="#0D0D1A">
+<title>Bianca Kugblenu — AI Portfolio</title>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0D0D1A;color:#e0e0ff;line-height:1.6;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+
+/* ── STATES ── */
+#state-request,#state-unlock,#state-portfolio{display:none;}
+
+/* ── SHARED INPUT STYLES ── */
+.field{width:100%;background:#0a0a1f;border:1px solid rgba(167,139,250,.25);border-radius:10px;padding:.72rem 1rem;color:#e0e0ff;font-size:.9rem;outline:none;transition:border-color .18s;margin-bottom:.6rem;}
+.field:focus{border-color:rgba(167,139,250,.6);}
+.field::placeholder{color:#3a3a60;}
+select.field option{background:#13132a;color:#e0e0ff;}
+.field-label{font-size:.72rem;font-weight:700;color:#5a5a8a;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
+
+/* ── FORM BUTTON ── */
+.btn-primary{width:100%;padding:.75rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;letter-spacing:.02em;transition:opacity .18s;}
+.btn-primary:hover{opacity:.88;}
+.btn-secondary{width:100%;padding:.65rem;background:transparent;border:1px solid rgba(167,139,250,.25);border-radius:10px;color:#7070a8;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .18s;margin-top:.4rem;}
+.btn-secondary:hover{border-color:rgba(167,139,250,.5);color:#a78bfa;}
+
+/* ── WRAP ── */
+.wrap{max-width:680px;margin:0 auto;padding:0 1.1rem 4rem;}
+
+/* ── REQUEST STATE ── */
+.request-page{min-height:100vh;display:flex;flex-direction:column;}
+.request-hero{background:linear-gradient(160deg,#0D0D1A 0%,#12102a 60%,#0D0D1A 100%);padding:3.5rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.request-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(124,58,237,.15),transparent);pointer-events:none;}
+
+/* Bridge SVG icon */
+.bridge-icon{display:flex;justify-content:center;margin-bottom:1.2rem;}
+
+.req-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6040c0;margin-bottom:.65rem;}
+.req-name{font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1;margin-bottom:.3rem;}
+.req-role{font-size:.95rem;color:#a78bfa;font-weight:600;margin-bottom:.25rem;}
+.req-location{font-size:.78rem;color:#4a4a80;margin-bottom:1.5rem;}
+.teaser-chips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:1.6rem;}
+.teaser-chip{font-size:.72rem;font-weight:600;padding:.22rem .65rem;border-radius:99px;border:1px solid;}
+
+.req-card{background:#13132a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem;max-width:440px;margin:0 auto;}
+.req-card-title{font-weight:800;font-size:1rem;color:#fff;margin-bottom:.3rem;text-align:center;}
+.req-card-sub{font-size:.78rem;color:#5a5a90;text-align:center;margin-bottom:1.25rem;line-height:1.5;}
+
+.divider-or{display:flex;align-items:center;gap:.75rem;margin:.85rem 0;color:#3a3a60;font-size:.75rem;font-weight:600;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+
+/* ── ENTRY OPTIONS (two-path choice) ── */
+.entry-opts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.35rem;}
+.entry-opt{padding:.85rem .6rem;border-radius:12px;border:1px solid;cursor:pointer;text-align:center;transition:all .18s;background:transparent;}
+.entry-opt-title{font-size:.82rem;font-weight:800;display:block;margin-bottom:.22rem;}
+.entry-opt-sub{font-size:.68rem;font-weight:500;display:block;line-height:1.35;}
+.entry-opt.opt-request{border-color:rgba(167,139,250,.3);color:#a78bfa;}
+.entry-opt.opt-request:hover,.entry-opt.opt-request.active{background:rgba(124,58,237,.15);border-color:rgba(167,139,250,.55);}
+.entry-opt.opt-pw{border-color:rgba(251,191,36,.25);color:#fbbf24;}
+.entry-opt.opt-pw:hover{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.45);}
+.has-password-btn{display:none;}
+
+/* ── SUCCESS CARD ── */
+.success-card{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.22);border-radius:14px;padding:1.5rem;text-align:center;max-width:440px;margin:0 auto;}
+.success-icon{font-size:2rem;margin-bottom:.5rem;}
+.success-title{font-weight:800;font-size:1.05rem;color:#34d399;margin-bottom:.4rem;}
+.success-text{font-size:.82rem;color:#6a9a8a;line-height:1.6;}
+
+/* ── UNLOCK STATE ── */
+.unlock-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
+.unlock-box{background:#13132a;border:1px solid rgba(167,139,250,.3);border-radius:18px;padding:2rem 1.75rem;width:min(420px,100%);box-shadow:0 24px 64px rgba(0,0,0,.5);}
+.unlock-header{text-align:center;margin-bottom:1.5rem;}
+.unlock-icon{font-size:2rem;margin-bottom:.4rem;}
+.unlock-title{font-weight:800;font-size:1.1rem;color:#a78bfa;margin-bottom:.2rem;}
+.unlock-sub{font-size:.78rem;color:#5a5a90;}
+.form-err{color:#f87171;font-size:.76rem;min-height:1rem;margin-bottom:.4rem;text-align:center;}
+
+/* ── PORTFOLIO STATE ── */
+.hero{background:linear-gradient(160deg,#0D0D1A 0%,#12102a 60%,#0D0D1A 100%);padding:3rem 1.1rem 2rem;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(124,58,237,.18),transparent);pointer-events:none;}
+.hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7c3aed;margin-bottom:.7rem;}
+.hero-name{font-size:2.1rem;font-weight:900;color:#fff;letter-spacing:-.01em;line-height:1.1;margin-bottom:.4rem;}
+.hero-role{font-size:.95rem;color:#a78bfa;font-weight:600;margin-bottom:.25rem;}
+.hero-sub{font-size:.78rem;color:#4a4a80;margin-bottom:1.5rem;}
+.hero-arc{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.arc-pill{font-size:.73rem;font-weight:700;padding:.26rem .78rem;border-radius:99px;border:1px solid;}
+.arc-pill.amber{color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);}
+.arc-pill.violet{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(124,58,237,.1);}
+.arc-div{color:#3a3a60;}
+
+.share-row{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;}
+.share-btn{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:.78rem;padding:.5rem 1.1rem;border-radius:99px;border:none;cursor:pointer;letter-spacing:.02em;}
+.share-btn.purple{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;}
+.share-btn.teal{background:linear-gradient(135deg,#0891b2,#38bdf8);color:#fff;}
+.share-btn.green{background:linear-gradient(135deg,#059669,#34d399);color:#fff;}
+
+/* SECTION LABELS */
+.section-head{display:flex;align-items:center;gap:.6rem;margin:2rem 0 1rem;}
+.section-head-line{flex:1;height:1px;background:rgba(255,255,255,.06);}
+.section-head-label{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4a4a70;white-space:nowrap;}
+
+/* PROOF CARDS (built before finishing) */
+.proof-grid{display:flex;flex-direction:column;gap:.65rem;}
+.proof-card{background:#13132a;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1rem 1.1rem;cursor:pointer;transition:border-color .18s;}
+.proof-card:hover{border-color:rgba(167,139,250,.25);}
+.proof-top{display:flex;align-items:flex-start;gap:.75rem;justify-content:space-between;}
+.proof-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.proof-text{flex:1;min-width:0;}
+.proof-title{font-weight:700;font-size:.9rem;color:#e0e0ff;margin-bottom:.18rem;}
+.proof-subtitle{font-size:.74rem;color:#5a5a8a;line-height:1.4;}
+.proof-badge{flex-shrink:0;font-size:.62rem;font-weight:800;padding:.14rem .45rem;border-radius:99px;white-space:nowrap;align-self:flex-start;margin-top:2px;}
+.proof-detail{display:none;margin-top:.85rem;padding-top:.85rem;border-top:1px solid rgba(255,255,255,.05);}
+.proof-detail.open{display:block;}
+.proof-detail-row{display:flex;gap:.65rem;align-items:flex-start;margin-bottom:.5rem;}
+.proof-detail-label{font-size:.68rem;font-weight:700;color:#4a4a80;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;width:90px;padding-top:1px;}
+.proof-detail-value{font-size:.8rem;color:#9090b8;line-height:1.5;}
+.proof-chevron{color:#3a3a60;font-size:.75rem;flex-shrink:0;margin-top:4px;transition:transform .18s;}
+.proof-chevron.open{transform:rotate(180deg);}
+
+/* APP GRID */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.85rem;}
+.app-card{background:#13132a;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.1rem;transition:transform .18s,box-shadow .18s;position:relative;}
+.app-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.4);}
+.app-card-top{display:flex;align-items:center;gap:.85rem;margin-bottom:.7rem;}
+.app-icon-svg{width:48px;height:48px;flex-shrink:0;}
+.app-info{flex:1;min-width:0;}
+.app-name{font-weight:800;font-size:.93rem;color:#fff;margin-bottom:.15rem;}
+.app-tags{display:flex;gap:.3rem;flex-wrap:wrap;}
+.tag{font-size:.6rem;font-weight:700;padding:.1rem .38rem;border-radius:99px;letter-spacing:.04em;}
+.tag-live{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.22);}
+.tag-pwa{background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);}
+.tag-doc{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+.tag-design{background:rgba(236,72,153,.1);color:#ec4899;border:1px solid rgba(236,72,153,.2);}
+.app-desc{font-size:.78rem;color:#6a6a90;line-height:1.55;margin-bottom:.85rem;}
+.app-actions{display:flex;gap:.4rem;flex-wrap:wrap;}
+.btn-open{flex:1;min-width:80px;padding:.48rem .7rem;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-weight:700;font-size:.76rem;border:none;border-radius:8px;text-align:center;white-space:nowrap;cursor:pointer;}
+.btn-copy{padding:.48rem .65rem;background:rgba(255,255,255,.05);color:#9090b8;font-size:.75rem;font-weight:600;border:1px solid rgba(255,255,255,.1);border-radius:8px;white-space:nowrap;}
+.btn-sms{padding:.48rem .65rem;background:rgba(52,211,153,.08);color:#34d399;font-size:.75rem;font-weight:600;border:1px solid rgba(52,211,153,.18);border-radius:8px;}
+.btn-email-sm{padding:.48rem .65rem;background:rgba(56,189,248,.08);color:#38bdf8;font-size:.75rem;font-weight:600;border:1px solid rgba(56,189,248,.18);border-radius:8px;}
+
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.7rem;}
+.doc-card{background:#13132a;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.9rem 1rem;display:flex;gap:.75rem;align-items:flex-start;}
+.doc-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px;}
+.doc-name{font-weight:700;font-size:.85rem;color:#e0e0ff;margin-bottom:.18rem;}
+.doc-desc{font-size:.73rem;color:#5a5a90;line-height:1.5;margin-bottom:.5rem;}
+.doc-actions{display:flex;gap:.35rem;flex-wrap:wrap;}
+
+/* SKILLS */
+.skills-wrap{display:flex;flex-wrap:wrap;gap:.4rem;}
+
+/* RECRUITER MATCH */
+.match-form textarea.field{resize:vertical;}
+.match-intro{font-size:.85rem;font-weight:700;color:#e0e0ff;margin-bottom:12px;line-height:1.55;padding:12px 14px;background:rgba(167,139,250,.06);border-radius:10px;border-left:3px solid #a78bfa;}
+.match-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.match-item:last-of-type{border-bottom:none;margin-bottom:4px;}
+.match-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.match-label{font-size:.78rem;font-weight:700;margin-bottom:2px;}
+.match-blurb{font-size:.75rem;color:#7070a8;line-height:1.55;}
+.match-no{font-size:.8rem;color:#5a5a8a;padding:8px 0;line-height:1.5;}
+.claude-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:.62rem 1rem;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(56,189,248,.1));border:1px solid rgba(124,58,237,.35);border-radius:10px;color:#a78bfa;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;justify-content:center;}
+.claude-link:hover{opacity:.82;}
+.match-reset{background:none;border:none;color:#4a4a80;font-size:.72rem;cursor:pointer;margin-top:10px;display:block;width:100%;text-align:center;}
+.skill-chip{font-size:.73rem;font-weight:600;padding:.22rem .62rem;border-radius:99px;background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);}
+
+/* FEEDBACK BUTTON */
+/* feedback is now inline — no floating button */
+
+/* FEEDBACK MODAL */
+/* feedback modal removed — feedback is inline */
+.feedback-title{font-weight:800;font-size:1rem;color:#fff;margin-bottom:.25rem;}
+.feedback-sub{font-size:.78rem;color:#5a5a90;margin-bottom:1.25rem;}
+.stars{display:flex;gap:.35rem;margin-bottom:.75rem;}
+.star{font-size:1.4rem;cursor:pointer;opacity:.3;transition:opacity .15s;}
+.star.lit{opacity:1;}
+textarea.field{resize:vertical;min-height:90px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(12px);background:#1c1c35;border:1px solid rgba(167,139,250,.3);color:#c4b5fd;font-size:.78rem;font-weight:700;padding:.5rem 1.1rem;border-radius:99px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ABOUT */
+.about-card{background:#13132a;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.25rem 1.3rem;}
+.about-text{font-size:.85rem;color:#8080a8;line-height:1.75;}
+.about-text strong{color:#c0c0e0;}
+
+/* FOOTER */
+footer{text-align:center;padding:2.5rem 1rem 1.5rem;color:#2a2a50;font-size:.73rem;border-top:1px solid rgba(255,255,255,.04);margin-top:2rem;}
+footer a{color:#4a4a80;}
+
+@media(max-width:480px){
+  .req-name,.hero-name{font-size:1.75rem;}
+  .app-grid,.doc-grid{grid-template-columns:1fr;}
+  .unlock-box{padding:1.5rem 1.25rem;}
+}
+</style>
+</head>
+<body>
+
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HIDDEN NETLIFY FORMS (must be in HTML for Netlify to detect)
+     ══════════════════════════════════════════════════════════ -->
+<form name="access-request" netlify netlify-honeypot="bot-field" hidden>
+  <input name="bot-field" />
+  <input name="visitor-name" />
+  <input name="visitor-email" />
+  <input name="relation" />
+  <input name="company" />
+  <input name="custom-relation" />
+  <textarea name="message"></textarea>
+  <input name="timestamp" />
+</form>
+
+<form name="access-log" netlify netlify-honeypot="bot-field" hidden>
+  <input name="bot-field" />
+  <input name="visitor-name" />
+  <input name="relation" />
+  <input name="company" />
+  <input name="custom-relation" />
+  <input name="page" />
+  <input name="timestamp" />
+  <input name="device" />
+</form>
+
+<form name="prompt-request" netlify netlify-honeypot="bot-field" hidden><input name="usecase"/><input name="contact"/></form>
+<form name="feedback" netlify netlify-honeypot="bot-field" hidden>
+  <input name="bot-field" />
+  <input name="visitor-name" />
+  <input name="relation" />
+  <input name="rating" />
+  <textarea name="message"></textarea>
+  <input name="timestamp" />
+</form>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     STATE 1: REQUEST ACCESS
+     ══════════════════════════════════════════════════════════ -->
+<div id="state-request" class="request-page">
+  <div class="request-hero">
+    <div class="bridge-icon">
+      <!-- Bridge SVG: human left, arc bridge, AI right -->
+      <svg width="90" height="54" viewBox="0 0 90 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="arcL" x1="0" y1="0" x2="45" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fbbf24"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+          <linearGradient id="arcR" x1="45" y1="0" x2="90" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#38bdf8"/>
+          </linearGradient>
+        </defs>
+        <!-- Human figure left -->
+        <circle cx="12" cy="12" r="6" fill="#fbbf2466"/>
+        <circle cx="12" cy="12" r="4" fill="#fbbf24"/>
+        <path d="M6 28 Q12 20 18 28" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- AI nodes right -->
+        <circle cx="78" cy="12" r="4" fill="#38bdf8"/>
+        <circle cx="86" cy="20" r="2.5" fill="#38bdf8" opacity=".6"/>
+        <circle cx="70" cy="20" r="2.5" fill="#38bdf8" opacity=".6"/>
+        <line x1="78" y1="12" x2="86" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
+        <line x1="78" y1="12" x2="70" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
+        <!-- Bridge arc -->
+        <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcL)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>
+        <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcR)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".4"/>
+        <!-- Bridge pillars -->
+        <line x1="30" y1="42" x2="30" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+        <line x1="60" y1="42" x2="60" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+        <!-- Road -->
+        <line x1="6" y1="42" x2="84" y2="42" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="req-eyebrow">AI Portfolio</div>
+    <div class="req-name">Bianca Kugblenu</div>
+    <div class="req-role">Finance → AI Product & Enablement</div>
+    <div class="req-location">NYC · biancakugblenu@gmail.com</div>
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
+      <a href="https://www.linkedin.com/in/biancakugblenu" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:.4rem;padding:.42rem 1rem;background:rgba(10,102,194,.18);border:1px solid rgba(10,102,194,.4);border-radius:99px;color:#60a5fa;font-size:.76rem;font-weight:700;text-decoration:none;letter-spacing:.03em;transition:opacity .15s;"
+        onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#60a5fa"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="mailto:biancakugblenu@gmail.com"
+        style="display:inline-flex;align-items:center;gap:.4rem;padding:.42rem 1rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:99px;color:#a78bfa;font-size:.76rem;font-weight:700;text-decoration:none;letter-spacing:.03em;">
+        ✉️ Email
+      </a>
+    </div>
+    <div class="teaser-chips" style="margin-top:.85rem;">
+      <span class="teaser-chip" style="color:#a78bfa;border-color:rgba(167,139,250,.25);background:rgba(124,58,237,.1);">10 Demonstrated Skills</span>
+      <span class="teaser-chip" style="color:#34d399;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.08);">6 Live Apps Built</span>
+      <span class="teaser-chip" style="color:#fbbf24;border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.08);">AI Foundations · Active</span>
+      <span class="teaser-chip" style="color:#38bdf8;border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.08);">Finance + AI Risk Background</span>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-top:2rem;">
+    <div class="req-card" id="req-form-wrap">
+      <div class="req-card-title">How would you like in?</div>
+      <div class="req-card-sub" style="margin-bottom:1rem;">Bianca shares this portfolio directly — pick your path below.</div>
+
+      <div class="entry-opts">
+        <button class="entry-opt opt-request active" id="btn-path-request" onclick="showPath('request')">
+          <span class="entry-opt-title">✉️ Request Access</span>
+          <span class="entry-opt-sub" style="color:#6060a0;">Ask Bianca to share with you</span>
+        </button>
+        <button class="entry-opt opt-pw" id="btn-path-pw" onclick="showUnlock()">
+          <span class="entry-opt-title">🔑 I Have a Password</span>
+          <span class="entry-opt-sub" style="color:#9a8060;">Bianca already gave me access</span>
+        </button>
+      </div>
+
+      <div id="path-request-form">
+
+      <label class="field-label" for="req-name">Your Name</label>
+      <input id="req-name" class="field" type="text" placeholder="Full name" autocomplete="name" />
+
+      <label class="field-label" for="req-email">Email</label>
+      <input id="req-email" class="field" type="email" placeholder="your@email.com" autocomplete="email" />
+
+      <label class="field-label" for="req-relation">How do you know Bianca?</label>
+      <select id="req-relation" class="field" onchange="toggleReqFields()">
+        <option value="">— Select —</option>
+        <option value="Recruiter">Recruiter</option>
+        <option value="Guest">Guest</option>
+        <option value="Peer">Peer</option>
+        <option value="Mentor">Mentor</option>
+        <option value="Other">Other — write in</option>
+      </select>
+
+      <div id="req-company-wrap" style="display:none;">
+        <label class="field-label" for="req-company">Company / Organisation</label>
+        <input id="req-company" class="field" type="text" placeholder="Company name" />
+      </div>
+
+      <div id="req-custom-wrap" style="display:none;">
+        <label class="field-label" for="req-custom">Describe your relation</label>
+        <input id="req-custom" class="field" type="text" placeholder="e.g. colleague, professor, collaborator…" />
+      </div>
+
+      <label class="field-label" for="req-message">Note (optional)</label>
+      <textarea id="req-message" class="field" placeholder="Why you're interested, how you found this, or anything else…" style="resize:vertical;min-height:72px;"></textarea>
+
+      <div id="req-err" style="color:#f87171;font-size:.76rem;min-height:.9rem;margin-bottom:.35rem;"></div>
+      <button class="btn-primary" onclick="submitRequest()">Send Request →</button>
+      </div><!-- /path-request-form -->
+    </div>
+
+    <div class="success-card" id="req-success" style="display:none;">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Request sent!</div>
+      <div class="success-text">Bianca will receive your message and reach out with access details if it's a match. Check your email — she usually responds same day.</div>
+      <button class="btn-secondary" style="margin-top:1rem;" onclick="showUnlock()">Already received the password? Unlock →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     STATE 2: UNLOCK (for people who already have the password)
+     ══════════════════════════════════════════════════════════ -->
+<div id="state-unlock">
+  <div class="unlock-page">
+    <div class="unlock-box">
+      <div class="unlock-header">
+        <div class="unlock-icon">🔑</div>
+        <div class="unlock-title">Enter your password</div>
+        <div class="unlock-sub">Name &amp; relation are optional — they help Bianca know who visited.</div>
+      </div>
+
+      <label class="field-label" for="ul-name">Your Name <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+      <input id="ul-name" class="field" type="text" placeholder="Full name" autocomplete="name" />
+
+      <label class="field-label" for="ul-relation">Your relation to Bianca <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+      <select id="ul-relation" class="field" onchange="toggleUnlockFields()">
+        <option value="">— Select —</option>
+        <option value="Recruiter">Recruiter</option>
+        <option value="Guest">Guest</option>
+        <option value="Peer">Peer</option>
+        <option value="Mentor">Mentor</option>
+        <option value="Other">Other — write in</option>
+      </select>
+
+      <div id="ul-company-wrap" style="display:none;">
+        <label class="field-label" for="ul-company">Company / Organisation</label>
+        <input id="ul-company" class="field" type="text" placeholder="Company name" />
+      </div>
+
+      <div id="ul-custom-wrap" style="display:none;">
+        <label class="field-label" for="ul-custom">Describe your relation</label>
+        <input id="ul-custom" class="field" type="text" placeholder="e.g. colleague, professor, collaborator…" />
+      </div>
+
+      <label class="field-label" for="ul-password">Password</label>
+      <div style="position:relative;margin-bottom:.6rem;">
+        <input id="ul-password" class="field" type="password" placeholder="Paste or type password from Bianca"
+          onkeydown="if(event.key==='Enter')unlock()"
+          style="margin-bottom:0;padding-right:5.5rem;" />
+        <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);display:flex;gap:.3rem;">
+          <button type="button" onclick="pastePassword()" title="Paste from clipboard"
+            style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:6px;color:#a78bfa;font-size:.72rem;font-weight:700;padding:.25rem .45rem;cursor:pointer;line-height:1;">
+            📋 Paste
+          </button>
+          <button type="button" onclick="togglePwVisible()" id="pw-eye" title="Show/hide password"
+            style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:6px;color:#7070a8;font-size:.78rem;padding:.25rem .4rem;cursor:pointer;line-height:1;">
+            👁
+          </button>
+        </div>
+      </div>
+      <div id="ul-paste-tip" style="font-size:.7rem;color:#5a5a90;margin-bottom:.5rem;min-height:.9rem;"></div>
+
+      <div id="ul-err" class="form-err"></div>
+      <button class="btn-primary" onclick="unlock()">Unlock Portfolio →</button>
+      <p style="text-align:center;margin-top:.75rem;font-size:.75rem;color:#5a5a90;">Don't have a password? <a href="#" onclick="showRequest();return false;" style="color:#a78bfa;text-decoration:none;">Request access instead →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     STATE 3: FULL PORTFOLIO
+     ══════════════════════════════════════════════════════════ -->
+<div id="state-portfolio">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="wrap">
+      <div class="bridge-icon" style="margin-bottom:.85rem;">
+        <svg width="72" height="44" viewBox="0 0 90 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="arcL2" x1="0" y1="0" x2="45" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="4" fill="#fbbf24"/>
+          <path d="M6 28 Q12 20 18 28" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="78" cy="12" r="4" fill="#38bdf8"/>
+          <circle cx="86" cy="20" r="2.5" fill="#38bdf8" opacity=".6"/>
+          <circle cx="70" cy="20" r="2.5" fill="#38bdf8" opacity=".6"/>
+          <line x1="78" y1="12" x2="86" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
+          <line x1="78" y1="12" x2="70" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
+          <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcL2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="30" y1="42" x2="30" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+          <line x1="60" y1="42" x2="60" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+          <line x1="6" y1="42" x2="84" y2="42" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="hero-eyebrow">AI Portfolio · March 2026</div>
+      <div class="hero-name">Bianca Kugblenu</div>
+      <div class="hero-role">Finance → AI Product & Enablement</div>
+      <div class="hero-sub">biancakugblenu@gmail.com · NYC</div>
+      <div class="hero-arc">
+        <span class="arc-pill amber">Finance / Expertise</span>
+        <span class="arc-div">⟶</span>
+        <span class="arc-pill violet">AI Enablement & Strategy</span>
+      </div>
+      <div class="share-row">
+        <button class="share-btn purple" onclick="shareAll('copy')">📋 Copy All</button>
+        <button class="share-btn teal" onclick="shareAll('email')">✉️ Email</button>
+        <button class="share-btn green" onclick="shareAll('text')">💬 Text</button>
+        <button class="share-btn" style="background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.25);" onclick="scheduleMeeting()">📅 Request a Call</button>
+        <button class="share-btn" style="background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.25);" onclick="shareOpportunity()">💼 I Have an Opportunity</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- LIVE APPS — first section, most visible -->
+    <div class="section-head" style="margin-top:.5rem;">
+      <div class="section-head-label" style="font-size:.75rem;color:#a78bfa;font-weight:800;">What I've Built — 6 Live Apps</div>
+      <div class="section-head-line"></div>
+    </div>
+    <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:1rem;line-height:1.6;">Every app is live, installable on mobile, and works offline. Built during a self-directed AI curriculum — <strong style="color:#c4b5fd;">before the courses that teach these skills were on the schedule.</strong></p>
+    <div class="app-grid" id="app-grid"></div>
+
+    <!-- BUILT BEFORE FINISHING -->
+    <div class="section-head">
+      <div class="section-head-label">Practiced Before Finishing</div>
+      <div class="section-head-line"></div>
+    </div>
+    <p style="font-size:.8rem;color:#5a5a8a;margin-bottom:1rem;line-height:1.6;">Most people wait to finish a course before they start. These are things Bianca built or demonstrated <strong style="color:#a78bfa;">before the course that teaches it was even on the schedule</strong>. Tap each one.</p>
+
+    <div class="proof-grid" id="proof-grid"></div>
+
+    <!-- DOCUMENTS -->
+    <div class="section-head">
+      <div class="section-head-label">Documents & Assets</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="doc-grid" id="doc-grid"></div>
+
+    <!-- SKILLS -->
+    <div class="section-head">
+      <div class="section-head-label">Skills Demonstrated</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="about-card" style="margin-bottom:1rem;">
+      <div class="skills-wrap" id="skills-wrap"></div>
+    </div>
+
+    <!-- RECRUITER MATCH -->
+    <div class="section-head">
+      <div class="section-head-label">Is Bianca a Fit for Your Role?</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="about-card match-form" style="margin-bottom:1rem;">
+      <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:14px;line-height:1.6;">Drop a job URL, paste a few lines from the listing, or just enter a role title. <strong style="color:#a78bfa;">Everything is optional — skip anything you don't have.</strong></p>
+      <div id="match-form-wrap">
+        <label class="field-label">Job listing URL <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <input class="field" id="match-url" placeholder="https://company.com/jobs/..." maxlength="300"/>
+        <p style="font-size:.68rem;color:#5a5a8a;margin:-8px 0 12px;">⚠️ We can't access job sites directly — paste a few lines from the listing below, or skip it entirely.</p>
+        <label class="field-label">Company <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <input class="field" id="match-company" placeholder="e.g. Headspace, Khan Academy, NYPL — or leave blank" maxlength="120"/>
+        <label class="field-label">Role or job description <span style="color:#5a5a8a;font-weight:400;">(optional — a few words is fine)</span></label>
+        <textarea class="field" id="match-role" rows="3" placeholder="Paste the job description, or just a few keywords (e.g. AI enablement, responsible AI, PM)... or skip and we'll assess broadly." maxlength="800"></textarea>
+        <button class="btn-primary" onclick="runMatch()" style="margin-top:4px;">Show me the fit →</button>
+      </div>
+      <div id="match-result" style="display:none;margin-top:16px;"></div>
+    </div>
+
+
+    <!-- RESUME BUILDER -->
+    <div class="section-head">
+      <div class="section-head-label">📄 Build a Tailored Resume</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="about-card match-form" style="margin-bottom:1rem;">
+      <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:14px;line-height:1.6;">Enter the role you're hiring for. <strong style="color:#a78bfa;">Everything is optional</strong> — the more context you share, the more the resume weights relevant experience for your needs.</p>
+      <div id="rb-form-wrap">
+        <label class="field-label">Company <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <input class="field" id="rb-company" placeholder="e.g. Headspace, NYPL, Khan Academy" maxlength="120"/>
+        <label class="field-label">Role title <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <input class="field" id="rb-role" placeholder="e.g. AI Product Manager, Responsible AI Analyst" maxlength="200"/>
+        <label class="field-label">Keywords or job description <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <textarea class="field" id="rb-jd" rows="3" placeholder="Paste the JD, a few keywords, or leave blank for Bianca's full resume." maxlength="800"></textarea>
+        <button class="btn-primary" onclick="buildResume()" style="margin-top:4px;">Build Tailored Resume →</button>
+      </div>
+      <div id="rb-result" style="display:none;margin-top:20px;"></div>
+    </div>
+
+    <!-- REQUEST A PROMPT -->
+    <div class="section-head">
+      <div class="section-head-label" title="Describe what you're building — Bianca will craft a prompt template and send it to you.">✨ Request a Custom AI Prompt</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="about-card match-form" id="rp-card" style="margin-bottom:1rem;">
+      <div id="rp-teaser" style="cursor:pointer;" onclick="togglePromptForm()">
+        <p style="font-size:.78rem;color:#5a5a8a;line-height:1.6;margin-bottom:.5rem;">Describe what you're building or trying to do. <strong style="color:#a78bfa;">Bianca will craft a prompt template</strong> tailored to your use case and send it directly to your inbox or phone — free.</p>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:#a78bfa;font-weight:700;">
+          <span id="rp-toggle-label">▸ Open Request Form</span>
+        </div>
+      </div>
+      <div id="rp-form-wrap" style="display:none;margin-top:1rem;">
+        <label class="field-label">What are you building or trying to do?</label>
+        <textarea class="field" id="rp-usecase" rows="3" placeholder="e.g. I'm building an onboarding flow for a wellness app and need a prompt that writes inclusive copy... or I want to summarise research papers with source verification..." maxlength="600"></textarea>
+        <label class="field-label">Your email or phone <span style="color:#5a5a8a;font-weight:400;">(to receive your prompt)</span></label>
+        <input class="field" id="rp-contact" placeholder="email@example.com or +1 555 000 0000" maxlength="200"/>
+        <div id="rp-err" style="color:#f87171;font-size:.76rem;min-height:.9rem;margin-bottom:.3rem;"></div>
+        <button class="btn-primary" onclick="submitPromptRequest()" style="margin-top:4px;">Send My Request →</button>
+      </div>
+      <div id="rp-success" style="display:none;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:1rem;text-align:center;color:#a78bfa;font-weight:700;font-size:.88rem;margin-top:1rem;">✓ Request received — Bianca will send your custom prompt within 24 hours.</div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="section-head">
+      <div class="section-head-label">The Short Version</div>
+      <div class="section-head-line"></div>
+    </div>
+    <div class="about-card">
+      <p class="about-text">Seven years in finance — model governance, stress testing, regulatory reporting. The core question was always: <strong>when this model is wrong, who bears the cost?</strong></p>
+      <p class="about-text" style="margin-top:.65rem;">That question travels perfectly into AI. In 2026 I shifted focus: not just to what AI can do, but to what it gets wrong — and who builds the bridge between the technology and the humans who need to use it responsibly. <strong>That bridge is the job I'm building toward.</strong></p>
+      <p class="about-text" style="margin-top:.65rem;">Everything in this portfolio was built during <strong>a self-directed 18-week AI curriculum</strong>. No bootcamp. No cohort. A structured roadmap, a bias toward building over watching, and a finance professional's instinct to verify before trusting.</p>
+    </div>
+
+  </div>
+
+  <!-- INLINE FEEDBACK SECTION -->
+  <div id="feedback-section" style="max-width:480px;margin:2.5rem auto 0;padding:0 1rem 3rem;">
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:2rem;">
+      <div style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:.25rem;">💬 Leave Feedback</div>
+      <div style="font-size:.78rem;color:#5a5a90;margin-bottom:1.25rem;">Bianca reads every message. Be honest — it's more useful.</div>
+      <div id="feedback-success" style="display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.22);border-radius:12px;padding:1rem;text-align:center;color:#34d399;font-weight:700;font-size:.88rem;">✓ Feedback sent — thank you!</div>
+      <div id="feedback-form-wrap">
+        <label class="field-label">Rating</label>
+        <div class="stars" id="stars">
+          <span class="star" onclick="setStar(1)">★</span>
+          <span class="star" onclick="setStar(2)">★</span>
+          <span class="star" onclick="setStar(3)">★</span>
+          <span class="star" onclick="setStar(4)">★</span>
+          <span class="star" onclick="setStar(5)">★</span>
+        </div>
+        <label class="field-label" for="fb-msg">Your message</label>
+        <textarea id="fb-msg" class="field" rows="3" placeholder="What impressed you? What questions do you have? What would make this stronger?"></textarea>
+        <div id="fb-err" style="color:#f87171;font-size:.76rem;min-height:.9rem;margin-bottom:.3rem;"></div>
+        <button class="btn-primary" onclick="submitFeedback()">Send Feedback →</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Built March 2026 · Self-directed AI curriculum · NYC<br>
+    <a href="mailto:biancakugblenu@gmail.com">biancakugblenu@gmail.com</a>
+  </footer>
+</div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+const HASH  = '5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87'; // GHACH1212 (guest)
+const OHASH = '98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c'; // WEBUILT90THISCITY@ (owner)
+const BASE_URL = 'https://flourishing-boba-840c92.netlify.app';
+const NETLIFY_URL = './bianca-ai-portfolio.html'; // form submission target
+let _visitor = {name:'', relation:'', company:''};
+let _starRating = 0;
+let _isOwner = false;
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+(function(){
+  var stored = localStorage.getItem('_pub_auth') || sessionStorage.getItem('_pub_auth');
+  if(stored===HASH||stored===OHASH){
+    _isOwner = (stored===OHASH);
+    _visitor = {name:'Visitor',relation:'',company:''};
+    var gate=document.getElementById('auth-gate');if(gate)gate.style.display='none';
+    var _so=document.getElementById('signout-btn');if(_so)_so.style.display='block';
+    var _hl=document.getElementById('hub-link-btn');if(_hl)_hl.style.display='block';
+  }
+})();
+
+// Seed initial history entry and defer rendering
+(function(){
+  history.replaceState({view:'portfolio'},'');
+  document.addEventListener('DOMContentLoaded', function(){
+    _applyState('portfolio');
+  });
+})();
+
+// ── PATH TOGGLE (request form vs unlock) ───────────────────────────────────────
+function showPath(path){
+  const reqForm = document.getElementById('path-request-form');
+  const btnR = document.getElementById('btn-path-request');
+  const btnP = document.getElementById('btn-path-pw');
+  if(path==='request'){
+    reqForm.style.display='block';
+    btnR.classList.add('active');
+    btnP.classList.remove('active');
+  }
+}
+
+// ── STATE TRANSITIONS ──────────────────────────────────────────────────────────
+function _applyState(view){
+  document.getElementById('state-request').style.display   = view==='request'   ? 'flex'  : 'none';
+  document.getElementById('state-unlock').style.display    = view==='unlock'    ? 'block' : 'none';
+  document.getElementById('state-portfolio').style.display = view==='portfolio' ? 'block' : 'none';
+  // feedback is inline — no floating button to toggle
+  if(view==='unlock') setTimeout(()=>{ const f=document.getElementById('ul-name'); if(f)f.focus(); },100);
+  if(view==='portfolio') renderPortfolio();
+  var _so=document.getElementById('signout-btn');if(_so)_so.style.display=(view==='portfolio'?'block':'none');
+  var _hl=document.getElementById('hub-link-btn');if(_hl)_hl.style.display=(view==='portfolio'?'block':'none');
+}
+function showRequest(pushHistory){
+  if(pushHistory!==false) history.pushState({view:'request'},'');
+  _applyState('request');
+}
+function showUnlock(pushHistory){
+  if(pushHistory!==false) history.pushState({view:'unlock'},'');
+  _applyState('unlock');
+}
+function showPortfolio(pushHistory){
+  if(pushHistory!==false) history.pushState({view:'portfolio'},'');
+  _applyState('portfolio');
+}
+window.addEventListener('popstate',function(e){
+  var view=(e.state&&e.state.view)||'unlock';
+  _applyState(view);
+});
+
+// ── REQUEST FORM ───────────────────────────────────────────────────────────────
+function toggleReqFields(){
+  const r = document.getElementById('req-relation').value;
+  document.getElementById('req-company-wrap').style.display = r==='Recruiter' ? 'block' : 'none';
+  document.getElementById('req-custom-wrap').style.display = r==='Other' ? 'block' : 'none';
+}
+function toggleUnlockFields(){
+  const r = document.getElementById('ul-relation').value;
+  document.getElementById('ul-company-wrap').style.display = r==='Recruiter' ? 'block' : 'none';
+  document.getElementById('ul-custom-wrap').style.display = r==='Other' ? 'block' : 'none';
+}
+
+async function submitRequest(){
+  const name = document.getElementById('req-name').value.trim();
+  const email = document.getElementById('req-email').value.trim();
+  const relation = document.getElementById('req-relation').value;
+  const company = document.getElementById('req-company').value.trim();
+  const custom = document.getElementById('req-custom').value.trim();
+  const message = document.getElementById('req-message').value.trim();
+  const errEl = document.getElementById('req-err');
+
+  if(!name){ errEl.textContent='Name is required.'; return; }
+  if(!email || !email.includes('@')){ errEl.textContent='A valid email is required.'; return; }
+  if(!relation){ errEl.textContent='Please select your relation.'; return; }
+  if(relation==='Other' && !custom){ errEl.textContent='Please describe your relation.'; return; }
+  errEl.textContent='';
+
+  const data = new URLSearchParams();
+  data.append('form-name','access-request');
+  data.append('visitor-name', name);
+  data.append('visitor-email', email);
+  data.append('relation', relation);
+  data.append('company', company);
+  data.append('custom-relation', custom);
+  data.append('message', message);
+  data.append('timestamp', new Date().toLocaleString('en-US',{timeZone:'America/New_York'})+' ET');
+
+  try {
+    await fetch(NETLIFY_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: data.toString() });
+  } catch(e){}
+
+  document.getElementById('req-form-wrap').style.display='none';
+  document.getElementById('req-success').style.display='block';
+}
+
+// ── PASSWORD HELPERS ───────────────────────────────────────────────────────────
+async function pastePassword(){
+  const tip = document.getElementById('ul-paste-tip');
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById('ul-password').value = text.trim();
+    if(tip){ tip.textContent = '✓ Pasted — tap Unlock to continue.'; tip.style.color='#34d399'; }
+    setTimeout(()=>{ if(tip) tip.textContent=''; }, 3000);
+  } catch(e) {
+    if(tip){ tip.textContent = 'Clipboard blocked — use Ctrl+V / Cmd+V to paste manually.'; tip.style.color='#f87171'; }
+    setTimeout(()=>{ if(tip) tip.textContent=''; }, 4000);
+  }
+}
+
+function togglePwVisible(){
+  const f = document.getElementById('ul-password');
+  const btn = document.getElementById('pw-eye');
+  if(!f) return;
+  const show = f.type === 'password';
+  f.type = show ? 'text' : 'password';
+  if(btn) btn.textContent = show ? '🙈' : '👁';
+}
+
+// ── UNLOCK ─────────────────────────────────────────────────────────────────────
+async function unlock(){
+  const name = document.getElementById('ul-name').value.trim();
+  const relation = document.getElementById('ul-relation').value;
+  const company = document.getElementById('ul-company').value.trim();
+  const custom = document.getElementById('ul-custom').value.trim();
+  const pw = document.getElementById('ul-password').value;
+  const errEl = document.getElementById('ul-err');
+
+  // Only password is required — name/relation are optional (used for visit logging only)
+  if(!pw){ errEl.textContent='Please enter the password.'; return; }
+  const safeName = name || 'Visitor';
+  const safeRelation = relation || 'Unknown';
+  errEl.textContent='';
+
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  const hash = [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+
+  if(hash !== HASH && hash !== OHASH){
+    errEl.textContent='Incorrect password. Ask Bianca to confirm yours.';
+    document.getElementById('ul-password').value='';
+    document.getElementById('ul-password').focus();
+    return;
+  }
+
+  _visitor = { name: safeName, relation: safeRelation, company: safeRelation==='Other' ? custom : company };
+  localStorage.setItem('_pub_auth', hash);
+  localStorage.setItem('_pub_visitor', JSON.stringify(_visitor));
+  localStorage.setItem('_hub_auth', hash); // share auth with all apps on this domain
+  if(hash === HASH){ localStorage.setItem('_hub_guest','1'); } // guest flag only for guest password
+  if(hash === OHASH){ localStorage.removeItem('_hub_guest'); sessionStorage.removeItem('_guest_mode'); } // owner clears guest flags
+
+  // Log the visit to Netlify Forms
+  const data = new URLSearchParams();
+  data.append('form-name','access-log');
+  data.append('visitor-name', safeName);
+  data.append('relation', safeRelation);
+  data.append('company', _visitor.company);
+  data.append('custom-relation', custom);
+  data.append('page','bianca-ai-portfolio');
+  data.append('timestamp', new Date().toLocaleString('en-US',{timeZone:'America/New_York'})+' ET');
+  data.append('device', navigator.userAgent.includes('Mobile')?'Mobile':'Desktop');
+  try { await fetch(NETLIFY_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: data.toString() }); } catch(e){}
+  showPortfolio();
+}
+
+// ── PORTFOLIO DATA ─────────────────────────────────────────────────────────────
+const PROOF_ITEMS = [
+  {
+    icon:'🚀', color:'#a78bfa', bg:'rgba(124,58,237,.15)',
+    badge:'Advanced skill — delivered early', badgeColor:'#a78bfa', badgeBg:'rgba(124,58,237,.15)',
+    title:'Deployed 7 live apps to production',
+    subtitle:'Netlify deployment, PWA install flow, safe-area insets, offline-first architecture',
+    course:'Deployment & infrastructure — roadmap skill',
+    when:'March 2026',
+    what:'Zipped and drag-drop deployed 7 HTML apps to Netlify with permanent public URLs. Built PWA install banners (beforeinstallprompt) so apps can be added to any phone home screen. Implemented env(safe-area-inset) for notched phones.',
+    why:'Demonstrates end-to-end product ownership: from idea to something live, shareable, and mobile-ready. Deployment literacy is increasingly expected in AI enablement and product roles — knowing how to ship is different from knowing how to build.'
+  },
+  {
+    icon:'🔍', color:'#f87171', bg:'rgba(248,113,113,.12)',
+    badge:'Strategic skill — delivered early', badgeColor:'#f87171', badgeBg:'rgba(248,113,113,.12)',
+    title:'Caught AI hallucinating — and documented it',
+    subtitle:'Two fabricated sources in a research paper. Found them. Fixed them. Published the lesson.',
+    course:'AI Ethics & Critical Awareness — Google Cloud Responsible AI',
+    when:'March 2026',
+    what:'While writing a 13-page research paper using Claude as a research assistant, two citations were fabricated: a WHO/Palantir partnership (never happened) and a ClimateGPT/UN dataset (never published). Both cited confidently. Caught by manual verification. Replaced with real sources: the ASSURE study and DeepMind\'s AlphaFold. Turned it into a LinkedIn carousel post and a skill entry.',
+    why:'Source verification is non-negotiable. Finance background made this instinctive — in model governance, you never trust an output you can\'t trace.'
+  },
+  {
+    icon:'📊', color:'#38bdf8', bg:'rgba(56,189,248,.12)',
+    badge:'Cross-domain skill — delivered early', badgeColor:'#38bdf8', badgeBg:'rgba(56,189,248,.12)',
+    title:'Built a Python data pipeline for PDF carousels',
+    subtitle:'ReportLab + PIL/Pillow for automated 9-slide LinkedIn documents with real screenshot embedding',
+    course:'IBM Data Analyst, Google Data Analytics',
+    when:'March 2026',
+    what:'Wrote Python scripts using ReportLab (vector PDF generation) and PIL (image cropping, compositing) to produce 1080×1080px LinkedIn carousel documents. Each slide embedded real screenshots of live apps with dark rounded browser-chrome frames. Output: professional PDF carousels ready to post as LinkedIn document posts.',
+    why:'Demonstrates the ability to spec, direct, and ship an automated content production pipeline — a skill that maps directly to AI PM work: defining output standards, building repeatable AI-driven workflows, and owning the process from brief to deliverable. The tool (Python) is incidental; the capability (systematic content ops) is the point.'
+  },
+  {
+    icon:'💡', color:'#fbbf24', bg:'rgba(251,191,36,.1)',
+    badge:'Cross-domain skill — delivered early', badgeColor:'#fbbf24', badgeBg:'rgba(251,191,36,.1)',
+    title:'Integrated a live third-party API — no course, no tutorial',
+    subtitle:'TheMealDB API powers real food photos in GainSmart. Fallback gradient system when no match found.',
+    course:'API integration and data literacy',
+    when:'March 2026',
+    what:'GainSmart uses TheMealDB (free, no-auth REST API) to fetch real food photos for 40+ meals. Images are cached to localStorage after first fetch. fetchOneMealImage() tries the full meal name, then the first two words. When no match is found, a 3-layer CSS photographic gradient (key light + shadow fill + base) simulates food photography lighting depth — no broken image states.',
+    why:'Demonstrates product standards and quality judgment — the decision to integrate a live API instead of using placeholders reflects the same thinking AI PMs apply when evaluating whether a feature is production-ready. Ships to the bar the product needs, not the bar that\'s easiest to hit.'
+  },
+  {
+    icon:'🎨', color:'#ec4899', bg:'rgba(236,72,153,.1)',
+    badge:'No course for this — self-directed', badgeColor:'#ec4899', badgeBg:'rgba(236,72,153,.1)',
+    title:'Directed a visual design rebrand — and rejected the first version',
+    subtitle:'LinkedIn banner v1 was technical and wrong for the audience. Directed a redesign with a clear brief.',
+    course:'Visual design is not on the formal roadmap — self-taught with the canvas-design skill',
+    when:'March 2026',
+    what:'First banner iteration featured neural network diagrams, model parameters (tokens: 4,096), and financial ledger columns. Rejected it immediately: "I\'m supposed to be bridging tech and humans — not going full technical." Directed v2 brief: two overlapping arcs (amber = finance, violet = AI) meeting at a luminous center point. Typography-forward. Human, not technical. The redesign took one session.',
+    why:'Design is a communication decision, not a software skill. Knowing when something is wrong for your audience is the capability.'
+  },
+];
+
+const APPS = [
+  {
+    name:'Study Dashboard',
+    file:'bianca-study-dashboard.html',
+    category:'Study Tool', catColor:'#a78bfa',
+    tags:['Live','PWA'],
+    desc:'13-tab learning system: roadmap, career tracker, skills log, project lab, LinkedIn calendar, growth log, skill grid game, and more. The infrastructure behind everything in this portfolio.',
+    color:'#a78bfa',
+    svgPath:'M10 8 L38 8 M10 16 L38 16 M10 24 L28 24 M34 20 L46 32 L34 44 M46 32 L22 32',
+  },
+  {
+    name:'Morning Brief',
+    file:'morning_brief.html',
+    category:'Daily Planner', catColor:'#38bdf8',
+    tags:['Live','PWA'],
+    desc:'Opens every morning and already knows what you need. Auto-detects the day, shows today\'s study focus, career nudges color-coded by urgency, and LinkedIn post brief on posting days. Zero setup.',
+    color:'#38bdf8',
+    svgPath:'M24 6 L24 12 M12 10 L16 14 M36 10 L32 14 M8 24 L16 24 M32 24 L40 24 M14 34 L18 30 M34 34 L30 30 M24 36 L24 42 M20 24 Q24 16 28 24 Q24 32 20 24',
+  },
+  {
+    name:'AI Games Hub',
+    file:'bianca-ai-games.html',
+    category:'Learning', catColor:'#fbbf24',
+    tags:['Live','PWA'],
+    desc:'5 interactive AI learning games: Quiz Blitz, Reading Recall, Prompt Lab, AI Dilemmas, and Concept Map. Offline-first. Built to make AI literacy genuinely engaging.',
+    color:'#fbbf24',
+    svgPath:'M20 8 Q32 4 44 8 L46 32 Q32 36 18 32 Z M28 18 L36 18 M32 14 L32 22',
+  },
+  {
+    name:'GainSmart',
+    file:'gainsmart.html',
+    category:'Wellness', catColor:'#f59e0b',
+    tags:['Live','PWA'],
+    desc:'Nutrition & weight gain PWA. 38-meal database with multiple filter modes (focus-friendly, hormone-friendly, budget, dietary). Pantry checker, calorie + water + weight tracking, 60-day challenge grid.',
+    color:'#f59e0b',
+    svgPath:'M12 24 Q24 10 36 24 Q24 38 12 24 M24 18 L24 30 M18 24 L30 24',
+  },
+  {
+    name:'FitSmart',
+    file:'fitsmart.html',
+    category:'Wellness', catColor:'#7c3aed',
+    tags:['Live','PWA'],
+    desc:'Smart fitness PWA. Workout generator based on time, energy & equipment. 40-exercise library with low-impact options, one-exercise-at-a-time focus mode, 28-day streak grid, and cross-app sync.',
+    color:'#7c3aed',
+    svgPath:'M14 32 L24 12 L34 32 M18 26 L30 26 M24 32 L24 40',
+  },
+  {
+    name:'GlowSmart',
+    file:'glowsmart.html',
+    category:'Wellness', catColor:'#ec4899',
+    tags:['Live','PWA'],
+    desc:'Clean beauty & skincare PWA. Ingredient safety scanner with 60+ ingredient database, hormone-aware mode, AM/PM routine builder, PAO expiration tracker, and 8 DIY skincare recipes. No data leaves the device.',
+    color:'#ec4899',
+    svgPath:'M24 10 Q36 14 38 24 Q36 34 24 38 Q12 34 10 24 Q12 14 24 10 M24 16 L24 32 M16 24 L32 24',
+  },
+];
+
+const DOCS = [
+  { icon:'📄', name:'The AI Question', tags:['Research Paper'], desc:'13-page paper on AI in public services. Includes live hallucination catch: 2 fabricated sources found, documented, and replaced with verified research.', color:'#a78bfa' },
+  { icon:'🖼️', name:'LinkedIn Banner', tags:['Visual Design'], desc:'"Signal Convergence" — 1584×396px. Two arcs (amber + violet) meeting at a luminous center. Human-centered, not technical.', color:'#ec4899' },
+  { icon:'📊', name:'Wellness Suite Launch Deck', tags:['Presentation'], desc:'Product launch deck for GainSmart, GlowSmart & FitSmart — market research, personas, competitive analysis, and go-to-market strategy for all three apps.', color:'#34d399' },
+  { icon:'🗓️', name:'LinkedIn Calendar', tags:['Strategy Doc'], desc:'7-post content calendar (Mar–Apr 2026) with post copy, engagement analysis, and strategy notes.', color:'#fbbf24' },
+];
+
+const SKILLS = [
+  'Prompt Engineering (Intermediate)',
+  'AI-Assisted Product Dev (Intermediate)',
+  'Human-AI Collaboration — Mollick',
+  'Technical Literacy (Non-Coding)',
+  'Self-Directed Learning Design (Advanced)',
+  'AI Ethics & Critical Awareness',
+  'AI Content Strategy & Distribution',
+  'Visual Design with AI Tools',
+  'Deployment & Infrastructure Literacy',
+  'Product Design & User Experience',
+];
+
+// ── RENDER PORTFOLIO ───────────────────────────────────────────────────────────
+function renderPortfolio(){
+  // Proof cards
+  document.getElementById('proof-grid').innerHTML = PROOF_ITEMS.map((p,i)=>`
+    <div class="proof-card" onclick="toggleProof(${i})" id="proof-${i}">
+      <div class="proof-top">
+        <div class="proof-icon-wrap" style="background:${p.bg};">${p.icon}</div>
+        <div class="proof-text">
+          <div class="proof-title">${p.title}</div>
+          <div class="proof-subtitle">${p.subtitle}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0;">
+          <span class="proof-badge" style="color:${p.badgeColor};background:${p.badgeBg};border:1px solid ${p.badgeColor}30;">${p.badge}</span>
+          <span class="proof-chevron" id="chev-${i}">▾</span>
+        </div>
+      </div>
+      <div class="proof-detail" id="proof-detail-${i}">
+        <div class="proof-detail-row"><span class="proof-detail-label">Formally belongs to</span><span class="proof-detail-value">${p.course}</span></div>
+        <div class="proof-detail-row"><span class="proof-detail-label">When done</span><span class="proof-detail-value">${p.when}</span></div>
+        <div class="proof-detail-row"><span class="proof-detail-label">What exactly</span><span class="proof-detail-value">${p.what}</span></div>
+        <div class="proof-detail-row"><span class="proof-detail-label">Why</span><span class="proof-detail-value">${p.why}</span></div>
+      </div>
+    </div>
+  `).join('');
+
+  // App cards with SVG icons
+  document.getElementById('app-grid').innerHTML = APPS.map(app=>`
+    <div class="app-card" style="border-top:2px solid ${app.color}44;">
+      <div class="app-card-top">
+        <svg class="app-icon-svg" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g${app.name.replace(/\s/g,'')}" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="${app.color}"/>
+              <stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <rect width="56" height="56" rx="14" fill="${app.color}14"/>
+          <circle cx="28" cy="28" r="14" fill="${app.color}18" stroke="${app.color}40" stroke-width="1.5"/>
+          <!-- Human figure -->
+          <circle cx="20" cy="20" r="4" fill="${app.color}80"/>
+          <path d="M15 32 Q20 26 25 32" stroke="${app.color}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- Bridge arc -->
+          <path d="M25 32 Q28 22 31 32" stroke="url(#g${app.name.replace(/\s/g,'')})" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- AI node -->
+          <circle cx="36" cy="20" r="3.5" fill="#38bdf880"/>
+          <circle cx="42" cy="25" r="2" fill="#38bdf850"/>
+          <line x1="36" y1="20" x2="42" y2="25" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
+          <path d="M31 32 Q34 26 38 32" stroke="#38bdf8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/>
+        </svg>
+        <div class="app-info">
+          <div class="app-name">${app.name}</div>
+          <div class="app-tags">
+            <span style="font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:99px;background:${app.catColor}18;color:${app.catColor};border:1px solid ${app.catColor}30;margin-right:3px;">${app.category}</span>
+            ${app.tags.map(t=>`<span class="tag tag-${t==='Live'?'live':'pwa'}">${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="app-desc">${app.desc}</div>
+      <div class="app-actions">
+        <a href="${app.file}" target="_blank" class="btn-open">Open App ↗</a>
+        <button class="btn-copy" onclick="copyLink('${BASE_URL}/${app.file}','${app.name}')">📋</button>
+        <button class="btn-sms" onclick="shareText('${app.name}','${BASE_URL}/${app.file}')">💬</button>
+        <button class="btn-email-sm" onclick="shareEmail('${app.name}','${BASE_URL}/${app.file}')">✉️</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Docs
+  document.getElementById('doc-grid').innerHTML = DOCS.map(doc=>`
+    <div class="doc-card" style="border-left:3px solid ${doc.color}44;">
+      <div class="doc-icon">${doc.icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="doc-name">${doc.name}</div>
+        <div style="margin:.2rem 0;"><span class="tag tag-doc">${doc.tags[0]}</span></div>
+        <div class="doc-desc">${doc.desc}</div>
+        <div class="doc-actions">
+          <button class="btn-copy" onclick="copyText('${doc.name} — available from biancakugblenu@gmail.com','${doc.name} reference copied')">📋 Ref</button>
+          <button class="btn-sms" onclick="shareDoc('${doc.name}')">💬 Request</button>
+          <button class="btn-email-sm" onclick="reqDocEmail('${doc.name}')">✉️ Request</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Skills
+  document.getElementById('skills-wrap').innerHTML = SKILLS.map(s=>`<span class="skill-chip">${s}</span>`).join('');
+}
+
+function toggleProof(i){
+  const det = document.getElementById('proof-detail-'+i);
+  const chev = document.getElementById('chev-'+i);
+  const card = document.getElementById('proof-'+i);
+  const open = det.classList.contains('open');
+  det.classList.toggle('open', !open);
+  chev.classList.toggle('open', !open);
+  if(!open) card.style.borderColor='rgba(167,139,250,.3)';
+  else card.style.borderColor='';
+}
+
+// ── FEEDBACK (inline section) ───────────────────────────────────────────────────
+function setStar(n){
+  _starRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
+}
+
+async function submitFeedback(){
+  const msg = document.getElementById('fb-msg').value.trim();
+  const errEl = document.getElementById('fb-err');
+  if(!msg){ errEl.textContent='A message is required — even one line is great.'; return; }
+  errEl.textContent='';
+
+  const data = new URLSearchParams();
+  data.append('form-name','feedback');
+  data.append('visitor-name', _visitor.name);
+  data.append('relation', _visitor.relation);
+  data.append('rating', _starRating+' / 5');
+  data.append('message', msg);
+  data.append('timestamp', new Date().toLocaleString('en-US',{timeZone:'America/New_York'})+' ET');
+  try { await fetch(NETLIFY_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: data.toString() }); } catch(e){}
+  // Show inline success state
+  const form = document.getElementById('feedback-form-wrap');
+  const success = document.getElementById('feedback-success');
+  if(form) form.style.display='none';
+  if(success) success.style.display='block';
+  showToast('Feedback sent — thank you!');
+}
+
+// ── RECRUITER MATCH ENGINE ──────────────────────────────────────────────────────
+const MATCH_SKILLS = [
+  {
+    id:'responsible-ai', color:'#f87171',
+    label:'Responsible AI & Ethics',
+    keywords:['responsible','ethics','ethical','risk','governance','safety','trust','harm','bias','fairness','policy','compliance','oversight','audit','accountability'],
+    blurb:'Caught AI hallucinating in her own research paper — two fabricated citations — and published the lesson as a LinkedIn carousel. Finance background means risk instincts are embedded, not acquired in a course.'
+  },
+  {
+    id:'enablement', color:'#34d399',
+    label:'AI Enablement & L&D',
+    keywords:['enablement','l&d','learning','training','change','adoption','rollout','workforce','upskill','reskill','onboarding','capability','program','curriculum'],
+    blurb:'Designed and executed a self-directed AI learning system from scratch. Knows how to build curriculum, track progress, and make adoption stick — without a department budget or a cohort.'
+  },
+  {
+    id:'product', color:'#a78bfa',
+    label:'AI Product Management',
+    keywords:['product','pm','product manager','roadmap','build','develop','prototype','launch','mvp','feature','backlog','stakeholder','requirements','strategy'],
+    blurb:'Took GainSmart and GlowSmart from idea through market research, personas, competitive analysis, IP strategy, and an 11-slide launch deck — all within her AI curriculum.'
+  },
+  {
+    id:'finance', color:'#fbbf24',
+    label:'Finance & Data Rigour',
+    keywords:['finance','financial','data','analytics','model','analysis','quantitative','banking','risk','fintech','ops','reporting','modelling','forecasting'],
+    blurb:'7 years in model governance, stress testing, and regulatory reporting. The instinct when a model outputs something wrong is to trace it, not accept it — directly applicable to LLM oversight.'
+  },
+  {
+    id:'technical', color:'#38bdf8',
+    label:'Technical Literacy (non-coding)',
+    keywords:['technical','engineering','developer','tech','api','integration','deploy','infrastructure','architecture','data','python','code','build','software'],
+    blurb:'Deployed 7 apps to Netlify, wrote Python for a PDF pipeline, integrated a live REST API, and debugged a silent JS parsing bug — without a CS background. Bridge literacy, not engineer literacy.'
+  },
+  {
+    id:'content', color:'#f472b6',
+    label:'AI Content Strategy & Distribution',
+    keywords:['content','social','linkedin','communications','brand','storytelling','writing','marketing','education','communications','audience','media','outreach','awareness'],
+    blurb:'Built a 7-post LinkedIn content calendar with carousel PDFs, hooks, CTAs, and a Social Arbitrage framework — turning the career transition itself into audience-building content.'
+  },
+  {
+    id:'mission', color:'#fb923c',
+    label:'Mission-Driven & Social Impact',
+    keywords:['nonprofit','mission','social','impact','education','community','health','equity','public','library','arts','museum','civic','foundation','ngos'],
+    blurb:'Targeting NYPL, Lincoln Center, MoMA, Khan Academy, aiEDU — organisations where the question of who AI serves is built into the mission, not bolted on. Finance background includes regulated public-interest institutions.'
+  },
+  {
+    id:'ai-pm', color:'#818cf8',
+    label:'AI Literacy & Adoption',
+    keywords:['ai','llm','machine learning','genai','generative','chatgpt','claude','copilot','literacy','awareness','adoption','transition','digital transformation','automation'],
+    blurb:'18-week self-directed AI curriculum: Ng, Mollick, Anthropic, O\'Neil. Building production tools while completing certifications simultaneously.'
+  },
+];
+
+function runMatch(){
+  const company = (document.getElementById('match-company').value||'').trim();
+  const role = (document.getElementById('match-role').value||'').trim();
+  const url = (document.getElementById('match-url')?.value||'').trim();
+  const sparse = !company && role.split(/\s+/).filter(Boolean).length < 4;
+  const skippedAll = !company && !role;
+
+  const query = (company + ' ' + role).toLowerCase();
+  const scored = MATCH_SKILLS.map(sk => {
+    const hits = sk.keywords.filter(kw => query.includes(kw)).length;
+    return { ...sk, hits };
+  }).filter(sk => sk.hits > 0).sort((a,b) => b.hits - a.hits);
+
+  const resultEl = document.getElementById('match-result');
+  const formWrap = document.getElementById('match-form-wrap');
+
+  const skipNote = (skippedAll || sparse)
+    ? `<div style="font-size:.72rem;color:#a78bfa;background:rgba(124,58,237,.1);border-radius:8px;padding:8px 12px;margin-bottom:14px;line-height:1.5;">✓ Got it — no details provided. Showing Bianca's strongest transferable strengths across any AI/tech role.</div>`
+    : '';
+  const urlNote = url ? `<div style="font-size:.68rem;color:#5a5a80;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 ${escPf(url)}</div>` : '';
+
+  if(skippedAll || !scored.length){
+    // Show top 3 strongest skills as broad fit signal
+    const top3 = MATCH_SKILLS.slice(0,3);
+    const coLabel = company ? `<strong>${escPf(company)}</strong>` : 'any AI or mission-driven organisation';
+    let html = skipNote + urlNote;
+    html += `<div class="match-intro">Here's why Bianca is a strong candidate for ${coLabel}:</div>`;
+    top3.forEach(sk => {
+      html += `<div class="match-item">
+        <div class="match-dot" style="background:${sk.color};"></div>
+        <div>
+          <div class="match-label" style="color:${sk.color};">${sk.label}</div>
+          <div class="match-blurb">${sk.blurb}</div>
+        </div>
+      </div>`;
+    });
+    html += buildClaudeBtn(company, role);
+    html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.9rem;"><button onclick="scheduleMeeting()" style="flex:1;min-width:120px;background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.22);border-radius:99px;padding:.42rem .8rem;font-size:.73rem;font-weight:700;cursor:pointer;">📅 Schedule a Call</button><button onclick="shareOpportunity()" style="flex:1;min-width:120px;background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.22);border-radius:99px;padding:.42rem .8rem;font-size:.73rem;font-weight:700;cursor:pointer;">💼 I Have an Opportunity</button></div>`;
+    html += `<button class="match-reset" onclick="resetMatch()">← Try with more details</button>`;
+    resultEl.innerHTML = html;
+  } else {
+    const top = scored.slice(0, 4);
+    const coLabel = company ? `<strong>${escPf(company)}</strong>` : 'your organisation';
+    const roleLabel = role ? ` for a role around <em>${escPf(role.slice(0,60))}${role.length>60?'…':''}</em>` : '';
+
+    let html = skipNote + urlNote;
+    html += `<div class="match-intro">Here's why Bianca fits ${coLabel}${roleLabel}:</div>`;
+    top.forEach(sk => {
+      html += `<div class="match-item">
+        <div class="match-dot" style="background:${sk.color};"></div>
+        <div>
+          <div class="match-label" style="color:${sk.color};">${sk.label}</div>
+          <div class="match-blurb">${sk.blurb}</div>
+        </div>
+      </div>`;
+    });
+    html += buildClaudeBtn(company, role);
+    html += `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:.9rem;"><button onclick="scheduleMeeting()" style="flex:1;min-width:120px;background:rgba(52,211,153,.08);color:#34d399;border:1px solid rgba(52,211,153,.22);border-radius:99px;padding:.42rem .8rem;font-size:.73rem;font-weight:700;cursor:pointer;">📅 Schedule a Call</button><button onclick="shareOpportunity()" style="flex:1;min-width:120px;background:rgba(167,139,250,.08);color:#a78bfa;border:1px solid rgba(167,139,250,.22);border-radius:99px;padding:.42rem .8rem;font-size:.73rem;font-weight:700;cursor:pointer;">💼 I Have an Opportunity</button></div>`;
+    html += `<button class="match-reset" onclick="resetMatch()">← Try a different role</button>`;
+    resultEl.innerHTML = html;
+  }
+
+  formWrap.style.display = 'none';
+  resultEl.style.display = 'block';
+}
+
+function buildClaudeBtn(company, role){
+  const roleContext = role && role.length > 20
+    ? `Here is the job description / role context I provided:\n---\n${role}\n---\n\n`
+    : (role ? `I'm hiring for a role around: ${role}.\n\n` : `I'm looking for AI / product / enablement talent.\n\n`);
+  const prompt = encodeURIComponent(
+    `I'm a recruiter${company ? ' at ' + company : ''}.\n\n${roleContext}Here is Bianca Kugblenu's background:\n• 7 years in finance (model governance, stress testing, regulatory reporting)\n• Currently completing a self-directed 18-week AI curriculum\n• Built and deployed 7 AI apps: study dashboard, games hub, morning brief, health tracker, portfolio\n• Caught two AI hallucinations in a 13-page research paper and published the lesson\n• Skills: AI Literacy, Responsible AI, AI Enablement, Product Development, Finance & Data Rigour, Technical Literacy (non-coding), AI Content Strategy\n• Targeting roles: AI PM, AI Enablement Lead, Responsible AI Analyst\n• Based in NYC, targeting $100K+\n\nAnalyse how Bianca fits this role. Be specific. Where is she strong? Where are the gaps? What questions should I ask her?`
+  );
+  return `<a class="claude-link" href="https://claude.ai/new?q=${prompt}" target="_blank" onclick="">✦ Take this deeper with Claude →</a>`;
+}
+
+function resetMatch(){
+  document.getElementById('match-form-wrap').style.display = 'block';
+  document.getElementById('match-result').style.display = 'none';
+  document.getElementById('match-result').innerHTML = '';
+  document.getElementById('match-company').focus();
+}
+
+function escPf(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+
+// ── RESUME BUILDER ────────────────────────────────────────────────────────────
+const RESUME_DATA = {
+  contact:{name:'Bianca Kugblenu',email:'biancakugblenu@gmail.com',location:'New York, NY',linkedin:'linkedin.com/in/biancakugblenu',site:'flourishing-boba-840c92.netlify.app'},
+  summaries:{
+    default:'Finance professional with 7 years in model governance and regulatory risk, building at the intersection of AI and human decision-making. Self-directed AI curriculum underway — Foundation complete. Builds tools, tests assumptions, and asks who bears the cost when models fail.',
+    product:'Finance-to-AI Product Manager. Seven years governing financial models; now applying that discipline to AI systems. Shipped 6 live apps during a structured self-directed curriculum — strong bias toward building before the course tells you how.',
+    responsible_ai:'Finance risk analyst turned responsible AI practitioner. Seven years asking "when this model fails, who bears the cost?" — a question that travels directly into AI governance. Published research on hallucination detection; responsible AI curriculum underway.',
+    enablement:'Finance-to-AI career changer specialising in AI adoption and enablement. Bridges technical AI literacy with organisational change. Built 6 production apps, earned early certifications, and developed frameworks for critical AI evaluation — before the formal courses were scheduled.',
+    analytics:'Quantitative analyst transitioning into AI. Seven years of model validation and regulatory stress testing — now applying a data-first lens to AI system design and evaluation. Building AI tools in production while completing a structured AI literacy curriculum.',
+  },
+  experience:[
+    {role:'AI Product Builder — Self-Directed Curriculum',org:'Independent Research & Development',period:'2025 – Present',
+     bullets:[
+      {t:'Shipped 6 production-quality apps — wellness platform, AI literacy games hub, recruiter portfolio, morning briefing system — all deployed to live Netlify URLs — self-directed 18-week curriculum.',kw:['product','build','apps','ship','deploy','portfolio']},
+      {t:'Earned Claude 101 (Anthropic) and IBM Prompt Engineering Basics; 140 XP logged across structured AI modules covering LLMs, RAG, fine-tuning, and prompt engineering.',kw:['cert','ai','credentials','learning','prompt','llm','rag']},
+      {t:'Designed and built a Role Match Grader that scores a candidate profile against any job description in real time — demonstrating product thinking, AI integration, and recruiter empathy simultaneously.',kw:['product','ai','grader','match','recruiter','tool']},
+      {t:"Applied responsible AI frameworks (O'Neil, Benjamin, McMillan Cottom) to a 13-page research paper on hallucination. Self-fact-checked and replaced 2 fabricated AI-generated sources with verified research.",kw:['responsible_ai','ethics','research','hallucination','governance','critical']},
+      {t:'Designed inclusive UX patterns across 6 apps: neutral health labels, dual-password auth, PWA onboarding persistence — empathy-driven design without external frameworks.',kw:['ux','design','inclusive','product','pwa','auth']},
+      {t:'Built a LinkedIn content distribution system: 7-post editorial calendar, AI-generated carousel decks, and a live morning briefing app — executing a complete content-to-distribution workflow.',kw:['content','strategy','linkedin','distribution','marketing','writing']},
+    ]},
+    {role:'Finance & Model Risk Professional',org:'Financial Services',period:'2017 – 2025',
+     bullets:[
+      {t:'Seven years in model governance, stress testing, and regulatory reporting — building and auditing quantitative models against high-stakes failure scenarios for regulated institutions.',kw:['finance','risk','governance','model','regulatory','stress']},
+      {t:'Translated complex model assumptions into stakeholder-ready documentation and regulatory submissions — the same communication bridge required to make AI systems legible to non-technical decision-makers.',kw:['finance','communication','stakeholder','documentation','governance']},
+      {t:'Applied systematic validation frameworks to catch model errors before deployment — directly analogous to responsible AI red-teaming, model evaluation, and pre-launch review.',kw:['finance','validation','responsible_ai','risk','governance','evaluation']},
+      {t:'Built institutional knowledge of how quantitative models fail under edge conditions and who absorbs the consequences — the foundational question of responsible AI product design.',kw:['finance','risk','responsible_ai','ethics','governance','product']},
+    ]},
+  ],
+  certs:[
+    {name:'Claude 101',org:'Anthropic',date:'2026',kw:['ai','anthropic','cert']},
+    {name:'IBM Prompt Engineering Basics',org:'Coursera / IBM',date:'2026',kw:['ai','prompting','ibm','cert']},
+    {name:'AI Foundations Curriculum',org:'Self-directed — Ng, Mollick, Anthropic',date:'2026',kw:['ai','learning','curriculum']},
+  ],
+  projects:[
+    {name:'AI Study Dashboard',desc:'13-tab personal learning OS with XP system, career tracker, role grader, and prompt library.',kw:['product','ai','build','tools','learning']},
+    {name:'GainSmart Wellness PWA',desc:'Inclusive nutrition and fitness tracker — 40 meals, offline-first, no diagnostic labels.',kw:['product','ux','inclusive','design','pwa']},
+    {name:'Morning Brief',desc:'Daily AI briefing: study focus, LinkedIn content calendar, live curriculum tracking. Zero manual input.',kw:['product','ai','content','tools','automation']},
+    {name:'AI Games Hub',desc:'5 interactive AI literacy games — offline-first, PWA-installable.',kw:['ai','product','education','build','pwa']},
+    {name:'Recruiter Portfolio',desc:'3-state auth, role match grader, tailored resume builder, request-a-prompt. Zero third-party tracking.',kw:['product','portfolio','ux','privacy','auth']},
+    {name:'"The AI Question" Research Paper',desc:'13-page responsible AI analysis with hallucination self-check — caught 2 fabricated sources.',kw:['research','responsible_ai','ethics','writing']},
+  ]
+};
+
+function _rbScore(kwList,inputKw){
+  if(!inputKw.length) return 1;
+  return kwList.filter(k=>inputKw.some(ik=>k.includes(ik)||ik.includes(k))).length;
+}
+
+function buildResume(){
+  const company=document.getElementById('rb-company').value.trim();
+  const role=document.getElementById('rb-role').value.trim();
+  const jd=document.getElementById('rb-jd').value.trim();
+  const raw=(role+' '+jd+' '+company).toLowerCase();
+  const inputKw=raw.split(/\W+/).filter(w=>w.length>3);
+
+  // Detect role archetype
+  let sKey='default';
+  if(/product.?manag|\bpm\b|product owner|roadmap|backlog|sprint|agile/.test(raw)) sKey='product';
+  else if(/responsible|ethic|governance|bias|fairness|risk|safety|red.?team|audit/.test(raw)) sKey='responsible_ai';
+  else if(/enabl|adoption|change.?manag|l&d|learning.*develop|onboard/.test(raw)) sKey='enablement';
+  else if(/analyt|data|quantit|insight|metric|report/.test(raw)) sKey='analytics';
+
+  // Build company-aware opening line
+  const co = company.toLowerCase();
+  let opener = '';
+  if(co.includes('headspace')||co.includes('calm')||/wellness|mental.?health|mindfulness/.test(raw)){
+    opener = 'Bianca brings financial model discipline and hands-on AI product experience — a rare combination for embedding AI thoughtfully into a wellness context where user trust and product safety are non-negotiable.';
+  } else if(co.includes('khan')||/education|learning|curriculum|student|teaching/.test(raw)){
+    opener = 'A self-directed learner who built her own AI curriculum from scratch — Bianca understands education-by-doing at the product level, and brings that lens to AI in learning environments.';
+  } else if(co.includes('nypl')||co.includes('library')||co.includes('moma')||co.includes('lincoln')||/nonprofit|mission|public.?trust|civic/.test(raw)){
+    opener = 'Bianca brings a public-trust lens to AI: seven years in regulated financial modelling, now building at the intersection of AI accountability and human-centred design — mission-alignment built in.';
+  } else if(co.includes('blackbaud')||/nonprofit.?tech|social.?good|community/.test(raw)){
+    opener = "Finance-to-AI with a mission orientation: Bianca's background in model governance and her bias toward building responsible, human-centred tools maps well to nonprofit technology contexts.";
+  } else if(sKey==='product'){
+    opener = 'A finance professional who ships: Bianca brings the validation rigour of regulatory modelling to AI product development, with 6 live apps built during an active self-directed curriculum.';
+  } else if(sKey==='responsible_ai'){
+    opener = `Seven years asking "when this model fails, who bears the cost?" — Bianca's model governance background is foundational preparation for responsible AI roles, not an adjacent career.`;
+  } else if(sKey==='enablement'){
+    opener = "Bianca bridges the gap between AI capability and organisational readiness, combining quantitative credibility, hands-on tool-building, and a communicator's instinct for making complex systems legible.";
+  } else if(company){
+    opener = "Bianca brings a finance professional's instinct to verify before trusting, applied to AI product delivery, responsible use frameworks, and the practical gap between AI hype and human-ready tools.";
+  }
+
+  const baseSummary = RESUME_DATA.summaries[sKey];
+  const fullSummary = opener ? opener + ' ' + baseSummary : baseSummary;
+
+  // Score and sort bullets — no "+match" labels, just natural ordering
+  const exp=RESUME_DATA.experience.map(job=>({...job,
+    bullets:[...job.bullets].map(b=>({...b,score:_rbScore(b.kw,inputKw)})).sort((a,b)=>b.score-a.score).slice(0,inputKw.length?3:4)
+  }));
+  const projects=[...RESUME_DATA.projects].map(p=>({...p,score:_rbScore(p.kw,inputKw)})).sort((a,b)=>b.score-a.score).slice(0,inputKw.length?3:6);
+
+  const preparedFor = (company||role) ? '<div style="font-size:.68rem;color:#5a5a8a;margin-bottom:.7rem;text-align:center;font-style:italic;">'+(company?'Prepared for '+company+(role?' — '+role:''):role)+'</div>' : '';
+  const expHTML=exp.map(job=>'<div style="margin-bottom:1.1rem;"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px;"><div><div style="font-size:.87rem;font-weight:800;color:#fff;">'+job.role+'</div><div style="font-size:.74rem;color:#a78bfa;">'+job.org+'</div></div><div style="font-size:.69rem;color:#5a5a8a;white-space:nowrap;">'+job.period+'</div></div><ul style="margin:.45rem 0 0;padding:0;list-style:none;">'+job.bullets.map(b=>'<li style="font-size:.77rem;color:#c8c8e8;line-height:1.58;margin-bottom:.38rem;padding-left:.9rem;position:relative;"><span style="position:absolute;left:0;color:#a78bfa;font-size:.65rem;top:3px;">▸</span>'+b.t+'</li>').join('')+'</ul></div>').join('');
+  const certsHTML=RESUME_DATA.certs.map(c=>'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.32rem;"><span style="font-size:.76rem;color:#c8c8e8;">'+c.name+' <span style="color:#5a5a8a;">· '+c.org+'</span></span><span style="font-size:.67rem;color:#5a5a8a;">'+c.date+'</span></div>').join('');
+  const projHTML=projects.map(p=>'<div style="margin-bottom:.48rem;font-size:.76rem;"><span style="font-weight:700;color:#a78bfa;">'+p.name+'</span><span style="color:#7a7aaa;"> — </span><span style="color:#c0c0e0;">'+p.desc+'</span></div>').join('');
+
+  const html=`<div id="rb-resume-wrap" style="background:rgba(13,13,30,.9);border:1px solid rgba(167,139,250,.2);border-radius:14px;padding:1.5rem 1.4rem;font-family:system-ui,Segoe UI,sans-serif;">'+preparedFor+'<div style="text-align:center;border-bottom:1px solid rgba(167,139,250,.12);padding-bottom:.85rem;margin-bottom:1rem;"><div style="font-size:1.25rem;font-weight:900;color:#fff;letter-spacing:-.3px;">Bianca Kugblenu</div><div style="font-size:.68rem;color:#9d8fe0;margin-top:.18rem;">biancakugblenu@gmail.com &nbsp;·&nbsp; New York, NY &nbsp;·&nbsp; linkedin.com/in/biancakugblenu</div></div><div style="margin-bottom:.85rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#a78bfa;margin-bottom:.35rem;">Profile</div><p style="font-size:.78rem;color:#c8c8e8;line-height:1.65;margin:0;">'+fullSummary+'</p></div><div style="margin-bottom:.85rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#a78bfa;border-top:1px solid rgba(167,139,250,.1);padding-top:.55rem;margin-bottom:.55rem;">Experience</div>'+expHTML+'</div><div style="margin-bottom:.85rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#a78bfa;border-top:1px solid rgba(167,139,250,.1);padding-top:.55rem;margin-bottom:.45rem;">Certifications & Learning</div>'+certsHTML+'</div><div style="margin-bottom:.85rem;"><div style="font-size:.6rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:#a78bfa;border-top:1px solid rgba(167,139,250,.1);padding-top:.55rem;margin-bottom:.45rem;">Selected Projects</div>'+projHTML+'</div><div style="display:flex;gap:7px;flex-wrap:wrap;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.05);"><button onclick="printResume()" style="flex:1;min-width:100px;background:#7c3aed;color:#fff;border:none;border-radius:99px;padding:.44rem .85rem;font-size:.73rem;font-weight:700;cursor:pointer;">🖨️ Print / PDF</button><button onclick="copyResumeText()" id="rb-copy-btn" style="flex:1;min-width:100px;background:rgba(255,255,255,.04);color:#c4b5fd;border:1px solid rgba(167,139,250,.25);border-radius:99px;padding:.44rem .85rem;font-size:.73rem;font-weight:700;cursor:pointer;">📋 Copy Text</button><button onclick="scheduleMeeting()" style="flex:1;min-width:100px;background:rgba(52,211,153,.07);color:#34d399;border:1px solid rgba(52,211,153,.22);border-radius:99px;padding:.44rem .85rem;font-size:.73rem;font-weight:700;cursor:pointer;">📅 Schedule a Call</button><button onclick="document.getElementById('rb-result').style.display='none';document.getElementById('rb-form-wrap').style.display='block';" style="background:transparent;color:#5a5a8a;border:1px solid rgba(255,255,255,.07);border-radius:99px;padding:.44rem .75rem;font-size:.69rem;cursor:pointer;">↩ Edit</button></div></div>`;
+
+  document.getElementById('rb-result').innerHTML=html;
+  document.getElementById('rb-result').style.display='block';
+  document.getElementById('rb-form-wrap').style.display='none';
+  document.getElementById('rb-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
+function printResume(){
+  const wrap=document.getElementById('rb-resume-wrap');
+  if(!wrap) return;
+  const win=window.open('','_blank','width=700,height=900');
+  const bullets=wrap.querySelectorAll('li');
+  let liHTML='';
+  bullets.forEach(li=>{ liHTML+='<li style="font-size:11px;margin-bottom:5px;line-height:1.55;color:#222;">'+li.innerText.replace('+match','').trim()+'</li>'; });
+  win.document.write('<html><head><title>Bianca Kugblenu — Resume</title><style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#111;background:#fff;padding:40px;max-width:680px;margin:0 auto;font-size:11px;line-height:1.5}.name{font-size:20px;font-weight:900;margin:0 0 3px}.contact{font-size:10px;color:#555;margin-bottom:16px}.sec{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#7c3aed;font-weight:800;border-top:1px solid #eee;padding-top:8px;margin:12px 0 6px}.role{font-size:11px;font-weight:800}.org{font-size:10px;color:#7c3aed}.period{font-size:10px;color:#888;float:right}ul{margin:5px 0;padding-left:14px}li{margin-bottom:4px}.proj-name{font-weight:700;color:#7c3aed}.cert-row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:10px}@media print{body{padding:20px}}</style></head><body>');
+  win.document.write('<div class="name">Bianca Kugblenu</div><div class="contact">biancakugblenu@gmail.com &nbsp;·&nbsp; New York, NY &nbsp;·&nbsp; linkedin.com/in/biancakugblenu &nbsp;·&nbsp; flourishing-boba-840c92.netlify.app</div>');
+  // Extract key text from the rendered resume
+  const sections=wrap.querySelectorAll('[style*="text-transform:uppercase"]');
+  sections.forEach(sec=>{
+    win.document.write('<div class="sec">'+sec.innerText+'</div>');
+    let el=sec.parentElement;
+    win.document.write('<div style="font-size:11px;color:#222;">'+el.innerText.replace(sec.innerText,'').trim()+'</div>');
+  });
+  win.document.write('<script>window.onload=function(){window.print()}<\/script></body></html>');
+  win.document.close();
+}
+
+function copyResumeText(){
+  const wrap=document.getElementById('rb-resume-wrap');
+  if(!wrap) return;
+  let text=wrap.innerText.replace(/\+match/g,'').replace(/🖨️[^\n]*/g,'').replace(/📋[^\n]*/g,'').replace(/📅[^\n]*/g,'').replace(/↩[^\n]*/g,'').replace(/Bullets marked[^\n]*/g,'').trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('rb-copy-btn');
+    if(btn){btn.textContent='✓ Copied!';setTimeout(()=>{btn.textContent='📋 Copy Text';},2200);}
+  }).catch(()=>alert('Select text manually and press Ctrl+C / Cmd+C'));
+}
+
+function shareOpportunity(){
+  const company=document.getElementById('match-company')?document.getElementById('match-company').value.trim():'';
+  const role=document.getElementById('match-role')?document.getElementById('match-role').value.trim():'';
+  const sub='Opportunity for Bianca'+(company?' at '+company:'')+(role?' — '+role:'');
+  const body='Hi Bianca,%0A%0AI reviewed your portfolio and wanted to share an opportunity:%0A%0ACompany: '+(company||'[Company]')+'%0ARole: '+(role||'[Role]')+'%0A%0APlease let me know if you\'d like to connect.%0A%0AThank you';
+  window.open('mailto:biancakugblenu@gmail.com?subject='+encodeURIComponent(sub)+'&body='+body,'_self');
+}
+
+function scheduleMeeting(){
+  window.open('mailto:biancakugblenu@gmail.com?subject=Scheduling a call — '+encodeURIComponent(document.getElementById('rb-role')?document.getElementById('rb-role').value||'AI Role':'AI Role')+'&body=Hi Bianca,%0A%0AI reviewed your portfolio and would like to schedule a call.%0A%0ACompany: '+encodeURIComponent(document.getElementById('rb-company')?document.getElementById('rb-company').value||'':'')+'%0ARole: '+encodeURIComponent(document.getElementById('rb-role')?document.getElementById('rb-role').value||'':'')+'%0A%0APlease suggest some availability.%0A%0AThank you','_self');
+}
+
+// ── REQUEST A PROMPT ──────────────────────────────────────────────────────────
+function togglePromptForm(){
+  const wrap=document.getElementById('rp-form-wrap');
+  const label=document.getElementById('rp-toggle-label');
+  const open=wrap.style.display==='block';
+  wrap.style.display=open?'none':'block';
+  label.textContent=open?'▸ Open Request Form':'▾ Close';
+}
+
+async function submitPromptRequest(){
+  const usecase=document.getElementById('rp-usecase').value.trim();
+  const contact=document.getElementById('rp-contact').value.trim();
+  const err=document.getElementById('rp-err');
+  if(!usecase){err.textContent="Tell Bianca what you're building. Even a sentence helps.";return;}
+  if(!contact){err.textContent='Add an email or phone number so the prompt can reach you.';return;}
+  err.textContent='';
+  // Try Netlify Forms first
+  try{
+    const data=new URLSearchParams();
+    data.append('form-name','prompt-request');
+    data.append('usecase',usecase);
+    data.append('contact',contact);
+    await fetch('./',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:data.toString()});
+  } catch(e){}
+  // Always fire mailto fallback
+  const sub='Prompt Request from '+contact;
+  const body='Use case:\n'+usecase+'\n\nContact: '+contact;
+  window.open('mailto:biancakugblenu@gmail.com?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body),'_self');
+  document.getElementById('rp-form-wrap').style.display='none';
+  document.getElementById('rp-teaser').style.display='none';
+  document.getElementById('rp-success').style.display='block';
+}
+
+
+// ── SHARE UTILS ────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function copyLink(url, name){
+  navigator.clipboard.writeText(url).then(()=>showToast(name+' link copied')).catch(()=>{
+    const el=document.createElement('textarea');el.value=url;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast(name+' link copied');
+  });
+}
+function copyText(text, toast){
+  navigator.clipboard.writeText(text).then(()=>showToast(toast||'Copied')).catch(()=>{
+    const el=document.createElement('textarea');el.value=text;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast(toast||'Copied');
+  });
+}
+function shareText(name, url){
+  const msg='Check out this AI project — '+name+':\n'+url+'\n(Ask me for the password)';
+  if(navigator.share) navigator.share({title:name,text:msg,url:url}).catch(()=>window.open('sms:?body='+encodeURIComponent(msg),'_blank'));
+  else window.open('sms:?body='+encodeURIComponent(msg),'_blank');
+}
+function shareEmail(name, url){
+  const s=encodeURIComponent('AI Project: '+name+' — Bianca Kugblenu');
+  const b=encodeURIComponent('Hi,\n\nSharing one of my AI projects:\n\n'+name+'\n'+url+'\n\nIt\'s password protected — reply and I\'ll send you access.\n\nBianca\nbiancakugblenu@gmail.com');
+  window.open('mailto:?subject='+s+'&body='+b,'_blank');
+}
+function shareDoc(name){
+  const msg='Hi — I\'d like to see: "'+name+'"\nBianca Kugblenu portfolio request';
+  if(navigator.share) navigator.share({title:name,text:msg}).catch(()=>window.open('sms:?body='+encodeURIComponent(msg),'_blank'));
+  else window.open('sms:?body='+encodeURIComponent(msg),'_blank');
+}
+function reqDocEmail(name){
+  const s=encodeURIComponent('Document Request: '+name+' — Bianca Kugblenu');
+  const b=encodeURIComponent('Hi Bianca,\n\nI\'d like to see: '+name+'\n\nPlease send when you get a chance.\n\nThanks');
+  window.open('mailto:biancakugblenu@gmail.com?subject='+s+'&body='+b,'_blank');
+}
+function shareAll(method){
+  const subject = 'Bianca Kugblenu — AI Portfolio';
+  const body = [
+    'Bianca Kugblenu — AI Portfolio',
+    'biancakugblenu@gmail.com | NYC | Finance → AI Enablement',
+    '',
+    '🎮 AI Games Hub: '+BASE_URL+'/bianca-ai-games.html',
+    '🎓 Study Dashboard: '+BASE_URL+'/bianca-study-dashboard.html',
+    '☀️ Morning Brief: '+BASE_URL+'/morning_brief.html',
+    '',
+    'Password protected — ask Bianca for access.',
+  ].join('\n');
+  if(method==='email') window.open('mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body),'_blank');
+  else if(method==='text'){
+    if(navigator.share) navigator.share({title:subject,text:body}).catch(()=>window.open('sms:?body='+encodeURIComponent(body),'_blank'));
+    else window.open('sms:?body='+encodeURIComponent(body),'_blank');
+  } else {
+    navigator.clipboard.writeText(body).then(()=>showToast('All links copied!')).catch(()=>{
+      const el=document.createElement('textarea');el.value=body;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast('All links copied!');
+    });
+  }
+}
+
+function _hubLogout(){
+  if(!confirm('Sign out of all apps on this device?')) return;
+  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(k=>localStorage.removeItem(k));
+  ['_hub_auth','_guest_mode'].forEach(k=>sessionStorage.removeItem(k));
+  location.reload();
+}
+</script>
+<a href="index.html" id="hub-link-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);text-decoration:none;">← Hub</a>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
+<script>
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter') return;
+  var focused = document.activeElement;
+  if(!focused) return;
+  var id = focused.id;
+  if(id==='ul-name'){ e.preventDefault(); var pw=document.getElementById('ul-password'); if(pw) pw.focus(); return; }
+  if(id==='ul-password'){ e.preventDefault(); if(typeof unlock==='function') unlock(); return; }
+  var gate=document.getElementById('auth-gate');
+  if(gate && gate.style.display!=='none' && getComputedStyle(gate).display!=='none'){
+    e.preventDefault();
+    if(typeof _checkAuth==='function') _checkAuth();
+    else if(typeof unlock==='function') unlock();
+  }
+});
+</script>
+</body>
+</html>

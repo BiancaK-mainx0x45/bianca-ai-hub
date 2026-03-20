@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bianca AI">
+<meta name="theme-color" content="#0d0d1a">
+<title>Bianca — AI Hub</title>
+<style>
+  :root {
+    --bg: #0d0d1a;
+    --card: #13132a;
+    --border: rgba(255,255,255,0.07);
+    --purple: #9b59b6;
+    --purple-bright: #c084fc;
+    --cyan: #00d4ff;
+    --gold: #f5c842;
+    --green: #2ecc71;
+    --pink: #ff6b9d;
+    --amber: #f39c12;
+    --text: #e0e8ff;
+    --muted: #6666aa;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    min-height: 100dvh;
+    padding: calc(var(--safe-top) + 20px) 16px calc(var(--safe-bottom) + 24px);
+    overscroll-behavior: none;
+  }
+
+  .header {
+    text-align: center;
+    padding: 24px 0 28px;
+  }
+  .header-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--purple-bright) 60%, var(--cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -.01em;
+    line-height: 1.15;
+  }
+  .header-sub {
+    font-size: .8rem;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: .04em;
+  }
+
+  .section-label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 4px 10px;
+  }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stats-row3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .stat-card.clickable { cursor: pointer; }
+  .stat-card.clickable:hover { border-color: rgba(167,139,250,.3); }
+  .stat-card.clickable:active { transform: scale(.98); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+  }
+  .stat-card.purple::before { background: linear-gradient(90deg,#7c3aed,#c084fc); }
+  .stat-card.gold::before   { background: linear-gradient(90deg,#d97706,#fbbf24); }
+  .stat-card.green::before  { background: linear-gradient(90deg,#059669,#34d399); }
+  .stat-card.cyan::before   { background: linear-gradient(90deg,#0891b2,#38bdf8); }
+  .stat-card.pink::before   { background: linear-gradient(90deg,#be185d,#f472b6); }
+  .stat-icon { font-size: 1.2rem; line-height: 1; margin-bottom: 2px; }
+  .stat-val  { font-size: 1.25rem; font-weight: 800; line-height: 1.1; color: var(--text); }
+  .stat-lbl  { font-size: .62rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .stat-hint { font-size: .6rem; color: rgba(167,139,250,.5); margin-top: 2px; }
+
+  /* ── CERT EXPAND ── */
+  .cert-expand {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cert-expand.open { display: flex; }
+  .cert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,.03);
+    border-radius: 10px;
+  }
+  .cert-logo {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: .65rem;
+    font-weight: 900;
+    letter-spacing: -.01em;
+  }
+  .cert-body { flex: 1; min-width: 0; }
+  .cert-name-t { font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .cert-issuer { font-size: .66rem; color: var(--muted); margin-bottom: 5px; }
+  .cert-learned-label { font-size: .63rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
+  .cert-learned { font-size: .72rem; color: #9090b8; line-height: 1.55; }
+
+  /* ── SKILLS EXPAND ── */
+  .skills-expand {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .skills-expand.open { display: block; }
+  .sk-group { font-size: .58rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #a78bfa; margin-bottom: .5rem; margin-top: .9rem; }
+  .sk-group:first-child { margin-top: 0; }
+  .sk-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; margin-bottom: .5rem; }
+  .sk-name { font-size: .7rem; color: #c0c0e0; grid-column: 1; }
+  .sk-lvl  { font-size: .58rem; font-weight: 700; color: #5a5a8a; white-space: nowrap; text-align: right; }
+  .sk-track { grid-column: 1/-1; height: 4px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; }
+  .sk-bar  { height: 100%; border-radius: 99px; width: 0; animation: skfill 1.2s ease-out forwards; }
+  @keyframes skfill { to { width: var(--w); } }
+  .sk-cta { margin-top: .9rem; padding-top: .8rem; border-top: 1px solid rgba(255,255,255,.05); display: flex; justify-content: flex-end; }
+  .sk-cta a { font-size: .68rem; font-weight: 700; color: #a78bfa; text-decoration: none; background: rgba(124,58,237,.1); border: 1px solid rgba(167,139,250,.22); border-radius: 99px; padding: .25rem .7rem; }
+
+  /* ── DETAIL EXPAND (apps / hours) ── */
+  .detail-expand {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    flex-direction: column;
+    gap: 6px;
+  }
+  .detail-expand.open { display: flex; }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.025);
+  }
+  .detail-name { font-size: .72rem; color: #c0c0e0; }
+  .detail-val  { font-size: .68rem; font-weight: 700; color: #5a5a8a; white-space: nowrap; }
+  .detail-sub  { font-size: .64rem; color: #5a5a8a; margin-top: 1px; }
+
+  /* ── APP GRID ── */
+  .app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .app-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px 16px 18px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .15s, background .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-card:active { transform: scale(.97); background: rgba(255,255,255,.03); }
+  .app-icon { font-size: 2rem; line-height: 1; }
+  .app-name { font-size: .9rem; font-weight: 700; line-height: 1.2; }
+  .app-desc { font-size: .73rem; color: var(--muted); line-height: 1.4; }
+  .app-badge {
+    display: inline-block; font-size: .62rem; font-weight: 700;
+    padding: 2px 7px; border-radius: 99px; margin-top: 2px; align-self: flex-start;
+  }
+  .card-purple { border-color: rgba(156,92,219,.25); }
+  .card-purple .app-name { color: var(--purple-bright); }
+  .card-purple .app-badge { background: rgba(156,92,219,.18); color: var(--purple-bright); }
+  .card-cyan { border-color: rgba(0,212,255,.2); }
+  .card-cyan .app-name { color: var(--cyan); }
+  .card-cyan .app-badge { background: rgba(0,212,255,.12); color: var(--cyan); }
+  .card-gold { border-color: rgba(245,200,66,.2); }
+  .card-gold .app-name { color: var(--gold); }
+  .card-gold .app-badge { background: rgba(245,200,66,.12); color: var(--gold); }
+  .card-green { border-color: rgba(46,204,113,.25); }
+  .card-green .app-name { color: var(--green); }
+  .card-green .app-badge { background: rgba(46,204,113,.15); color: var(--green); }
+  .card-pink { border-color: rgba(255,107,157,.25); }
+  .card-pink .app-name { color: var(--pink); }
+  .card-pink .app-badge { background: rgba(255,107,157,.15); color: var(--pink); }
+  .card-teal { border-color: rgba(0,206,201,.25); }
+  .card-teal .app-name { color: #00cec9; }
+  .card-teal .app-badge { background: rgba(0,206,201,.15); color: #00cec9; }
+
+  /* ── TOOLS ROW ── */
+  .tools-row {
+    display: flex; gap: 10px; margin-bottom: 28px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 2px;
+  }
+  .tools-row::-webkit-scrollbar { display: none; }
+  .tool-chip {
+    flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 10px 14px; text-decoration: none;
+    color: var(--muted); font-size: .8rem; font-weight: 600;
+    display: flex; align-items: center; gap: 7px;
+    transition: color .15s, border-color .15s; white-space: nowrap;
+  }
+  .tool-chip:active { color: var(--text); border-color: rgba(255,255,255,.2); }
+
+  /* ── PWA INSTALL ── */
+  #install-banner {
+    display: none; background: rgba(156,92,219,.12);
+    border: 1px solid rgba(156,92,219,.3); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 18px; align-items: center; gap: 12px;
+  }
+  #install-banner.show { display: flex; }
+  #install-banner p { font-size: .78rem; color: var(--purple-bright); flex: 1; }
+  #install-btn {
+    background: var(--purple); color: white; border: none;
+    border-radius: 8px; padding: 8px 14px; font-size: .78rem;
+    font-weight: 700; cursor: pointer; flex-shrink: 0;
+  }
+
+  .footer {
+    text-align: center; font-size: .7rem;
+    color: var(--muted); padding-top: 8px; opacity: .5;
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
+  <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+    <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
+    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
+    <div style="position:relative;">
+      <input id="auth-input" type="password" placeholder="Password"
+        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.7rem 3.5rem .7rem 1rem;color:#e0e0ff;font-size:.95rem;outline:none;margin-bottom:.5rem;"
+        onkeydown="if(event.key==='Enter')_checkAuth()"/>
+      <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-60%);display:flex;gap:.3rem;">
+        <button type="button" onclick="(async()=>{try{document.getElementById('auth-input').value=(await navigator.clipboard.readText()).trim();}catch(e){}})();"
+          style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:6px;color:#a78bfa;font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;">📋</button>
+        <button type="button" onclick="var f=document.getElementById('auth-input');f.type=f.type==='password'?'text':'password';"
+          style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:6px;color:#7070a8;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;">👁</button>
+      </div>
+    </div>
+    <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
+    <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
+      <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
+    </label>
+    <button onclick="_checkAuth()"
+      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
+      Unlock →
+    </button>
+  </div>
+</div>
+
+<script>
+var _isOwner = true;
+(function(){
+  var stored = localStorage.getItem('_hub_auth') || sessionStorage.getItem('_hub_auth');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(stored===H||stored===G){
+    if(stored===G){sessionStorage.setItem('_guest_mode','1');localStorage.setItem('_hub_guest','1');}
+    var g = document.getElementById('auth-gate');
+    if(g) g.style.display='none';
+    document.addEventListener('DOMContentLoaded', function(){
+      var so=document.getElementById('signout-btn');if(so)so.style.display='block';
+    });
+  }
+})();
+
+async function _checkAuth(){
+  var val = document.getElementById('auth-input').value;
+  if(!val) return;
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+  var hash = [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',
+      G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(hash===H || hash===G){
+    if(hash===H){ _isOwner=true; localStorage.removeItem('_hub_guest'); sessionStorage.removeItem('_guest_mode'); }
+    var rem = document.getElementById('auth-rem');
+    if(rem && rem.checked) localStorage.setItem('_hub_auth', hash);
+    else sessionStorage.setItem('_hub_auth', hash);
+    document.getElementById('auth-gate').style.display='none';
+    var so = document.getElementById('signout-btn');
+    if(so) so.style.display='block';
+  } else {
+    document.getElementById('auth-err').textContent='Incorrect password — try again.';
+    document.getElementById('auth-input').value='';
+    document.getElementById('auth-input').focus();
+  }
+}
+
+function _hubLogout(){
+  if(!confirm('Sign out of all apps on this device?')) return;
+  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(k=>localStorage.removeItem(k));
+  ['_hub_auth','_guest_mode'].forEach(k=>sessionStorage.removeItem(k));
+  location.reload();
+}
+
+function toggleCerts(){
+  var el=document.getElementById('cert-expand');
+  var chev=document.getElementById('cert-chev');
+  if(!el) return;
+  var open=el.classList.contains('open');
+  el.classList.toggle('open',!open);
+  if(chev) chev.textContent=open?'▸':'▾';
+}
+function toggleDetail(id){
+  var el=document.getElementById(id+'-expand');
+  var chev=document.getElementById(id+'-chev');
+  if(!el) return;
+  var open=el.classList.contains('open');
+  el.classList.toggle('open',!open);
+  if(chev) chev.textContent=open?'▸':'▾';
+}
+
+function toggleSkills(){
+  if(!_isOwner) return;
+  var el=document.getElementById('skills-expand');
+  var chev=document.getElementById('skills-chev');
+  if(!el) return;
+  var open=el.classList.contains('open');
+  el.classList.toggle('open',!open);
+  if(chev) chev.textContent=open?'▸':'▾';
+}
+</script>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-name">Bianca Kugblenu</div>
+  <div class="header-title">AI Hub</div>
+  <div class="header-sub">Finance → AI · Building in Public</div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner">
+  <p>Add to Home Screen for app-like experience</p>
+  <button id="install-btn">Install</button>
+</div>
+
+<!-- STATS -->
+<div class="section-label">At a Glance</div>
+
+<!-- Row 1: Skills (owner-expandable) + Certs (always expandable) -->
+<div class="stats-grid" style="margin-bottom:10px;">
+
+  <!-- Skills — owner-only expand -->
+  <div class="stat-card purple clickable" onclick="toggleSkills()" style="flex-direction:column;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="stat-icon">🏅</div>
+        <div class="stat-val">11</div>
+        <div class="stat-lbl">Skills</div>
+      </div>
+      <span id="skills-chev" style="color:#5a5a8a;font-size:.7rem;margin-top:2px;">▸</span>
+    </div>
+    <div id="skills-expand" class="skills-expand">
+      <div class="sk-group">AI Product &amp; Enablement</div>
+      <div class="sk-row"><span class="sk-name">Prompt Engineering</span><span class="sk-lvl">Intermediate</span><div class="sk-track"><div class="sk-bar" style="--w:65%;background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Product Development</span><span class="sk-lvl">Intermediate</span><div class="sk-track"><div class="sk-bar" style="--w:65%;background:linear-gradient(90deg,#0284c7,#38bdf8);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Feature Specification</span><span class="sk-lvl">Foundation+</span><div class="sk-track"><div class="sk-bar" style="--w:55%;background:linear-gradient(90deg,#0284c7,#38bdf8);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Human-AI Collaboration</span><span class="sk-lvl">Practitioner</span><div class="sk-track"><div class="sk-bar" style="--w:90%;background:linear-gradient(90deg,#059669,#34d399);"></div></div></div>
+      <div class="sk-group">Ethics &amp; Strategy</div>
+      <div class="sk-row"><span class="sk-name">Responsible AI</span><span class="sk-lvl">Foundation+</span><div class="sk-track"><div class="sk-bar" style="--w:55%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Learning Architecture</span><span class="sk-lvl">Advanced</span><div class="sk-track"><div class="sk-bar" style="--w:80%;background:linear-gradient(90deg,#c026d3,#e879f9);"></div></div></div>
+      <div class="sk-group">Technical &amp; Creative</div>
+      <div class="sk-row"><span class="sk-name">Technical Literacy</span><span class="sk-lvl">Foundation</span><div class="sk-track"><div class="sk-bar" style="--w:40%;background:linear-gradient(90deg,#1d4ed8,#93c5fd);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Deployment &amp; Infra</span><span class="sk-lvl">Foundation</span><div class="sk-track"><div class="sk-bar" style="--w:40%;background:linear-gradient(90deg,#059669,#6ee7b7);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Visual Design</span><span class="sk-lvl">Foundation</span><div class="sk-track"><div class="sk-bar" style="--w:40%;background:linear-gradient(90deg,#be185d,#ec4899);"></div></div></div>
+      <div class="sk-group">Communication &amp; Content</div>
+      <div class="sk-row"><span class="sk-name">AI Content Strategy</span><span class="sk-lvl">Foundation</span><div class="sk-track"><div class="sk-bar" style="--w:40%;background:linear-gradient(90deg,#d97706,#fbbf24);"></div></div></div>
+      <div class="sk-row"><span class="sk-name">Product Design &amp; UX</span><span class="sk-lvl">Foundation+</span><div class="sk-track"><div class="sk-bar" style="--w:55%;background:linear-gradient(90deg,#0891b2,#67e8f9);"></div></div></div>
+      <div class="sk-cta"><a href="bianca-ai-portfolio.html">Full evidence &amp; upskill plans ↗</a></div>
+    </div>
+  </div>
+
+  <!-- Certs Earned — expands for everyone -->
+  <div class="stat-card gold clickable" onclick="toggleCerts()" style="flex-direction:column;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="stat-icon">📜</div>
+        <div class="stat-val">2</div>
+        <div class="stat-lbl">Certs Earned</div>
+      </div>
+      <span id="cert-chev" style="color:#5a5a8a;font-size:.7rem;margin-top:2px;">▸</span>
+    </div>
+
+    <div id="cert-expand" class="cert-expand">
+
+      <!-- Claude 101 — Anthropic -->
+      <div class="cert-item">
+        <div class="cert-logo" style="background:#1a0533;color:#c084fc;border:1.5px solid rgba(192,132,252,.3);">
+          <span style="font-size:.75rem;font-weight:900;letter-spacing:-.02em;">ANT</span>
+        </div>
+        <div class="cert-body">
+          <div class="cert-name-t">Claude 101</div>
+          <div class="cert-issuer">Anthropic</div>
+          <div class="cert-learned-label">What was learned</div>
+          <div class="cert-learned">How LLMs work · Prompt design · Responsible AI principles · Human-AI collaboration frameworks · Applied use with Claude API</div>
+        </div>
+      </div>
+
+      <!-- IBM Prompt Engineering — Coursera/IBM -->
+      <div class="cert-item">
+        <div class="cert-logo" style="background:#051243;color:#4b8ef7;border:1.5px solid rgba(75,142,247,.3);">
+          <span style="font-size:.75rem;font-weight:900;">IBM</span>
+        </div>
+        <div class="cert-body">
+          <div class="cert-name-t">Prompt Engineering</div>
+          <div class="cert-issuer">IBM · Coursera</div>
+          <div class="cert-learned-label">What was learned</div>
+          <div class="cert-learned">Prompt engineering fundamentals · System prompts · Few-shot &amp; chain-of-thought · Hallucination mitigation · Enterprise prompt design patterns</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Row 2: Apps + Hours — all expandable -->
+<div class="stats-row3" style="margin-bottom:24px;">
+
+  <!-- Apps Live -->
+  <div class="stat-card green clickable" onclick="toggleDetail('apps')" style="flex-direction:column;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="stat-icon">🚀</div>
+        <div class="stat-val">6</div>
+        <div class="stat-lbl">Apps Live</div>
+      </div>
+      <span id="apps-chev" style="color:#5a5a8a;font-size:.7rem;margin-top:2px;">▸</span>
+    </div>
+    <div id="apps-expand" class="detail-expand">
+      <div class="detail-row"><span class="detail-name">☀️ Morning Brief</span><span class="detail-val">Daily</span></div>
+      <div class="detail-row"><span class="detail-name">📁 AI Portfolio</span><span class="detail-val">Recruiter</span></div>
+      <div class="detail-row"><span class="detail-name">🎮 AI Games Hub</span><span class="detail-val">5 games</span></div>
+      <div class="detail-row"><span class="detail-name">💪 GainSmart</span><span class="detail-val">Nutrition</span></div>
+      <div class="detail-row"><span class="detail-name">🏋️ FitSmart</span><span class="detail-val">Workouts</span></div>
+      <div class="detail-row"><span class="detail-name">✨ GlowSmart</span><span class="detail-val">Skincare</span></div>
+    </div>
+  </div>
+
+  <!-- Hrs Studied -->
+  <div class="stat-card cyan clickable" onclick="toggleDetail('studied')" style="flex-direction:column;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="stat-icon">📖</div>
+        <div class="stat-val">46</div>
+        <div class="stat-lbl">Hrs Studied</div>
+      </div>
+      <span id="studied-chev" style="color:#5a5a8a;font-size:.7rem;margin-top:2px;">▸</span>
+    </div>
+    <div id="studied-expand" class="detail-expand">
+      <div class="detail-row"><span class="detail-name">Claude 101 — Anthropic</span><span class="detail-val">6 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">Prompt Engineering — IBM</span><span class="detail-val">5 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">AI For Everyone — Ng</span><span class="detail-val">10 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">AI Ethics &amp; Research</span><span class="detail-val">8 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">Phase 1 Agent Lab</span><span class="detail-val">5 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">Self-directed practice</span><span class="detail-val">12 hrs</span></div>
+    </div>
+  </div>
+
+  <!-- Hrs Building -->
+  <div class="stat-card pink clickable" onclick="toggleDetail('building')" style="flex-direction:column;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="stat-icon">🔨</div>
+        <div class="stat-val">44</div>
+        <div class="stat-lbl">Hrs Building</div>
+      </div>
+      <span id="building-chev" style="color:#5a5a8a;font-size:.7rem;margin-top:2px;">▸</span>
+    </div>
+    <div id="building-expand" class="detail-expand">
+      <div class="detail-row"><span class="detail-name">Study Dashboard</span><span class="detail-val">8 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">GainSmart PWA</span><span class="detail-val">6 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">AI Portfolio</span><span class="detail-val">6 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">AI Games Hub</span><span class="detail-val">4 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">Morning Brief + Hub</span><span class="detail-val">4 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">FitSmart + GlowSmart</span><span class="detail-val">4 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">LinkedIn assets &amp; docs</span><span class="detail-val">5 hrs</span></div>
+      <div class="detail-row"><span class="detail-name">Fixes &amp; refinements</span><span class="detail-val">7 hrs</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOOLS -->
+<div class="section-label">Tools</div>
+<div class="app-grid" style="margin-bottom:12px;">
+  <a href="morning_brief.html" class="app-card card-cyan" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:16px;padding:18px 20px;">
+    <div class="app-icon" style="font-size:2.2rem;flex-shrink:0;">☀️</div>
+    <div style="flex:1;min-width:0;">
+      <div class="app-name">Morning Brief</div>
+      <div class="app-desc">Today's study focus &amp; career nudges — auto-loads by day</div>
+    </div>
+    <span class="app-badge">Today</span>
+  </a>
+  <a href="bianca-study-dashboard.html" class="app-card card-purple">
+    <div class="app-icon">🗺️</div>
+    <div class="app-name">Study Dashboard</div>
+    <div class="app-desc">Roadmap, certs, projects &amp; skills</div>
+    <span class="app-badge">Owner</span>
+  </a>
+  <a href="bianca-ai-portfolio.html" class="app-card card-gold">
+    <div class="app-icon">📁</div>
+    <div class="app-name">Portfolio</div>
+    <div class="app-desc">All 6 apps — games, wellness, recruiter tools & resume builder</div>
+    <span class="app-badge">All Apps</span>
+  </a>
+</div>
+<div class="tools-row" style="margin-bottom:28px;">
+  <a href="https://claude.ai" target="_blank" class="tool-chip">🤖 Claude.ai</a>
+  <a href="https://perplexity.ai" target="_blank" class="tool-chip">🔍 Perplexity</a>
+  <a href="https://www.linkedin.com/in/biancakugblenu" target="_blank" class="tool-chip">💼 LinkedIn</a>
+  <a href="https://deeplearning.ai" target="_blank" class="tool-chip">🧠 DeepLearning.AI</a>
+</div>
+
+<div class="footer">Bianca AI Hub · biancakugblenu@gmail.com</div>
+
+<script>
+var _deferredPrompt;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); _deferredPrompt=e;
+  var b=document.getElementById('install-banner');
+  if(b) b.classList.add('show');
+});
+document.addEventListener('DOMContentLoaded',function(){
+  var btn=document.getElementById('install-btn');
+  if(btn) btn.addEventListener('click',function(){
+    if(_deferredPrompt){_deferredPrompt.prompt();_deferredPrompt=null;}
+    var b=document.getElementById('install-banner');if(b)b.classList.remove('show');
+  });
+});
+</script>
+
+<button onclick="history.back()" id="back-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">← Back</button>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">Sign out</button>
+<script>
+(function(){
+  // Show back button if there's history to go back to and referrer is within the suite
+  var ref = document.referrer;
+  var suite = ['gainsmart.html','fitsmart.html','glowsmart.html','bianca-ai-games.html',
+               'morning_brief.html','bianca-study-dashboard.html','bianca-ai-portfolio.html'];
+  var fromSuite = suite.some(function(f){ return ref.indexOf(f) !== -1; });
+  if(fromSuite && history.length > 1){
+    var bb = document.getElementById('back-btn');
+    if(bb) bb.style.display='block';
+  }
+})();
+</script>
+</body>
+</html>

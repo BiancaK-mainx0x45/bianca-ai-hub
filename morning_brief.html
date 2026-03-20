@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Brief">
+<meta name="theme-color" content="#0a0a18">
+<title>Morning Brief</title>
+<style>
+:root {
+  --bg: #0a0a18;
+  --card: #111128;
+  --card2: #0e0e24;
+  --border: rgba(255,255,255,.07);
+  --purple: #c084fc;
+  --cyan: #00d4ff;
+  --gold: #f5c842;
+  --green: #2ecc71;
+  --amber: #f39c12;
+  --red: #e74c3c;
+  --pink: #ff6b9d;
+  --muted: #5a5a8a;
+  --text: #dde0f0;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bot) + 24px);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* DATE HEADER */
+.date-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 0 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.date-day   { font-size: 2.8rem; font-weight: 800; line-height: 1; color: var(--text); }
+.date-meta  { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+.date-right { text-align: right; }
+.date-phase { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); }
+.date-xp    { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+
+/* SECTION */
+.section { margin-bottom: 20px; }
+.section-title {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 7px;
+}
+.section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.card-row { display: flex; align-items: flex-start; gap: 12px; }
+.card-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+.card-body { flex: 1; }
+.card-title { font-size: .9rem; font-weight: 700; margin-bottom: 3px; }
+.card-sub   { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.card-action {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .72rem; font-weight: 700; padding: 5px 11px;
+  border-radius: 8px; border: none; cursor: pointer;
+  text-decoration: none; margin-top: 10px;
+  transition: opacity .15s;
+}
+.card-action:active { opacity: .7; }
+
+/* STATUS PILLS */
+.pill {
+  display: inline-block; font-size: .62rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 99px; margin-left: 6px;
+  vertical-align: middle;
+}
+.pill-urgent  { background: rgba(231,76,60,.18);  color: var(--red); }
+.pill-due     { background: rgba(243,156,18,.18); color: var(--amber); }
+.pill-today   { background: rgba(0,212,255,.15);  color: var(--cyan); }
+.pill-ok      { background: rgba(46,204,113,.12); color: var(--green); }
+.pill-post    { background: rgba(192,132,252,.15);color: var(--purple); }
+
+/* LINKEDIN POST CARD */
+.post-card {
+  background: linear-gradient(135deg, rgba(192,132,252,.08) 0%, rgba(0,212,255,.05) 100%);
+  border: 1px solid rgba(192,132,252,.2);
+  border-radius: 14px;
+  padding: 16px;
+}
+.post-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
+.post-title { font-size: .95rem; font-weight: 800; margin-bottom: 6px; }
+.post-hook  { font-size: .8rem; color: var(--muted); font-style: italic; margin-bottom: 12px; line-height: 1.5; }
+.post-meta  { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.post-chip  { font-size: .68rem; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 3px 9px; color: var(--muted); }
+.post-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-post    { background: var(--purple); color: #0a0a18; font-weight: 800; }
+.btn-draft   { background: rgba(192,132,252,.12); color: var(--purple); border: 1px solid rgba(192,132,252,.25); font-weight: 700; }
+
+/* FOLLOW-UPS */
+.followup-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.followup-row:last-child { border-bottom: none; }
+.followup-co   { font-size: .85rem; font-weight: 700; }
+.followup-role { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+.followup-right { text-align: right; flex-shrink: 0; margin-left: 12px; }
+.followup-date { font-size: .68rem; color: var(--muted); }
+
+/* STUDY FOCUS */
+.focus-card {
+  background: linear-gradient(135deg, rgba(245,200,66,.06) 0%, rgba(243,156,18,.04) 100%);
+  border: 1px solid rgba(245,200,66,.15);
+  border-radius: 14px;
+  padding: 16px;
+}
+.focus-tag   { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.focus-title { font-size: .95rem; font-weight: 800; margin-bottom: 5px; }
+.focus-desc  { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.focus-session { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .75rem; color: var(--gold); font-weight: 600; }
+
+/* THOUGHT */
+.thought-card {
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  border-radius: 0 14px 14px 0;
+  padding: 14px 16px;
+}
+.thought-text { font-size: .85rem; line-height: 1.65; color: var(--text); font-style: italic; }
+.thought-attr { font-size: .7rem; color: var(--muted); margin-top: 8px; }
+
+/* ASK CLAUDE */
+.claude-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, rgba(192,132,252,.12), rgba(0,212,255,.08));
+  border: 1px solid rgba(192,132,252,.25);
+  border-radius: 14px;
+  color: var(--purple); font-size: .88rem; font-weight: 700;
+  text-decoration: none; cursor: pointer;
+  transition: opacity .15s;
+  margin-bottom: 20px;
+}
+.claude-btn:active { opacity: .7; }
+
+/* QUICK NAV */
+.nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.nav-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 8px; text-align: center;
+  text-decoration: none; color: var(--muted);
+  font-size: .72rem; font-weight: 600;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  transition: color .15s, border-color .15s;
+}
+.nav-item:active { color: var(--text); border-color: rgba(255,255,255,.15); }
+.nav-emoji { font-size: 1.3rem; }
+
+/* NO POST */
+.no-post { font-size: .82rem; color: var(--muted); padding: 8px 0; }
+
+/* TASKS */
+.task-open-btn {
+  width:100%; padding:10px 14px;
+  background:rgba(192,132,252,.06);
+  border:1px dashed rgba(192,132,252,.22);
+  border-radius:11px; color:var(--purple);
+  font-size:.8rem; font-weight:700; cursor:pointer;
+  text-align:left; display:flex; align-items:center; gap:8px;
+  margin-bottom:10px; transition:background .15s; box-sizing:border-box;
+}
+.task-open-btn:active { background:rgba(192,132,252,.12); }
+.task-form {
+  background:var(--card2); border:1px solid rgba(192,132,252,.18);
+  border-radius:12px; padding:14px; margin-bottom:10px;
+}
+.task-input {
+  width:100%; background:#0a0a1f;
+  border:1px solid rgba(167,139,250,.22);
+  border-radius:8px; padding:.6rem .9rem;
+  color:var(--text); font-size:.88rem; outline:none;
+  margin-bottom:10px; font-family:inherit; box-sizing:border-box;
+}
+.task-input::placeholder { color:var(--muted); }
+.chips-label { font-size:.62rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.chip-row { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+.chip {
+  font-size:.68rem; font-weight:700; padding:4px 11px; border-radius:99px;
+  border:1px solid var(--border); background:transparent; color:var(--muted);
+  cursor:pointer; transition:all .15s;
+}
+.chip.sel { background:var(--purple); border-color:var(--purple); color:#0a0a18; }
+.slot-row { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:12px; }
+.slot-btn {
+  font-size:.65rem; font-weight:700; padding:7px 4px; border-radius:8px;
+  border:1px solid var(--border); background:transparent; color:var(--muted);
+  cursor:pointer; transition:all .15s; text-align:center; line-height:1.4;
+}
+.slot-btn.sel[data-s="morning"]   { color:var(--gold);  background:rgba(245,200,66,.08);  border-color:rgba(245,200,66,.3); }
+.slot-btn.sel[data-s="afternoon"] { color:var(--amber); background:rgba(243,156,18,.08);  border-color:rgba(243,156,18,.3); }
+.slot-btn.sel[data-s="evening"]   { color:var(--cyan);  background:rgba(0,212,255,.08);   border-color:rgba(0,212,255,.3); }
+.slot-btn.sel[data-s="pinned"]    { color:var(--pink);  background:rgba(255,107,157,.08); border-color:rgba(255,107,157,.3); }
+.add-btn {
+  width:100%; padding:.62rem; background:var(--purple); color:#0a0a18;
+  border:none; border-radius:8px; font-weight:800; font-size:.85rem; cursor:pointer;
+}
+.bucket-hd {
+  font-size:.62rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  margin-bottom:7px; display:flex; align-items:center; gap:7px;
+}
+.bucket-hd::after { content:''; flex:1; height:1px; background:var(--border); }
+.task-row {
+  display:flex; align-items:flex-start; gap:9px; padding:9px 12px;
+  background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:6px;
+}
+.t-check {
+  width:17px; height:17px; border-radius:4px; border:2px solid var(--muted);
+  background:transparent; cursor:pointer; flex-shrink:0; margin-top:2px;
+  display:flex; align-items:center; justify-content:center; font-size:.65rem;
+  transition:all .15s;
+}
+.t-check.done { background:var(--green); border-color:var(--green); color:#0a0a18; }
+.t-body { flex:1; min-width:0; }
+.t-text { font-size:.82rem; line-height:1.4; word-break:break-word; }
+.t-text.done { text-decoration:line-through; color:var(--muted); }
+.t-est { font-size:.63rem; color:var(--muted); margin-top:2px; }
+.t-acts { display:flex; gap:3px; flex-shrink:0; }
+.t-btn { background:none; border:none; cursor:pointer; font-size:.75rem; color:var(--muted); padding:2px 5px; border-radius:5px; }
+.t-btn:active { color:var(--text); }
+.slot-picker {
+  display:flex; gap:5px; flex-wrap:wrap; padding:6px 10px 8px;
+  border:1px solid rgba(192,132,252,.18); border-top:none;
+  border-radius:0 0 10px 10px; background:rgba(192,132,252,.04);
+  margin-top:-6px; margin-bottom:6px;
+}
+.sp-label { font-size:.63rem; color:var(--muted); align-self:center; margin-right:4px; }
+.sp-btn {
+  font-size:.65rem; font-weight:700; padding:4px 10px; border-radius:99px;
+  border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer;
+  transition:all .15s;
+}
+.sp-btn:active { color:var(--text); border-color:rgba(255,255,255,.2); }
+
+/* VOICE INPUT */
+.voice-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: .95rem; padding: 0 .3rem; line-height: 1;
+  color: var(--muted); transition: color .15s; flex-shrink: 0;
+}
+.voice-btn.listening { color: var(--red); animation: pulse-mic 1s infinite; }
+@keyframes pulse-mic { 0%,100%{opacity:1} 50%{opacity:.4} }
+</style>
+</head>
+<body>
+<a href="./bianca-ai-portfolio.html" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(13,13,26,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(167,139,250,.22);color:#a78bfa;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Portfolio</a>
+<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
+  <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+    <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
+    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
+    <div style="position:relative;width:100%;margin-bottom:.3rem;">
+      <input id="auth-input" type="password" placeholder="Password"
+        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.7rem 3.8rem .7rem 1rem;color:#e0e0ff;font-size:.95rem;outline:none;"
+        onkeydown="if(event.key==='Enter')_checkAuth()"/>
+      <button onclick="togglePwVisible()" title="Show/hide"
+        style="position:absolute;right:2.2rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#7070a8;cursor:pointer;font-size:.9rem;padding:.2rem;line-height:1;">👁</button>
+      <button onclick="pastePassword()" title="Paste password"
+        style="position:absolute;right:.4rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#7070a8;cursor:pointer;font-size:.85rem;padding:.2rem;line-height:1;">📋</button>
+    </div>
+    <div id="ul-paste-tip" style="color:#6b7280;font-size:.68rem;min-height:.9rem;margin-bottom:.3rem;text-align:left;"></div>
+    <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
+        <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:.45rem;cursor:pointer;">
+      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#a78bfa;"/>
+      <span style="color:#7070a8;font-size:.76rem;">👁 Show password as I type</span>
+    </label>
+<label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
+      <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
+    </label>
+    <button onclick="_checkAuth()"
+      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
+      Unlock →
+    </button>
+  </div>
+
+</div>
+<script>
+(function(){
+  var stored = localStorage.getItem('_hub_auth') || sessionStorage.getItem('_hub_auth');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(stored===H||stored===G){
+    if(stored===G){sessionStorage.setItem('_guest_mode','1');localStorage.setItem('_hub_guest','1');}
+    var gate=document.getElementById('auth-gate');if(gate)gate.style.display='none';
+    var so=document.getElementById('signout-btn');if(so)so.style.display='block';
+  }
+})();
+async function _checkAuth(){
+  var val=document.getElementById('auth-input').value;
+  if(!val)return;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+  var hash=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(hash===H||hash===G){
+    if(hash===G){sessionStorage.setItem('_guest_mode','1');localStorage.setItem('_hub_guest','1');}
+    var rem=document.getElementById('auth-rem');
+    if(rem&&rem.checked)localStorage.setItem('_hub_auth',hash);
+    else sessionStorage.setItem('_hub_auth',hash);
+    document.getElementById('auth-gate').style.display='none';
+    var so=document.getElementById('signout-btn');if(so)so.style.display='block';
+    applyGuestMode();
+  } else {
+    document.getElementById('auth-err').textContent='Incorrect password — try again.';
+    document.getElementById('auth-input').value='';
+    document.getElementById('auth-input').focus();
+  }
+}
+function togglePwVisible(){
+  var i=document.getElementById('auth-input');
+  i.type=i.type==='password'?'text':'password';
+}
+async function pastePassword(){
+  try{
+    var t=await navigator.clipboard.readText();
+    document.getElementById('auth-input').value=t;
+    document.getElementById('ul-paste-tip').textContent='✓ Pasted';
+    setTimeout(function(){var e=document.getElementById('ul-paste-tip');if(e)e.textContent='';},2000);
+  }catch(e){
+    document.getElementById('ul-paste-tip').textContent='Use Ctrl+V / Cmd+V to paste manually.';
+  }
+}
+function applyGuestMode(){
+  if(sessionStorage.getItem('_guest_mode')!=='1') return;
+  // Replace career pipeline with sample data — personal follow-ups stay private
+  var nl=document.getElementById('nudge-list');
+  if(nl) nl.innerHTML=
+    '<div style="font-size:.7rem;color:#a78bfa;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:6px;padding:.35rem .7rem;margin-bottom:.65rem;">'+
+    '📎 Sample view — active follow-ups are private</div>'+
+    '<div class="followup-row"><div>'+
+    '<div class="followup-co">Mission-Driven Tech<span class="pill pill-urgent">TODAY</span></div>'+
+    '<div class="followup-role">AI Product Manager · Top priority</div></div>'+
+    '<div class="followup-right"><div class="followup-date">today</div></div></div>'+
+    '<div class="followup-row"><div>'+
+    '<div class="followup-co">AI-First Startup<span class="pill pill-due">2d</span></div>'+
+    '<div class="followup-role">Responsible AI Analyst</div></div>'+
+    '<div class="followup-right"><div class="followup-date">03/18</div></div></div>'+
+    '<div class="followup-row"><div>'+
+    '<div class="followup-co">Enterprise SaaS<span class="pill pill-ok">5d</span></div>'+
+    '<div class="followup-role">AI Enablement Lead · Follow up</div></div>'+
+    '<div class="followup-right"><div class="followup-date">03/21</div></div></div>';
+  // Hide personal to-do section
+  var ts=document.getElementById('tasks-section');
+  if(ts) ts.style.display='none';
+  // Hide internal CTA workflow notes on LinkedIn posts
+  var cta=document.getElementById('post-status-btn');
+  if(cta) cta.style.display='none';
+  // Show guest context banner explaining what the full version contains
+  var gb=document.getElementById('guest-context-banner');
+  if(gb) gb.style.display='block';
+  // Hide phase label and XP display — personal curriculum data
+  var dp=document.getElementById('date-phase-wrap');
+  if(dp) dp.style.display='none';
+  var xp=document.getElementById('xp-display');
+  if(xp) xp.style.display='none';
+}
+
+function _hubLogout(){
+  if(!confirm('Sign out of all apps on this device?')) return;
+  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(k=>localStorage.removeItem(k));
+  ['_hub_auth','_guest_mode'].forEach(k=>sessionStorage.removeItem(k));
+  location.reload();
+}
+</script>
+
+<!-- DATE HEADER -->
+<div class="date-bar">
+  <div>
+    <div class="date-day" id="day-num"></div>
+    <div class="date-meta" id="day-meta"></div>
+  </div>
+  <div class="date-right">
+    <div class="date-phase" id="date-phase-wrap">AI Foundations</div>
+    <div class="date-xp" id="xp-display">140 XP earned</div>
+  </div>
+</div>
+
+<!-- ASK CLAUDE -->
+<a class="claude-btn" href="https://claude.ai" target="_blank">
+  ✦ Open Claude to run your full brief
+</a>
+
+<!-- Guest context — subtle, informative, no personal data referenced -->
+<div id="guest-context-banner" style="display:none;margin:0 0 1.25rem;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.13);border-radius:12px;padding:.85rem 1rem;">
+  <div style="font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6a5a9a;margin-bottom:.45rem;">About Morning Brief</div>
+  <div style="font-size:.77rem;color:#7a7aaa;line-height:1.75;">
+    Bianca's daily AI study companion — auto-loads the right content by day of week.
+    The full version includes a structured
+    <span style="color:#a78bfa;font-weight:600;">daily study focus</span>,
+    <span style="color:#a78bfa;font-weight:600;">LinkedIn content brief</span> on publishing days, and
+    <span style="color:#a78bfa;font-weight:600;">live curriculum tracking</span> across all four phases.
+    Explore the full build in the <a href="bianca-ai-portfolio.html" style="color:#38bdf8;text-decoration:none;font-weight:600;">AI Portfolio →</a>
+  </div>
+</div>
+
+<!-- TASKS (owner-only — hidden from guests) -->
+<div class="section" id="tasks-section">
+  <div class="section-title">📝 Today's Tasks</div>
+  <button class="task-open-btn" id="task-open-btn" onclick="toggleTaskForm()">＋ Add a task</button>
+  <div class="task-form" id="task-form" style="display:none">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+      <input class="task-input" id="task-text" placeholder="What needs to get done? (or tap 🎤)"
+        style="margin-bottom:0;flex:1;" onkeydown="if(event.key==='Enter')submitTask()"/>
+      <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Speak your task">🎤</button>
+    </div>
+    <div class="chips-label">Time estimate</div>
+    <div class="chip-row" id="est-row">
+      <button class="chip" onclick="selEst(this,'10min')">10min</button>
+      <button class="chip" onclick="selEst(this,'15min')">15min</button>
+      <button class="chip" onclick="selEst(this,'30min')">30min</button>
+      <button class="chip" onclick="selEst(this,'45min')">45min</button>
+      <button class="chip" onclick="selEst(this,'1hr')">1hr</button>
+      <button class="chip" onclick="selEst(this,'2hr+')">2hr+</button>
+    </div>
+    <div class="chips-label">When</div>
+    <div class="slot-row">
+      <button class="slot-btn sel" data-s="morning" onclick="selSlot(this,'morning')">🌅<br>Morning</button>
+      <button class="slot-btn" data-s="afternoon" onclick="selSlot(this,'afternoon')">☀️<br>Afternoon</button>
+      <button class="slot-btn" data-s="evening" onclick="selSlot(this,'evening')">🌙<br>Evening</button>
+      <button class="slot-btn" data-s="pinned" onclick="selSlot(this,'pinned')">📌<br>Pin</button>
+    </div>
+    <div id="voice-tip" style="display:none;font-size:.7rem;color:var(--purple);margin-bottom:8px;text-align:center;padding:5px 10px;background:rgba(192,132,252,.07);border-radius:7px;"></div>
+    <button class="add-btn" onclick="submitTask()">Add to today →</button>
+  </div>
+  <div id="bucket-morning"></div>
+  <div id="bucket-afternoon"></div>
+  <div id="bucket-evening"></div>
+  <div id="bucket-pinned"></div>
+</div>
+
+<!-- TODAY'S FOCUS -->
+<div class="section">
+  <div class="section-title">📚 Study Focus</div>
+  <div class="focus-card" id="focus-card">
+    <div class="focus-tag">Today's action</div>
+    <div class="focus-title" id="focus-title">Loading...</div>
+    <div class="focus-desc" id="focus-desc"></div>
+    <div class="focus-session" id="focus-session"></div>
+  </div>
+</div>
+
+<!-- LINKEDIN POST (only shows on posting days) -->
+<div class="section" id="post-section" style="display:none">
+  <div class="section-title">💼 LinkedIn — Post Today</div>
+  <div class="post-card">
+    <div class="post-label" id="post-label">Post Due</div>
+    <div class="post-title" id="post-title"></div>
+    <div class="post-hook" id="post-hook"></div>
+    <div class="post-meta" id="post-meta"></div>
+    <div class="post-actions">
+      <a href="https://www.linkedin.com/feed/" target="_blank" class="card-action btn-post">Post now →</a>
+      <span class="card-action btn-draft" id="post-status-btn"></span>
+    </div>
+  </div>
+</div>
+
+<!-- CAREER NUDGE -->
+<div class="section" id="nudge-section">
+  <div class="section-title">📋 Career Nudges</div>
+  <div class="card" id="nudge-card">
+    <div id="nudge-list"></div>
+  </div>
+</div>
+
+<!-- THOUGHT -->
+<div class="section">
+  <div class="section-title">💡 Thought</div>
+  <div class="thought-card">
+    <div class="thought-text" id="thought-text"></div>
+    <div class="thought-attr" id="thought-attr"></div>
+  </div>
+</div>
+
+<!-- FAQ + FEEDBACK (visible to all) -->
+<div class="section" id="faq-section">
+  <div class="section-title">❓ FAQ</div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div id="faq-list"></div>
+  </div>
+</div>
+
+<div class="section" id="feedback-section">
+  <div class="section-title">💬 Questions & Feedback</div>
+  <div class="card">
+    <div id="fb-form-wrap">
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Got a question or comment? Send it directly.</div>
+      <textarea id="fb-text" rows="3"
+        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.22);border-radius:8px;padding:.65rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;resize:vertical;margin-bottom:6px;"
+        placeholder="Ask something or leave a note..."></textarea>
+      <input id="fb-name" type="text"
+        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.22);border-radius:8px;padding:.6rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;margin-bottom:10px;"
+        placeholder="Your name (optional)"/>
+      <button onclick="submitFeedback()"
+        style="width:100%;padding:.62rem;background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.25);border-radius:8px;color:var(--purple);font-weight:700;font-size:.82rem;cursor:pointer;">
+        Send message →
+      </button>
+    </div>
+    <div id="fb-success" style="display:none;text-align:center;padding:16px 0;">
+      <div style="font-size:1.4rem;margin-bottom:6px;">✉️</div>
+      <div style="color:var(--green);font-size:.85rem;font-weight:700;">Message sent!</div>
+      <div style="color:var(--muted);font-size:.75rem;margin-top:4px;">Opens your email client to send.</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK NAV -->
+<div class="section">
+  <div class="section-title">Apps</div>
+  <div class="nav-grid">
+    <a href="index.html" class="nav-item"><span class="nav-emoji">🏠</span>Hub</a>
+    <a href="bianca-study-dashboard.html" class="nav-item"><span class="nav-emoji">🗺️</span>Dashboard</a>
+    <a href="bianca-ai-games.html" class="nav-item"><span class="nav-emoji">🎮</span>Games</a>
+    <a href="gainsmart.html" class="nav-item"><span class="nav-emoji">💪</span>GainSmart</a>
+    <a href="https://claude.ai" target="_blank" class="nav-item"><span class="nav-emoji">✦</span>Claude</a>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const LI_POSTS = [
+  { date:'2026-03-17', title:'I caught AI hallucinating in my own research paper', format:'Carousel PDF', hook:'"I fact-checked my AI-assisted research paper. It had invented two sources. Here\'s what I found."', status:'Carousel ready', cta:'Attach linkedin_carousel_post1.pdf' },
+  { date:'2026-03-19', title:'3 AI tools that changed how I work this month', format:'Carousel (draft)', hook:'"I didn\'t just read about AI tools. I built things with them."', status:'Needs draft', cta:'Write 3 concrete tool examples with before/after' },
+  { date:'2026-03-24', title:'Finance gave me sharper AI risk instincts than most tech people', format:'Text post', hook:'"People assume you need a CS degree to evaluate AI risk. I spent 10 years in finance. Turns out, that\'s better."', status:'Needs draft', cta:'Add 3 concrete finance→AI parallels' },
+  { date:'2026-03-26', title:'I used AI to build a stakeholder brief in 20 minutes', format:'Text + numbered list', hook:'"A task that used to take 2 hours now takes 20 minutes. Here\'s the exact process."', status:'Needs draft', cta:'DM lead magnet: "brief"' },
+  { date:'2026-03-31', title:'Month 1 of my AI transition: what I built, what I learned', format:'Long-form text', hook:'"30 days ago I decided to transition from finance into AI. Here\'s everything I actually built."', status:'Needs draft', cta:'Include real receipts: certs, projects, honest moment' },
+  { date:'2026-04-02', title:'I built my AI Study Dashboard (and it taught me more than any course)', format:'Carousel PDF', hook:'"How do you actually know if you\'re making progress? I built a tool to track it. With AI. No code."', status:'Carousel ready', cta:'Attach linkedin_carousel_dashboard.pdf' },
+  { date:'2026-04-07', title:'What 10 years in finance actually taught me about AI adoption', format:'Long-form text', hook:'"Finance people aren\'t behind on AI. We\'ve been doing the hard parts for decades."', status:'Idea', cta:'Develop 3–5 concrete parallels' },
+];
+
+const FOLLOWUPS = [
+  { co:'Blackbaud', role:'Sr. PM, AI Literacy', due:'2026-03-17', priority:'high' },
+  { co:'Databricks', role:'PM, Talent & L&D', due:'2026-03-18', priority:'high' },
+  { co:'Salesforce', role:'Sales Programs Mgr', due:'2026-03-18', priority:'med' },
+  { co:'Airtable (Alex)', role:'Sr. Mgr, People Systems', due:'2026-03-18', priority:'med' },
+  { co:'Google', role:'Enablement Mgr, GPO', due:'2026-03-18', priority:'med', note:'Decide to apply' },
+  { co:'Headspace', role:'Sr. Mgr, AI Enablement', due:'2026-03-20', priority:'high', note:'#1 PRIORITY' },
+  { co:'Zillow', role:'PM, Early Talent', due:'2026-03-20', priority:'med' },
+  { co:'DataAnnotation', role:'AI Data Labeler', due:'2026-03-16', priority:'urgent', note:'Complete assessment' },
+  { co:'UnitedHealth Group', role:'CSR', due:'2026-03-16', priority:'urgent', note:'Complete HireVue audio' },
+  { co:'Airtable', role:'People Analytics Lead', due:'2026-04-01', priority:'low' },
+  { co:'FLC / NYFF', role:'Programming Assistant', due:'2026-03-28', priority:'med', note:'Gig — follow up' },
+];
+
+const STUDY_SCHEDULE = [
+  { day:1, title:'AI For Everyone — Week 1', desc:'Watch Week 1 of Andrew Ng\'s AI For Everyone. Take 3-bullet notes per video: what I learned / how I\'d use it / my question.', session:'2 × 25-min sprints' },
+  { day:2, title:'AI For Everyone — Week 2', desc:'Watch Week 2. Finish with one sentence summarising how AI applies to your Finance background.', session:'2 × 25-min sprints' },
+  { day:3, title:'AI For Everyone — Week 3', desc:'Watch Week 3. Start Google AI Essentials in parallel — it\'s only 8hrs total and maps directly onto your LinkedIn profile.', session:'50-min deep session' },
+  { day:4, title:'AI For Everyone — Week 4 + Cert', desc:'Complete Week 4. Submit for certificate. Update LinkedIn immediately.', session:'2 × 25-min sprints' },
+  { day:5, title:'Generative AI for Everyone — Week 1', desc:'Start Mollick\'s course. Notice how it connects to AI For Everyone. Take notes on any surprises.', session:'50-min deep session' },
+  { day:6, title:'Rest or review', desc:'Revisit your notes from the week. Write one LinkedIn post idea based on what surprised you. No new material today.', session:'25-min review' },
+  { day:0, title:'Free study day', desc:'Explore one AI Agent Lab module: Claude Mem, Context7, or Frontend Design. Document what you learned in your dashboard.', session:'25-min sprint' },
+];
+
+const THOUGHTS = [
+  { text: 'The biggest mistake people make with AI is trying to use it before they understand what question they\'re actually asking. Finance taught you to find the right question. That\'s rarer than it sounds.', attr: 'Synthesised from Ethan Mollick, Co-Intelligence' },
+  { text: 'Hallucination isn\'t a bug to be fixed — it\'s a property of the system to be managed. You already know how to manage properties of systems. That\'s what financial modelling is.', attr: 'Your own insight, March 2026' },
+  { text: 'The most dangerous AI risk isn\'t the one that fails loudly. It\'s the one that succeeds quietly while measuring the wrong thing. Cathy O\'Neil showed us this a decade before LLMs existed.', attr: 'After Weapons of Math Destruction' },
+  { text: 'Responsible AI isn\'t ethics theatre. It\'s what happens when someone in the room actually knows what a false positive costs a real person. That\'s your job.', attr: 'Your positioning' },
+  { text: 'Learning that compounds is learning that gets applied the same day. Don\'t just finish the lesson — use something from it before midnight.', attr: 'Ethan Mollick, learning framework' },
+  { text: 'The transition isn\'t from finance to AI. It\'s from one kind of rigour to another. The rigour is the constant. The domain is the variable.', attr: 'Your narrative, March 2026' },
+  { text: 'Every tool you build is an argument you don\'t have to make in an interview. The dashboard, the games hub, the research paper — they speak before you do.', attr: 'Portfolio-first principle' },
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const today = new Date();
+today.setHours(0,0,0,0);
+const todayStr = today.toISOString().split('T')[0];
+const dow = today.getDay(); // 0=Sun, 2=Tue, 4=Thu
+
+function daysBetween(a, b){ return Math.round((b-a)/(1000*60*60*24)); }
+function parseDate(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+
+// ── DATE HEADER ──────────────────────────────────────────────────────────────
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('day-num').textContent = today.getDate();
+document.getElementById('day-meta').textContent = `${DAYS[dow]}, ${MONTHS[today.getMonth()]} ${today.getFullYear()}`;
+
+// XP from localStorage
+try {
+  const done = JSON.parse(localStorage.getItem('b_done')||'{}');
+  let xp = 140; // pre-completed baseline
+  const courses = [
+    {name:"AI For Everyone — Andrew Ng (DeepLearning.AI)",xp:100,id:1},
+    {name:"Generative AI for Everyone — DeepLearning.AI",xp:100,id:1},
+    {name:"Anthropic Claude Developer Course (Claude 102)",xp:80,id:1},
+  ];
+  courses.forEach(c=>{ if(done[`course-${c.id}-${c.name}`]) xp+=c.xp; });
+  document.getElementById('xp-display').textContent = xp + ' XP earned';
+} catch(e){}
+
+// ── STUDY FOCUS ──────────────────────────────────────────────────────────────
+const focus = STUDY_SCHEDULE[dow];
+document.getElementById('focus-title').textContent = focus.title;
+document.getElementById('focus-desc').textContent = focus.desc;
+document.getElementById('focus-session').innerHTML = `⏱️ ${focus.session}`;
+
+// ── LINKEDIN POST CHECK (Tue=2, Thu=4) ───────────────────────────────────────
+const post = LI_POSTS.find(p => p.date === todayStr);
+if(post){
+  document.getElementById('post-section').style.display = 'block';
+  document.getElementById('post-label').textContent = dow===2 ? 'Tuesday Post Due' : 'Thursday Post Due';
+  document.getElementById('post-title').textContent = post.title;
+  document.getElementById('post-hook').textContent = post.hook;
+  document.getElementById('post-meta').innerHTML =
+    `<span class="post-chip">${post.format}</span>` +
+    `<span class="post-chip">${post.status}</span>`;
+  document.getElementById('post-status-btn').textContent = post.cta;
+}
+
+// ── CAREER NUDGES ─────────────────────────────────────────────────────────────
+const nudgeEl = document.getElementById('nudge-list');
+const upcoming = FOLLOWUPS.filter(f => {
+  const d = parseDate(f.due);
+  const diff = daysBetween(today, d);
+  return diff >= -1 && diff <= 5; // due yesterday through next 5 days
+}).sort((a,b)=>parseDate(a.due)-parseDate(b.due));
+
+if(upcoming.length === 0){
+  nudgeEl.innerHTML = '<div class="no-post">No urgent follow-ups this week — keep building.</div>';
+} else {
+  upcoming.forEach(f => {
+    const d = parseDate(f.due);
+    const diff = daysBetween(today, d);
+    let pillClass, pillText;
+    if(f.priority==='urgent'||diff<0){ pillClass='pill-urgent'; pillText=diff<0?'OVERDUE':'TODAY'; }
+    else if(diff===0){ pillClass='pill-today'; pillText='TODAY'; }
+    else if(diff<=2){ pillClass='pill-due'; pillText=`${diff}d`; }
+    else { pillClass='pill-ok'; pillText=`${diff}d`; }
+
+    nudgeEl.innerHTML += `
+      <div class="followup-row">
+        <div>
+          <div class="followup-co">${f.co}<span class="pill ${pillClass}">${pillText}</span></div>
+          <div class="followup-role">${f.role}${f.note?` · ${f.note}`:''}</div>
+        </div>
+        <div class="followup-right">
+          <div class="followup-date">${f.due.slice(5).replace('-','/')}</div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── DAILY THOUGHT ─────────────────────────────────────────────────────────────
+const t = THOUGHTS[today.getDate() % THOUGHTS.length];
+document.getElementById('thought-text').textContent = '\u201C' + t.text + '\u201D';
+document.getElementById('thought-attr').textContent = '— ' + t.attr;
+
+// ── TASK MANAGER ──────────────────────────────────────────────────────────────
+const TASK_KEY = 'mb_tasks';
+let _tEst = '', _tSlot = 'morning';
+
+function lsGetTasks(){ try{ return JSON.parse(localStorage.getItem(TASK_KEY)||'[]'); }catch(e){ return []; } }
+function lsSaveTasks(arr){ localStorage.setItem(TASK_KEY, JSON.stringify(arr)); }
+
+function toggleTaskForm(){
+  const f = document.getElementById('task-form');
+  const b = document.getElementById('task-open-btn');
+  const open = f.style.display !== 'none';
+  f.style.display = open ? 'none' : 'block';
+  b.textContent = open ? '＋ Add a task' : '✕ Close';
+  if(!open){ document.getElementById('task-text').focus(); }
+}
+
+function selEst(el, v){
+  _tEst = v;
+  document.querySelectorAll('#est-row .chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selSlot(el, v){
+  _tSlot = v;
+  document.querySelectorAll('.slot-btn').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function autoSlot(){
+  const h = new Date().getHours();
+  if(h < 12) return 'morning';
+  if(h < 17) return 'afternoon';
+  return 'evening';
+}
+
+function submitTask(){
+  const text = document.getElementById('task-text').value.trim();
+  if(!text) return;
+  const tasks = lsGetTasks();
+  tasks.push({ id: Date.now(), text, est: _tEst, slot: _tSlot || autoSlot(), date: todayStr, done: false });
+  lsSaveTasks(tasks);
+  document.getElementById('task-text').value = '';
+  _tEst = '';
+  document.querySelectorAll('#est-row .chip').forEach(c => c.classList.remove('sel'));
+  // reset slot to morning
+  _tSlot = 'morning';
+  document.querySelectorAll('.slot-btn').forEach(c => c.classList.remove('sel'));
+  const mBtn = document.querySelector('.slot-btn[data-s="morning"]');
+  if(mBtn) mBtn.classList.add('sel');
+  renderTasks();
+}
+
+function toggleDone(id){
+  const tasks = lsGetTasks();
+  const item = tasks.find(t => t.id === id);
+  if(item) item.done = !item.done;
+  lsSaveTasks(tasks);
+  renderTasks();
+}
+
+function deleteTask(id){
+  lsSaveTasks(lsGetTasks().filter(t => t.id !== id));
+  renderTasks();
+}
+
+function pinTask(id){
+  const tasks = lsGetTasks();
+  const item = tasks.find(t => t.id === id);
+  if(item){ item.slot = 'pinned'; item._prevSlot = item.slot; }
+  lsSaveTasks(tasks);
+  renderTasks();
+}
+
+function showSlotPicker(id){
+  // Remove any open pickers
+  document.querySelectorAll('.slot-picker').forEach(el => el.remove());
+  const row = document.getElementById('tr-' + id);
+  if(!row) return;
+  const picker = document.createElement('div');
+  picker.className = 'slot-picker';
+  picker.id = 'sp-' + id;
+  picker.innerHTML = `<span class="sp-label">Move to:</span>
+    <button class="sp-btn" onclick="moveTask(${id},'morning')">🌅 Morning</button>
+    <button class="sp-btn" onclick="moveTask(${id},'afternoon')">☀️ Afternoon</button>
+    <button class="sp-btn" onclick="moveTask(${id},'evening')">🌙 Evening</button>
+    <button class="sp-btn" onclick="document.querySelector('#sp-${id}').remove()" style="color:var(--muted)">✕</button>`;
+  row.after(picker);
+}
+
+function moveTask(id, slot){
+  const tasks = lsGetTasks();
+  const item = tasks.find(t => t.id === id);
+  if(item){ item.slot = slot; item.date = todayStr; }
+  lsSaveTasks(tasks);
+  renderTasks();
+}
+
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderTasks(){
+  const tasks = lsGetTasks();
+  const visible = tasks.filter(t => t.date === todayStr || t.slot === 'pinned');
+  const buckets = { morning:[], afternoon:[], evening:[], pinned:[] };
+  visible.forEach(t => { if(buckets[t.slot]) buckets[t.slot].push(t); });
+
+  const defs = [
+    { key:'morning',   el:'bucket-morning',   label:'🌅 Morning', col:'var(--gold)' },
+    { key:'afternoon', el:'bucket-afternoon', label:'☀️ Afternoon', col:'var(--amber)' },
+    { key:'evening',   el:'bucket-evening',   label:'🌙 Evening', col:'var(--cyan)' },
+    { key:'pinned',    el:'bucket-pinned',     label:'📌 Pinned for later', col:'var(--pink)' },
+  ];
+
+  defs.forEach(def => {
+    const el = document.getElementById(def.el);
+    if(!el) return;
+    const list = buckets[def.key];
+    if(!list.length){ el.innerHTML = ''; return; }
+    const isPinned = def.key === 'pinned';
+    let html = `<div class="bucket-hd" style="color:${def.col}">${def.label}</div>`;
+    list.forEach(item => {
+      html += `<div class="task-row" id="tr-${item.id}">
+        <div class="t-check${item.done?' done':''}" onclick="toggleDone(${item.id})">${item.done?'✓':''}</div>
+        <div class="t-body">
+          <div class="t-text${item.done?' done':''}">${escH(item.text)}</div>
+          ${item.est ? `<div class="t-est">~${item.est}</div>` : ''}
+        </div>
+        <div class="t-acts">
+          ${isPinned
+            ? `<button class="t-btn" onclick="showSlotPicker(${item.id})" title="Schedule">📅</button>`
+            : `<button class="t-btn" onclick="pinTask(${item.id})" title="Pin for later">📌</button>`}
+          <button class="t-btn" onclick="deleteTask(${item.id})" title="Remove">✕</button>
+        </div>
+      </div>`;
+    });
+    el.innerHTML = html;
+  });
+}
+
+// ── VOICE INPUT ───────────────────────────────────────────────────────────────
+let _voiceRec = null;
+let _voiceActive = false;
+
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    const tip = document.getElementById('voice-tip');
+    if(tip){ tip.textContent = 'Voice input not supported in this browser. Try Chrome.'; tip.style.display='block'; }
+    return;
+  }
+  if(_voiceActive){ stopVoice(); return; }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  _voiceRec = new SR();
+  _voiceRec.lang = 'en-US';
+  _voiceRec.continuous = false;
+  _voiceRec.interimResults = true;
+
+  const btn = document.getElementById('voice-btn');
+  const inp = document.getElementById('task-text');
+  const tip = document.getElementById('voice-tip');
+
+  _voiceRec.onstart = () => {
+    _voiceActive = true;
+    if(btn) btn.classList.add('listening');
+    if(tip){ tip.textContent = '🎤 Listening… speak your task'; tip.style.display='block'; }
+  };
+  _voiceRec.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    if(inp) inp.value = transcript;
+  };
+  _voiceRec.onend = () => {
+    stopVoice();
+    // Auto-detect time estimate + slot from transcript
+    if(inp && inp.value.trim()){
+      const v = inp.value.toLowerCase();
+      // Slot hints
+      if(v.includes('morning') || v.includes('before noon')) selSlot(document.querySelector('.slot-btn[data-s="morning"]'),'morning');
+      else if(v.includes('afternoon')) selSlot(document.querySelector('.slot-btn[data-s="afternoon"]'),'afternoon');
+      else if(v.includes('evening') || v.includes('tonight') || v.includes('after 5')) selSlot(document.querySelector('.slot-btn[data-s="evening"]'),'evening');
+      else if(v.includes('pin') || v.includes('later') || v.includes('remind')) selSlot(document.querySelector('.slot-btn[data-s="pinned"]'),'pinned');
+      // Time estimate hints
+      if(v.includes('quick') || v.includes('5 min') || v.includes('ten min')) selEst(document.querySelector('#est-row .chip[onclick*="10min"]'),'10min');
+      else if(v.includes('15 min')) selEst(document.querySelector('#est-row .chip[onclick*="15min"]'),'15min');
+      else if(v.includes('30 min') || v.includes('half hour')) selEst(document.querySelector('#est-row .chip[onclick*="30min"]'),'30min');
+      else if(v.includes('45 min')) selEst(document.querySelector('#est-row .chip[onclick*="45min"]'),'45min');
+      else if(v.includes('hour') || v.includes('1 hr') || v.includes('one hour')) selEst(document.querySelector('#est-row .chip[onclick*="1hr"]'),'1hr');
+    }
+  };
+  _voiceRec.onerror = (e) => {
+    stopVoice();
+    if(tip){ tip.textContent = 'Could not hear — tap 🎤 to try again.'; tip.style.display='block'; }
+  };
+  _voiceRec.start();
+}
+function stopVoice(){
+  _voiceActive = false;
+  if(_voiceRec){ try{ _voiceRec.stop(); }catch(e){} _voiceRec = null; }
+  const btn = document.getElementById('voice-btn');
+  const tip = document.getElementById('voice-tip');
+  if(btn) btn.classList.remove('listening');
+  if(tip) setTimeout(()=>{ tip.style.display='none'; tip.textContent=''; }, 2000);
+}
+
+// Init tasks on load
+renderTasks();
+
+// ── FAQ ────────────────────────────────────────────────────────────────────────
+const FAQS = [
+  { q: "What is this?", a: "Bianca's personal morning brief — a daily dashboard for her AI career transition. It shows today's study focus, LinkedIn posting schedule, and career follow-ups." },
+  { q: "Who built this?", a: "Bianca built this herself using Claude (AI) as a collaborator — no prior coding background. It's part of her AI literacy learning project." },
+  { q: "Can I see the full portfolio?", a: "Yes — hit the ← Portfolio button at the top to access the full recruiter portfolio. You'll need the access password." },
+  { q: "What is Bianca's background?", a: "10 years in finance, now transitioning into AI Product Management and Responsible AI roles. Based in NYC." },
+  { q: "How do I get in touch?", a: "Use the feedback form below — it'll open an email directly to Bianca." },
+];
+
+(function renderFAQ(){
+  const el = document.getElementById('faq-list');
+  if(!el) return;
+  let html = '';
+  FAQS.forEach((item, i) => {
+    html += `<div style="border-bottom:1px solid var(--border);last-child:border-none;">
+      <button onclick="toggleFaq(${i})"
+        style="width:100%;text-align:left;background:none;border:none;padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <span style="font-size:.83rem;font-weight:700;color:var(--text);">${escH(item.q)}</span>
+        <span id="faq-arrow-${i}" style="color:var(--muted);font-size:.8rem;flex-shrink:0;">▼</span>
+      </button>
+      <div id="faq-body-${i}" style="display:none;padding:0 16px 13px;font-size:.78rem;color:var(--muted);line-height:1.6;">${escH(item.a)}</div>
+    </div>`;
+  });
+  el.innerHTML = html;
+})();
+
+function toggleFaq(i){
+  const body = document.getElementById('faq-body-' + i);
+  const arrow = document.getElementById('faq-arrow-' + i);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.textContent = open ? '▼' : '▲';
+  arrow.style.color = open ? 'var(--muted)' : 'var(--purple)';
+}
+
+// ── FEEDBACK ──────────────────────────────────────────────────────────────────
+function submitFeedback(){
+  const text = document.getElementById('fb-text').value.trim();
+  if(!text) return;
+  const name = document.getElementById('fb-name').value.trim() || 'Anonymous';
+  const subject = encodeURIComponent('Morning Brief message from ' + name);
+  const body = encodeURIComponent(text + '\n\n— ' + name);
+  window.open('mailto:biancakugblenu@gmail.com?subject=' + subject + '&body=' + body);
+  document.getElementById('fb-form-wrap').style.display = 'none';
+  document.getElementById('fb-success').style.display = 'block';
+}
+
+// ── APPLY GUEST MODE (runs after all rendering) ────────────────────────────────
+applyGuestMode();
+</script>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
+<script>
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter') return;
+  var gate=document.getElementById('auth-gate');
+  if(gate && gate.style.display!=='none' && getComputedStyle(gate).display!=='none'){
+    e.preventDefault();
+    if(typeof _checkAuth==='function') _checkAuth();
+  }
+});
+</script>
+</body>
+</html>
