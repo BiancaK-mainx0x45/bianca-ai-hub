@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Éclat">
+<meta name="theme-color" content="#1E0A14">
+<meta name="application-name" content="Éclat">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%231E0A14'/%3E%3Crect x='36' y='68' width='8' height='16' rx='4' fill='%233A1A28'/%3E%3Crect x='34' y='80' width='12' height='4' rx='2' fill='%232E1420'/%3E%3Cellipse cx='40' cy='44' rx='22' ry='26' fill='%232E1420' stroke='%23C4687A' stroke-width='2'/%3E%3Cellipse cx='40' cy='44' rx='18' ry='22' fill='none' stroke='%23E8A598' stroke-width='1' opacity='.5'/%3E%3Cellipse cx='40' cy='44' rx='16' ry='20' fill='%23140810'/%3E%3Cpath d='M28 30 Q30 26 34 28' stroke='%23E8A598' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M62 14 L63.5 10 L65 14 L69 15.5 L65 17 L63.5 21 L62 17 L58 15.5 Z' fill='%23E8A598'/%3E%3Cpath d='M16 22 L17 19 L18 22 L21 23 L18 24 L17 27 L16 24 L13 23 Z' fill='%23C4687A'/%3E%3C/svg%3E">
+<title>Éclat ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1E0A14;
+  --bg2: #2A1020;
+  --bg3: #38182C;
+  --card: #241018;
+  --card2: #301428;
+  --accent: #E8A598;
+  --accent2: #D4788A;
+  --accent3: #C4687A;
+  --rose: #E8A598;
+  --gold: #D4A882;
+  --sage: #C4A898;
+  --red: #C4687A;
+  --text: #F5EAF0;
+  --text2: #C8A8B8;
+  --text3: #7A4860;
+  --border: #3A1828;
+  --nav-h: 72px;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font-body); overflow: hidden; -webkit-text-size-adjust: 100%; }
+
+/* ── SPLASH ── */
+#splash {
+  position: fixed; inset: 0; background: var(--bg); z-index: 99999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+}
+#splash-icon { opacity: 0; transform: scale(0.7); animation: splashIconIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.3s forwards; }
+#splash-name { opacity: 0; transform: translateY(16px); animation: splashNameIn 0.6s ease 0.9s forwards; font-family: var(--font-display); font-size: 42px; font-style: italic; font-weight: 700; color: var(--text); letter-spacing: 1px; }
+#splash-name span { color: var(--accent); }
+#splash-sub { opacity: 0; animation: splashSubIn 0.5s ease 1.3s forwards; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--text3); font-family: var(--font-body); font-weight: 300; }
+#splash-bar { opacity: 0; animation: splashSubIn 0.5s ease 1.4s forwards; width: 40px; height: 1px; background: var(--accent3); }
+@keyframes splashIconIn { to { opacity: 1; transform: scale(1); } }
+@keyframes splashNameIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes splashSubIn { to { opacity: 1; } }
+@keyframes splashFadeOut { to { opacity: 0; pointer-events: none; } }
+#splash.hiding { animation: splashFadeOut 0.5s ease forwards; }
+
+/* ── APP ── */
+#app { height: 100vh; display: flex; flex-direction: column; max-width: 430px; margin: 0 auto; position: relative; }
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 8px); }
+#content::-webkit-scrollbar { display: none; }
+
+/* ── NAV ── */
+#nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: var(--nav-h);
+  background: var(--bg2); border-top: 1px solid var(--border); display: flex; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; border: none; background: none; color: var(--text3); cursor: pointer;
+  transition: color 0.2s; font-size: 10px; padding: 8px 4px; font-family: var(--font-body);
+  font-weight: 500; letter-spacing: 0.5px;
+  min-height: 44px;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn .ni { font-size: 20px; line-height: 1; }
+.nav-btn .nav-label { font-family: var(--font-display); font-style: italic; font-size: 11px; }
+
+/* ── SCREENS ── */
+.screen { display: none; padding: 20px 16px; animation: fadeIn 0.25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── HEADERS ── */
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-top: 10px; }
+.header h1 { font-family: var(--font-display); font-size: 30px; font-style: italic; font-weight: 700; color: var(--text); line-height: 1; }
+.header h1 span { color: var(--accent); }
+.header .sub { font-size: 12px; color: var(--text3); margin-top: 4px; font-weight: 300; letter-spacing: 0.3px; }
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; padding-left: 2px;
+}
+
+/* ── CARDS ── */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.card-title { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; font-weight: 600; font-family: var(--font-body); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 20px; border-radius: 12px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-body); min-height: 44px; }
+.btn-terra { background: var(--accent3); color: #fff; }
+.btn-terra:active { opacity: 0.85; transform: scale(0.98); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text2); }
+.btn-outline:active { background: var(--bg3); }
+.btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 10px; min-height: 36px; }
+.btn-full { width: 100%; }
+
+/* ── INPUT ── */
+.gs-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 14px; font-family: var(--font-body); transition: border-color 0.2s; min-height: 44px; }
+.gs-input:focus { outline: none; border-color: var(--accent3); }
+.gs-input::placeholder { color: var(--text3); }
+
+/* ── STAT PILLS ── */
+.stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.stat-pill { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 8px; text-align: center; }
+.stat-num { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--accent); line-height: 1; }
+.stat-lbl { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; font-weight: 500; }
+
+/* ── SCANNER ── */
+.scanner-box { background: var(--bg3); border: 1.5px dashed var(--border); border-radius: 16px; padding: 28px 16px; text-align: center; margin-bottom: 12px; }
+
+/* ── CAPTURE ── */
+.capture-btn { display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1px solid var(--accent3);background:var(--bg3);color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font-body);min-height:44px; }
+.capture-btn:active { background:var(--accent3);color:#fff;transform:scale(0.98); }
+.capture-divider { display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-family:var(--font-body); }
+.capture-divider::before,.capture-divider::after { content:"";flex:1;height:1px;background:var(--border); }
+#camera-preview-wrap { display:none;margin-top:12px;border-radius:14px;overflow:hidden;position:relative;background:#000; }
+#camera-preview-wrap video { width:100%;border-radius:14px; }
+#camera-preview-wrap canvas { display:none; }
+.camera-controls { display:flex;gap:8px;justify-content:center;padding:12px 0; }
+.camera-controls button { padding:10px 20px;border-radius:10px;border:none;font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-body);min-height:44px; }
+.cam-snap-btn { background:var(--accent);color:#1E0A14; }
+.cam-cancel-btn { background:var(--bg3);color:var(--text2);border:1px solid var(--border); }
+#photo-preview-wrap { display:none;margin-top:12px; }
+#photo-preview-wrap img { width:100%;border-radius:14px;margin-bottom:10px; }
+.ocr-status { text-align:center;padding:12px;color:var(--accent);font-size:13px;font-family:var(--font-body); }
+.ocr-status .spinner { display:inline-block;width:14px;height:14px;border:2px solid var(--accent3);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── INGREDIENT ROWS ── */
+.ingredient-row { display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-radius:12px;margin-bottom:6px; }
+.ing-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+.ing-dot.safe { background: #6ABFA0; }
+.ing-dot.caution { background: var(--gold); }
+.ing-dot.avoid { background: var(--red); }
+.ing-dot.endo { background: var(--rose); }
+.ing-name { font-size:13px;color:var(--text);flex:1; }
+.ing-badge { font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;font-family:var(--font-body); }
+.ing-badge.safe { background:#6ABFA022;color:#6ABFA0; }
+.ing-badge.caution { background:#D4A88222;color:var(--gold); }
+.ing-badge.avoid { background:#C4687A22;color:var(--red); }
+.ing-badge.endo { background:#E8A59822;color:var(--rose); }
+
+/* ── SCORE RING ── */
+.score-ring { width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0; }
+.score-ring.great { background:conic-gradient(#6ABFA0 var(--pct),var(--border) 0);box-shadow:0 0 0 3px var(--bg3) inset; }
+.score-ring.ok { background:conic-gradient(var(--gold) var(--pct),var(--border) 0);box-shadow:0 0 0 3px var(--bg3) inset; }
+.score-ring.poor { background:conic-gradient(var(--red) var(--pct),var(--border) 0);box-shadow:0 0 0 3px var(--bg3) inset; }
+.score-inner { width:60px;height:60px;border-radius:50%;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center; }
+.score-num { font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text); }
+.score-lbl { font-size:9px;color:var(--text3); }
+
+/* ── ROUTINE ── */
+.routine-step { background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px; }
+.step-num { width:30px;height:30px;border-radius:50%;background:var(--accent3);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;font-family:var(--font-body); }
+.step-info { flex:1; }
+.step-name { font-size:14px;font-weight:500;color:var(--text); }
+.step-product { font-size:12px;color:var(--text3);margin-top:3px;font-style:italic;font-family:var(--font-display); }
+.step-del { background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:4px;min-width:32px;min-height:32px; }
+
+/* ── JOURNAL ── */
+.journal-entry { background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px; }
+.journal-date { font-size:11px;color:var(--text3);margin-bottom:6px;font-family:var(--font-display);font-style:italic; }
+.journal-body { font-size:14px;color:var(--text2);line-height:1.6;font-weight:300; }
+.skin-emoji-row { display:flex;gap:8px;margin:10px 0;flex-wrap:wrap; }
+.skin-tag { font-size:12px;padding:6px 12px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;user-select:none;font-family:var(--font-body);min-height:36px;display:flex;align-items:center; }
+.skin-tag.sel { background:var(--accent3);border-color:var(--accent3);color:#fff; }
+
+/* ── PAO ── */
+.pao-item { background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px; }
+.pao-icon { font-size:28px;flex-shrink:0; }
+.pao-info { flex:1;min-width:0; }
+.pao-name { font-size:14px;font-weight:500;color:var(--text);font-family:var(--font-display);font-style:italic; }
+.pao-date { font-size:11px;color:var(--text3);margin-top:2px;font-weight:300; }
+.pao-badge { font-size:10px;padding:4px 10px;border-radius:20px;font-weight:600;font-family:var(--font-body); }
+.pao-badge.fresh { background:#6ABFA022;color:#6ABFA0; }
+.pao-badge.soon { background:#D4A88222;color:var(--gold); }
+.pao-badge.expired { background:#C4687A22;color:var(--red); }
+
+/* ── DIY ── */
+.diy-card { background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer;transition:border-color 0.2s;touch-action:manipulation; }
+.diy-card:active { border-color:var(--accent3); }
+.diy-top { display:flex;align-items:center;gap:12px;margin-bottom:10px; }
+.diy-emoji { font-size:30px; }
+.diy-name { font-family:var(--font-display);font-size:17px;font-style:italic;font-weight:600;color:var(--text); }
+.diy-sub { font-size:11px;color:var(--text3);margin-top:3px;font-weight:300; }
+.benefit-row { display:flex;gap:6px;flex-wrap:wrap; }
+.benefit-tag { font-size:10px;padding:3px 9px;border-radius:20px;background:#C4687A18;color:var(--accent);border:1px solid #C4687A33;font-family:var(--font-body); }
+
+/* ── MODAL ── */
+.modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:flex-end;max-width:430px;margin:0 auto; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--bg2);border-radius:22px 22px 0 0;padding:22px 18px;width:100%;max-height:88vh;overflow-y:auto;animation:slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+@keyframes emojiFlyGlow { 0% { opacity:1;transform:translateY(0) scale(1); } 100% { opacity:0;transform:translateY(-130px) scale(0.4) rotate(20deg); } }
+.modal-handle { width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 18px; }
+
+/* ── ONBOARDING ── */
+#onboarding { position:fixed;inset:0;background:var(--bg);z-index:400;overflow-y:auto;max-width:430px;margin:0 auto; }
+.onboard-step { display:none;padding:36px 22px;min-height:100vh;flex-direction:column;justify-content:center; }
+.onboard-step.active { display:flex; }
+.ob-emoji { font-size:58px;text-align:center;margin-bottom:20px; }
+.ob-title { font-family:var(--font-display);font-size:32px;font-style:italic;font-weight:700;color:var(--accent);text-align:center;margin-bottom:10px; }
+.ob-sub { font-size:15px;color:var(--text2);text-align:center;line-height:1.7;margin-bottom:28px;font-weight:300; }
+.ob-input { width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px 18px;color:var(--text);font-size:16px;margin-bottom:12px;font-family:var(--font-body); }
+.ob-input:focus { outline:none;border-color:var(--accent3); }
+.ob-row { display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap; }
+.ob-option { flex:1;min-width:80px;padding:14px 8px;background:var(--card);border:2px solid var(--border);border-radius:14px;text-align:center;cursor:pointer;transition:all 0.15s;font-size:12px;color:var(--text2);font-family:var(--font-body);min-height:44px; }
+.ob-option.sel { border-color:var(--accent3);background:#C4687A18;color:var(--accent); }
+.ob-progress { display:flex;gap:6px;justify-content:center;margin-bottom:28px; }
+.ob-dot { width:8px;height:8px;border-radius:50%;background:var(--border); }
+.ob-dot.active { background:var(--accent3); }
+
+/* ── TOAST ── */
+#toast { position:fixed;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 14px);left:50%;transform:translateX(-50%);background:var(--accent3);color:#fff;padding:10px 22px;border-radius:22px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.25s;z-index:300;pointer-events:none;white-space:nowrap;font-family:var(--font-body); }
+#toast.show { opacity:1; }
+
+/* ── MISC ── */
+.prog-bar { height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:6px 0; }
+.prog-fill { height:100%;background:var(--accent3);border-radius:3px;transition:width 0.4s ease; }
+.divider { height:1px;background:var(--border);margin:14px 0; }
+.section-title { font-family:var(--font-display);font-size:16px;font-style:italic;font-weight:600;color:var(--text);margin-bottom:10px; }
+textarea.gs-input { resize:none;min-height:90px;font-family:var(--font-body);line-height:1.6; }
+.settings-row { display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border); }
+.toggle { width:46px;height:26px;border-radius:13px;background:var(--bg3);border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0;min-height:26px; }
+.toggle.on { background:var(--accent3); }
+.toggle::after { content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.2s; }
+.toggle.on::after { transform:translateX(20px); }
+
+/* ── SYNC PANEL ── */
+.sync-panel { border:1px solid #C4687A22;background:#C4687A08;border-radius:16px;padding:14px;margin-bottom:14px; }
+.sync-label { font-size:10px;color:var(--accent2);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-family:var(--font-body); }
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div id="splash-icon">
+    <svg width="90" height="90" viewBox="0 0 80 80">
+      <rect width="80" height="80" rx="20" fill="#2E1420"/>
+      <!-- mirror handle -->
+      <rect x="36" y="54" width="8" height="14" rx="4" fill="#3A1A28"/>
+      <rect x="33" y="65" width="14" height="4" rx="2" fill="#2A1018"/>
+      <!-- mirror frame -->
+      <ellipse cx="40" cy="34" rx="20" ry="24" fill="#2E1420" stroke="#C4687A" stroke-width="2"/>
+      <ellipse cx="40" cy="34" rx="16" ry="20" fill="none" stroke="#E8A598" stroke-width="0.8" opacity="0.5"/>
+      <!-- glass -->
+      <ellipse cx="40" cy="34" rx="14" ry="18" fill="#140810"/>
+      <!-- face -->
+      <ellipse cx="40" cy="28" rx="6" ry="7" fill="#2A1020"/>
+      <path d="M34 36 Q37 39 40 39 Q43 39 46 36" fill="none" stroke="#3A1828" stroke-width="1"/>
+      <!-- highlight -->
+      <path d="M28 20 Q30 16 34 18" fill="none" stroke="#E8A598" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- sparkles -->
+      <path d="M60 12 L61.5 8 L63 12 L67 13.5 L63 15 L61.5 19 L60 15 L56 13.5 Z" fill="#E8A598"/>
+      <path d="M16 20 L17 17 L18 20 L21 21 L18 22 L17 25 L16 22 L13 21 Z" fill="#C4687A"/>
+      <circle cx="62" cy="28" r="1.5" fill="#E8C0B0" opacity="0.8"/>
+    </svg>
+  </div>
+  <a href="./index.html" style="text-decoration:none;"><div id="splash-name">éclat<span>.</span></div></a>
+  <div id="splash-bar"></div>
+  <div id="splash-sub">beauty rituals</div>
+</div>
+
+<!-- AUTH GATE -->
+<a href="#" id="back-btn" onclick="event.preventDefault();if(document.referrer&&document.referrer.indexOf(location.origin)>-1){history.back();}else{location.href='./bianca-ai-portfolio.html';}" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(30,10,20,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(196,104,122,.22);color:#E8A598;font-size:.72rem;font-weight:600;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;font-family:'DM Sans',sans-serif;">← Back</a>
+
+<div id="auth-gate" style="position:fixed;inset:0;background:#1E0A14;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;">
+  <div style="background:#2A1020;border:1px solid rgba(196,104,122,.35);border-radius:20px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.2rem;color:#E8A598;margin-bottom:.4rem;">éclat.</div>
+    <div style="color:#E8A598;font-weight:600;font-size:.95rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#7A4860;font-size:.78rem;margin-bottom:1.5rem;font-weight:300;">Enter your password to continue.</div>
+    <div style="position:relative;">
+      <input id="auth-input" type="password" placeholder="Password"
+      style="width:100%;box-sizing:border-box;background:#1E0A14;border:1px solid rgba(196,104,122,.3);border-radius:10px;padding:.75rem 1rem;color:#F5EAF0;font-size:.95rem;outline:none;margin-bottom:.5rem;font-family:'DM Sans',sans-serif;"
+      onkeydown="if(event.key==='Enter')_checkAuth()"/>
+      <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);display:flex;gap:.3rem;">
+        <button type="button" onclick="(async()=>{try{document.getElementById('auth-input').value=(await navigator.clipboard.readText()).trim();document.getElementById('auth-err').textContent='✓ Pasted';setTimeout(()=>{document.getElementById('auth-err').textContent='';},2000);}catch(e){document.getElementById('auth-err').textContent='Use Ctrl+V / Cmd+V to paste';}})();"
+          style="background:rgba(196,104,122,.15);border:1px solid rgba(196,104,122,.3);border-radius:6px;color:#E8A598;font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;line-height:1;">📋</button>
+        <button type="button" onclick="(function(){var f=document.getElementById('auth-input');f.type=f.type==='password'?'text':'password';this.textContent=f.type==='password'?'👁':'🙈';}).call(this)"
+          style="background:rgba(196,104,122,.1);border:1px solid rgba(196,104,122,.2);border-radius:6px;color:#C8A8B8;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;line-height:1;">👁</button>
+      </div>
+    </div>
+    <div id="auth-err" style="color:#C4687A;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;font-weight:300;"></div>
+    <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:.45rem;cursor:pointer;">
+      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})();" style="accent-color:#C4687A;"/>
+      <span style="color:#C8A8B8;font-size:.76rem;font-weight:300;">Show password as I type</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#C4687A;"/>
+      <span style="color:#C8A8B8;font-size:.76rem;font-weight:300;">Remember this device</span>
+    </label>
+    <button onclick="_checkAuth()"
+      style="width:100%;padding:.75rem;background:linear-gradient(135deg,#C4687A,#E8A598);border:none;border-radius:10px;color:#1E0A14;font-weight:700;font-size:.93rem;cursor:pointer;font-family:'DM Sans',sans-serif;">
+      Unlock →
+    </button>
+  </div>
+</div>
+<script>
+(function(){
+  var stored = localStorage.getItem('_hub_auth') || sessionStorage.getItem('_hub_auth');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(stored===H||stored===G){
+    if(stored===G){sessionStorage.setItem('_guest_mode','1');localStorage.setItem('_hub_guest','1');}
+    var gate=document.getElementById('auth-gate');if(gate)gate.style.display='none';
+    var so=document.getElementById('signout-btn');if(so)so.style.display='block';
+  }
+})();
+async function _checkAuth(){
+  var val=document.getElementById('auth-input').value;
+  if(!val)return;
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+  var hash=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+  if(hash===H||hash===G){
+    var rem=document.getElementById('auth-rem');
+    if(rem&&rem.checked)localStorage.setItem('_hub_auth',hash);
+    else sessionStorage.setItem('_hub_auth',hash);
+    if(hash===H){localStorage.removeItem('_hub_guest');sessionStorage.removeItem('_guest_mode');}
+    document.getElementById('auth-gate').style.display='none';
+    var so=document.getElementById('signout-btn');if(so)so.style.display='block';
+  } else {
+    document.getElementById('auth-err').textContent='Incorrect password — try again.';
+    document.getElementById('auth-input').value='';
+    document.getElementById('auth-input').focus();
+  }
+}
+function _hubLogout(){
+  if(!confirm('Sign out of all apps on this device?')) return;
+  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(k=>localStorage.removeItem(k));
+  ['_hub_auth','_guest_mode'].forEach(k=>sessionStorage.removeItem(k));
+  location.reload();
+}
+</script>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="onboard-step active" id="ob1">
+    <div class="ob-progress">
+      <div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div>
+    </div>
+    <div class="ob-emoji">✨</div>
+    <div class="ob-title">Welcome to Éclat</div>
+    <div class="ob-sub">Your intelligent skincare companion. Scan ingredients, build your ritual, and care for your skin with full transparency and zero brand bias.</div>
+    <input class="ob-input" id="ob-name" placeholder="What's your name?" type="text">
+    <button class="btn btn-terra btn-full" style="margin-top:8px" onclick="obNext(1)">Begin my ritual →</button>
+  </div>
+
+  <div class="onboard-step" id="ob2">
+    <div class="ob-progress">
+      <div class="ob-dot active"></div><div class="ob-dot active"></div><div class="ob-dot"></div>
+    </div>
+    <div class="ob-emoji">🌿</div>
+    <div class="ob-title">Your Skin Profile</div>
+    <div class="ob-sub">This personalises your ingredient alerts and ritual suggestions.</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:300;">Skin type</div>
+    <div class="ob-row">
+      <div class="ob-option" id="st-dry" onclick="selSkinType('dry')">🏜️<br>Dry</div>
+      <div class="ob-option" id="st-oily" onclick="selSkinType('oily')">💧<br>Oily</div>
+      <div class="ob-option" id="st-combo" onclick="selSkinType('combo')">⚖️<br>Combo</div>
+      <div class="ob-option" id="st-normal" onclick="selSkinType('normal')">✨<br>Normal</div>
+      <div class="ob-option" id="st-sensitive" onclick="selSkinType('sensitive')">🌸<br>Sensitive</div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:6px;margin-top:10px;font-weight:300;">Concerns (select all that apply)</div>
+    <div class="ob-row">
+      <div class="ob-option" id="sc-acne" onclick="toggleConcern('acne')">🔴<br>Acne</div>
+      <div class="ob-option" id="sc-aging" onclick="toggleConcern('aging')">🕐<br>Aging</div>
+      <div class="ob-option" id="sc-hyper" onclick="toggleConcern('hyper')">🟤<br>Dark spots</div>
+      <div class="ob-option" id="sc-redness" onclick="toggleConcern('redness')">🌹<br>Redness</div>
+    </div>
+    <button class="btn btn-terra btn-full" style="margin-top:14px" onclick="obNext(2)">Continue →</button>
+  </div>
+
+  <div class="onboard-step" id="ob3">
+    <div class="ob-progress">
+      <div class="ob-dot active"></div><div class="ob-dot active"></div><div class="ob-dot active"></div>
+    </div>
+    <div class="ob-emoji">🏥</div>
+    <div class="ob-title">Health Considerations</div>
+    <div class="ob-sub">These affect which ingredients you should avoid. All data stays on your device.</div>
+    <div class="ob-row">
+      <div class="ob-option" id="hc-gentle" onclick="toggleHealth('endo')">🌸<br>Hormone Sensitivity</div>
+      <div class="ob-option" id="hc-pregnant" onclick="toggleHealth('pregnant')">🤰<br>Pregnant</div>
+      <div class="ob-option" id="hc-hormonal" onclick="toggleHealth('hormonal')">🔬<br>Hormonal imbalance</div>
+    </div>
+    <div class="ob-row">
+      <div class="ob-option" id="hc-fragrance" onclick="toggleHealth('fragrance')">🚫<br>Fragrance allergy</div>
+      <div class="ob-option" id="hc-nut" onclick="toggleHealth('nut')">🥜<br>Nut allergy</div>
+    </div>
+    <button class="btn btn-terra btn-full" style="margin-top:14px" onclick="finishOnboarding()">Begin Éclat ✨</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+  <div id="content">
+
+    <!-- SCAN -->
+    <div class="screen active" id="screen-scan">
+      <div class="header">
+        <div>
+          <h1 id="scan-greeting">Morning <span>glow</span></h1>
+          <div class="sub" id="scan-sub">Scan your ingredients below</div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-pill">
+          <div class="stat-num" id="home-scanned">0</div>
+          <div class="stat-lbl">Scanned</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num" id="home-routine">0</div>
+          <div class="stat-lbl">Ritual steps</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-num" id="home-pao">0</div>
+          <div class="stat-lbl">PAO tracked</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">✦ Ingredient Scanner</div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:12px;font-weight:300;">Snap a photo of the ingredient list or type it in</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <button class="capture-btn" onclick="startCamera()" id="cam-live-btn">📸 Camera</button>
+          <button class="capture-btn" onclick="pickPhoto()">🖼️ Upload Photo</button>
+          <input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoFile(event)">
+        </div>
+        <div id="camera-preview-wrap">
+          <video id="camera-video" autoplay playsinline></video>
+          <canvas id="camera-canvas"></canvas>
+          <div class="camera-controls">
+            <button class="cam-snap-btn" onclick="snapPhoto()">📸 Capture</button>
+            <button class="cam-cancel-btn" onclick="stopCamera()">Cancel</button>
+          </div>
+        </div>
+        <div id="photo-preview-wrap">
+          <img id="photo-preview-img" alt="Captured ingredient photo">
+          <div class="ocr-status" id="ocr-status"><span class="spinner"></span> Reading ingredients...</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-terra" style="flex:1;font-size:13px;" onclick="retakePhoto()">Retake</button>
+            <button class="btn btn-terra" style="flex:1;font-size:13px;" id="ocr-use-btn" onclick="useOcrText()" disabled>Use Text ↓</button>
+          </div>
+        </div>
+        <div class="capture-divider">or type below</div>
+        <textarea class="gs-input" id="scan-input" placeholder="e.g. Water, Glycerin, Niacinamide, Parfum, Methylparaben..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <input class="gs-input" id="product-name-input" placeholder="Product name (optional)" style="flex:1;min-width:140px;">
+        </div>
+        <button class="btn btn-terra btn-full" style="margin-top:12px;" onclick="scanIngredients()">Analyse Ingredients ✦</button>
+      </div>
+
+      <div id="scan-result" style="display:none;">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+            <div class="score-ring" id="score-ring" style="--pct:0deg">
+              <div class="score-inner">
+                <div class="score-num" id="score-num">—</div>
+                <div class="score-lbl">/ 100</div>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div style="font-family:var(--font-display);font-size:18px;font-style:italic;font-weight:600;color:var(--text);" id="score-product-name">Product</div>
+              <div style="font-size:13px;color:var(--text3);margin-top:4px;font-weight:300;" id="score-verdict"></div>
+              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;" id="score-flags"></div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="card-title">Ingredient Breakdown</div>
+          <div id="ingredient-results"></div>
+          <button class="btn btn-terra btn-full" style="margin-top:14px;" onclick="saveScannedProduct()">Save to My Cabinet</button>
+        </div>
+      </div>
+
+      <div class="sync-panel" id="gs2-sync-panel">
+        <div class="sync-label">✦ Suite Sync</div>
+        <div id="gs2-sync-items" style="font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;"></div>
+      </div>
+
+      <div class="card" id="saved-products-card">
+        <div class="card-title">My Cabinet</div>
+        <div id="saved-products-list">
+          <div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;font-weight:300;">No products scanned yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROUTINE -->
+    <div class="screen" id="screen-routine">
+      <div class="header">
+        <div><h1>The <span>Ritual</span></h1><div class="sub">AM & PM steps in order</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn btn-terra btn-sm" id="routine-am-btn" onclick="setRoutineType('am')" style="flex:1;">☀️ Morning</button>
+        <button class="btn btn-outline btn-sm" id="routine-pm-btn" onclick="setRoutineType('pm')" style="flex:1;">🌙 Evening</button>
+      </div>
+      <div id="routine-steps-list"></div>
+      <div class="card" style="margin-top:4px;">
+        <div class="card-title">Add Step</div>
+        <select class="gs-input" id="step-type" style="margin-bottom:10px;">
+          <option value="Cleanser">🧴 Cleanser</option>
+          <option value="Toner">💧 Toner</option>
+          <option value="Serum">✨ Serum</option>
+          <option value="Moisturiser">🧴 Moisturiser</option>
+          <option value="SPF">☀️ SPF (AM only)</option>
+          <option value="Eye Cream">👁️ Eye Cream</option>
+          <option value="Exfoliant">🔬 Exfoliant</option>
+          <option value="Face Oil">🌿 Face Oil</option>
+          <option value="Mask">💆 Mask</option>
+          <option value="Lip Treatment">💋 Lip Treatment</option>
+          <option value="Retinol">🌙 Retinol (PM only)</option>
+        </select>
+        <input class="gs-input" id="step-product" placeholder="Product name (optional)" style="margin-bottom:10px;">
+        <input class="gs-input" id="step-notes" placeholder="Notes (e.g. 2 drops, wait 30s)">
+        <button class="btn btn-terra btn-full" style="margin-top:12px;" onclick="addRoutineStep()">+ Add to Ritual</button>
+      </div>
+      <div id="post-workout-box" style="display:none;background:linear-gradient(135deg,#C4687A18,#E8A59808);border:1px solid #C4687A33;border-radius:16px;padding:16px;margin-top:6px;">
+        <div style="font-size:10px;color:var(--accent2);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">🏋️ Post-Workout Skin Protocol</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;font-weight:300;">
+          FitSmart says you worked out today! Here's how to protect your skin:<br>
+          <strong style="color:var(--accent);">1.</strong> Cleanse within 30 min — sweat left on skin clogs pores<br>
+          <strong style="color:var(--accent);">2.</strong> Use a gentle, fragrance-free cleanser after exercise<br>
+          <strong style="color:var(--accent);">3.</strong> Reapply SPF if heading outdoors after your session<br>
+          <strong style="color:var(--accent);">4.</strong> A hyaluronic acid serum after cleansing restores hydration<br>
+          <strong style="color:var(--accent);">5.</strong> If hormone-friendly mode is on — avoid heat-generating products on workout days
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="screen" id="screen-journal">
+      <div class="header"><div><h1>Skin <span>Journal</span></h1></div></div>
+      <div class="card">
+        <div class="card-title">Log Today's Skin</div>
+        <div style="font-size:13px;color:var(--text3);margin-bottom:8px;font-weight:300;">How does your skin feel today?</div>
+        <div class="skin-emoji-row" id="journal-tags">
+          <span class="skin-tag" data-tag="clear">✨ Clear</span>
+          <span class="skin-tag" data-tag="dry">🏜️ Dry</span>
+          <span class="skin-tag" data-tag="oily">💧 Oily</span>
+          <span class="skin-tag" data-tag="breakout">🔴 Breakout</span>
+          <span class="skin-tag" data-tag="sensitive">🌹 Sensitive</span>
+          <span class="skin-tag" data-tag="glowing">🌟 Glowing</span>
+          <span class="skin-tag" data-tag="dull">😶 Dull</span>
+          <span class="skin-tag" data-tag="flaky">❄️ Flaky</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin:12px 0 6px;font-weight:300;">Notes</div>
+        <textarea class="gs-input" id="journal-notes" placeholder="What did you use today? Any reactions? New products?"></textarea>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+          <span style="font-size:13px;color:var(--text3);font-weight:300;">Rating:</span>
+          <div id="rating-stars" style="display:flex;gap:6px;"></div>
+        </div>
+        <button class="btn btn-terra btn-full" style="margin-top:14px;" onclick="saveJournalEntry()">Save Entry ✦</button>
+      </div>
+      <div class="section-title">Previous Entries</div>
+      <div id="journal-entries-list"></div>
+    </div>
+
+    <!-- PAO -->
+    <div class="screen" id="screen-pao">
+      <div class="header"><div><h1><span>Expiry</span> Tracker</h1></div></div>
+      <div class="card">
+        <div class="card-title">Track a Product</div>
+        <input class="gs-input" id="pao-name" placeholder="Product name" style="margin-bottom:10px;">
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <div style="flex:1;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:300;">Opened date</div>
+            <input class="gs-input" id="pao-opened" type="date">
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:300;">PAO (months)</div>
+            <select class="gs-input" id="pao-months">
+              <option value="1">1M</option><option value="3">3M</option><option value="6">6M</option>
+              <option value="9">9M</option><option value="12" selected>12M</option><option value="18">18M</option>
+              <option value="24">24M</option><option value="36">36M</option>
+            </select>
+          </div>
+        </div>
+        <input class="gs-input" id="pao-emoji" placeholder="Emoji icon (e.g. 🧴)" style="margin-bottom:10px;">
+        <button class="btn btn-terra btn-full" onclick="addPAO()">+ Track Product</button>
+      </div>
+      <div class="section-title">Tracked Products</div>
+      <div id="pao-list"></div>
+    </div>
+
+    <!-- DIY -->
+    <div class="screen" id="screen-diy">
+      <div class="header"><div><h1>DIY <span>Rituals</span></h1></div></div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7;font-weight:300;">Pantry-to-skin recipes using clean, kitchen-safe ingredients. Perfect for sensitive and hormone-conscious skin.</div>
+      <div id="diy-grid"></div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- BOTTOM NAV -->
+  <nav id="nav">
+    <button class="nav-btn active" id="nav-scan" onclick="showTab('scan')" style="min-height:44px;">
+      <span class="ni">🔍</span><span class="nav-label">Scan</span>
+    </button>
+    <button class="nav-btn" id="nav-routine" onclick="showTab('routine')" style="min-height:44px;">
+      <span class="ni">🌅</span><span class="nav-label">Ritual</span>
+    </button>
+    <button class="nav-btn" id="nav-journal" onclick="showTab('journal')" style="min-height:44px;">
+      <span class="ni">📓</span><span class="nav-label">Journal</span>
+    </button>
+    <button class="nav-btn" id="nav-pao" onclick="showTab('pao')" style="min-height:44px;">
+      <span class="ni">📅</span><span class="nav-label">Expiry</span>
+    </button>
+    <button class="nav-btn" id="nav-diy" onclick="showTab('diy')" style="min-height:44px;">
+      <span class="ni">🌿</span><span class="nav-label">DIY</span>
+    </button>
+  </nav>
+</div>
+
+<!-- DIY MODAL -->
+<div class="modal-overlay" id="diy-modal" onclick="closeDiyModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="diy-modal-content"></div>
+    <button class="btn btn-outline btn-full" style="margin-top:14px;" onclick="closeDiyModal()">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ─── INGREDIENT DATABASE ──────────────────────────────────────────────
+const INGREDIENTS_DB = {
+  "water": {status:"safe",label:"Safe",note:"Base ingredient, harmless."},
+  "aqua": {status:"safe",label:"Safe",note:"Water — base ingredient."},
+  "glycerin": {status:"safe",label:"Safe",note:"Excellent humectant. Suitable for all skin types."},
+  "glycerol": {status:"safe",label:"Safe",note:"Same as glycerin. Great for hydration."},
+  "niacinamide": {status:"safe",label:"Safe",note:"Vitamin B3 — brightening, pore-reducing. Excellent ingredient."},
+  "hyaluronic acid": {status:"safe",label:"Safe",note:"Deep hydration. Excellent for all skin types."},
+  "sodium hyaluronate": {status:"safe",label:"Safe",note:"Salt form of hyaluronic acid — penetrates well."},
+  "ceramide": {status:"safe",label:"Safe",note:"Barrier repair. Excellent for dry and sensitive skin."},
+  "aloe vera": {status:"safe",label:"Safe",note:"Soothing and hydrating. Safe for sensitive skin."},
+  "aloe barbadensis": {status:"safe",label:"Safe",note:"Aloe vera — soothing and anti-inflammatory."},
+  "vitamin c": {status:"safe",label:"Safe",note:"Antioxidant and brightening. Use with SPF."},
+  "ascorbic acid": {status:"safe",label:"Safe",note:"Pure vitamin C — effective but can be unstable."},
+  "retinol": {status:"caution",label:"Caution",note:"Effective anti-aging but avoid if pregnant. Start low (0.025%)."},
+  "retinyl palmitate": {status:"caution",label:"Caution",note:"Retinol ester — gentler but avoid during pregnancy."},
+  "zinc oxide": {status:"safe",label:"Safe",note:"Mineral SPF. Safe for sensitive and endo skin."},
+  "titanium dioxide": {status:"safe",label:"Safe",note:"Mineral SPF. Non-comedogenic and hormone-friendly."},
+  "salicylic acid": {status:"caution",label:"Caution",note:"Excellent for acne, but avoid if pregnant or endo-sensitive. Max 2%."},
+  "lactic acid": {status:"safe",label:"Safe",note:"Gentle AHA. Good for dry skin. Avoid with broken skin."},
+  "glycolic acid": {status:"caution",label:"Caution",note:"Strong AHA. Start at 5-10%. Avoid with active endo flare."},
+  "centella asiatica": {status:"safe",label:"Safe",note:"Cica — calming and barrier-supporting. Endo-friendly."},
+  "green tea extract": {status:"safe",label:"Safe",note:"Antioxidant and anti-inflammatory. Great for endo skin."},
+  "rosehip oil": {status:"safe",label:"Safe",note:"Hydrating, contains natural retinoids. Endo-friendly at low %."},
+  "squalane": {status:"safe",label:"Safe",note:"Lightweight, non-comedogenic oil. Excellent for all types."},
+  "jojoba oil": {status:"safe",label:"Safe",note:"Balancing oil similar to sebum. Non-comedogenic."},
+  "argan oil": {status:"safe",label:"Safe",note:"Rich in vitamin E. Non-comedogenic and nourishing."},
+  "shea butter": {status:"safe",label:"Safe",note:"Rich emollient. Can be comedogenic for very oily skin."},
+  "tocopherol": {status:"safe",label:"Safe",note:"Vitamin E — antioxidant and skin conditioning."},
+  "panthenol": {status:"safe",label:"Safe",note:"Pro-vitamin B5 — hydrating and healing. Very safe."},
+  "allantoin": {status:"safe",label:"Safe",note:"Soothing and healing. Excellent for sensitive skin."},
+  "peptides": {status:"safe",label:"Safe",note:"Anti-aging. Safe and effective for all skin types."},
+  "ferulic acid": {status:"safe",label:"Safe",note:"Antioxidant that boosts vitamin C effectiveness."},
+  "azelaic acid": {status:"safe",label:"Safe",note:"Brightening and anti-acne. Safe for pregnant people."},
+  "beta-glucan": {status:"safe",label:"Safe",note:"Deeply soothing. Excellent for sensitive skin."},
+  "resveratrol": {status:"safe",label:"Safe",note:"Antioxidant. Generally safe."},
+  "snail secretion filtrate": {status:"safe",label:"Safe",note:"Hydrating and healing. Generally well tolerated."},
+  "parfum": {status:"avoid",label:"Avoid",note:"Synthetic fragrance — top irritant. Can disrupt hormones (endo risk).",endo:true},
+  "fragrance": {status:"avoid",label:"Avoid",note:"Synthetic fragrance — irritating and potentially hormone-disrupting.",endo:true},
+  "methylparaben": {status:"avoid",label:"Avoid",note:"Paraben preservative — potential endocrine disruptor.",endo:true},
+  "propylparaben": {status:"avoid",label:"Avoid",note:"Paraben — endocrine disruption risk. Avoid with endo.",endo:true},
+  "butylparaben": {status:"avoid",label:"Avoid",note:"Strongest paraben — high endocrine disruption concern.",endo:true},
+  "ethylparaben": {status:"avoid",label:"Avoid",note:"Paraben preservative — mild endocrine concern.",endo:true},
+  "sodium lauryl sulfate": {status:"avoid",label:"Avoid",note:"Harsh surfactant — strips skin barrier. Irritating."},
+  "sodium laureth sulfate": {status:"caution",label:"Caution",note:"Milder than SLS but can still irritate sensitive skin."},
+  "sodium lauryl ether sulfate": {status:"caution",label:"Caution",note:"SLES — milder surfactant but can irritate."},
+  "polyethylene glycol": {status:"caution",label:"Caution",note:"PEG compounds vary. Some have penetration enhancement concerns."},
+  "phenoxyethanol": {status:"caution",label:"Caution",note:"Preservative. Safe at approved levels (<1%) but avoid on broken skin."},
+  "benzophenone": {status:"endo",label:"Endo Flag",note:"Chemical sunscreen linked to hormone disruption. Swap for zinc oxide.",endo:true},
+  "oxybenzone": {status:"endo",label:"Endo Flag",note:"Chemical UV filter — strong endocrine disruptor. Avoid with endo.",endo:true},
+  "octinoxate": {status:"endo",label:"Endo Flag",note:"Chemical sunscreen — hormone disruption risk with endo.",endo:true},
+  "triclosan": {status:"avoid",label:"Avoid",note:"Antimicrobial — endocrine disruptor, banned in many countries.",endo:true},
+  "phthalates": {status:"avoid",label:"Avoid",note:"Plasticiser — strong endocrine disruptor. Often hidden in 'fragrance'.",endo:true},
+  "formaldehyde": {status:"avoid",label:"Avoid",note:"Carcinogen and sensitiser. Often released by preservatives."},
+  "dmdm hydantoin": {status:"avoid",label:"Avoid",note:"Formaldehyde-releasing preservative. Sensitising."},
+  "imidazolidinyl urea": {status:"caution",label:"Caution",note:"Formaldehyde-releasing preservative. Moderate concern."},
+  "mineral oil": {status:"caution",label:"Caution",note:"Occlusive petroleum derivative. Safe at cosmetic grade but pore-clogging."},
+  "petrolatum": {status:"caution",label:"Caution",note:"Petroleum jelly — safe cosmetic grade, occlusive only."},
+  "alcohol denat": {status:"caution",label:"Caution",note:"Denatured alcohol — drying and can compromise barrier with daily use."},
+  "isopropyl alcohol": {status:"avoid",label:"Avoid",note:"Drying and irritating. Strips skin barrier."},
+  "artificial color": {status:"caution",label:"Caution",note:"Synthetic dyes — sensitising for reactive skin."},
+  "ci ": {status:"caution",label:"Caution",note:"Synthetic colour ingredient — potential sensitiser."},
+  "hydroquinone": {status:"caution",label:"Caution",note:"Strong brightener — banned in EU. Use azelaic acid instead."},
+  "kojic acid": {status:"caution",label:"Caution",note:"Brightening — can be sensitising. Use at low concentrations."},
+};
+
+const DIY_RECIPES = [
+  {id:1,emoji:"🍯",name:"Honey & Oat Face Mask",time:"5 min",skin:["dry","sensitive","normal"],benefits:["Deep moisture","Soothing","Anti-bacterial"],endo:true,ingredients:["1 tbsp raw honey","1 tbsp finely ground oats","1 tsp plain yogurt (optional)"],steps:["Mix honey and oats until it forms a paste.","Apply to clean face, avoiding eye area.","Leave for 10-15 minutes.","Rinse with warm water. Pat dry gently."],notes:"Raw honey has natural antimicrobial properties. Safe for all skin types including hormone-sensitive skin."},
+  {id:2,emoji:"🥑",name:"Avocado & Honey Mask",time:"5 min",skin:["dry","sensitive","combo"],benefits:["Intense hydration","Barrier repair","Glow boost"],endo:true,ingredients:["1/4 ripe avocado","1 tsp raw honey","3 drops rosehip oil (optional)"],steps:["Mash avocado until completely smooth.","Mix in honey and oil.","Apply to clean face.","Leave 15 minutes, rinse well."],notes:"Avocado is rich in oleic acid and vitamin E. Excellent for dry and endo skin."},
+  {id:3,emoji:"☕",name:"Coffee Brightening Scrub",time:"3 min",skin:["oily","normal","combo"],benefits:["Exfoliates","Brightens","Boosts circulation"],endo:false,ingredients:["2 tbsp fine coffee grounds","1 tbsp coconut oil","1 tsp brown sugar"],steps:["Mix all ingredients.","Apply to damp skin using gentle circular motions.","Massage 1-2 minutes.","Rinse thoroughly with warm water."],notes:"Use max 2x per week. Avoid if active breakouts. Not recommended with active endo inflammation."},
+  {id:4,emoji:"🌿",name:"Turmeric Glow Mask",time:"8 min",skin:["oily","combo","normal"],benefits:["Anti-inflammatory","Brightening","Anti-bacterial"],endo:true,ingredients:["1/2 tsp turmeric","1 tbsp plain yogurt","1 tsp honey","1/4 tsp lemon juice"],steps:["Mix all ingredients into a paste.","Apply thin layer to clean face.","Leave 10-12 minutes.","Rinse well — turmeric can stain towels."],notes:"Turmeric is a natural anti-inflammatory — excellent for endo skin. Can stain — use an old towel."},
+  {id:5,emoji:"🌹",name:"Rose Water Toner",time:"2 min",skin:["all","sensitive","dry","oily"],benefits:["Balancing","Soothing","Pore-tightening"],endo:true,ingredients:["3 tbsp food-grade rose water","1 tbsp witch hazel (alcohol-free)","2 drops glycerin"],steps:["Combine all ingredients in a small bottle.","Shake well before each use.","Apply with a cotton pad or hands after cleansing.","Store in fridge for up to 2 weeks."],notes:"Alcohol-free witch hazel only. Rose water soothes inflammation."},
+  {id:6,emoji:"🫒",name:"Olive Oil Cleansing Balm",time:"3 min",skin:["dry","normal","sensitive"],benefits:["Gentle cleansing","Removes makeup","Nourishing"],endo:true,ingredients:["2 tbsp extra virgin olive oil","1 tbsp castor oil","Optional: 2 drops vitamin E oil"],steps:["Mix oils in a small jar.","Apply to dry face in circular motions 1-2 minutes.","Add a little warm water to emulsify.","Rinse with warm water or wipe with warm cloth."],notes:"Oil cleansing removes SPF and makeup without stripping the barrier."},
+  {id:7,emoji:"🍋",name:"Vitamin C Brightening Serum",time:"10 min",skin:["all","oily","combo"],benefits:["Brightening","Antioxidant","Fade dark spots"],endo:true,ingredients:["1/4 tsp L-ascorbic acid powder","1 tbsp distilled water","1 tsp glycerin","Optional: 1/8 tsp ferulic acid"],steps:["Mix ascorbic acid in distilled water until dissolved.","Add glycerin and stir.","Pour into dark glass dropper bottle.","Apply 4-5 drops to clean face in AM before moisturiser."],notes:"Use within 2 weeks. Store in fridge. Always follow with SPF."},
+  {id:8,emoji:"🧊",name:"Green Tea Ice Cube Toner",time:"5 min + freeze",skin:["oily","sensitive","redness"],benefits:["Calms redness","Tightens pores","Antioxidant"],endo:true,ingredients:["2 green tea bags","1 cup distilled water (cooled)","1 tsp aloe vera gel"],steps:["Brew strong green tea, allow to cool completely.","Mix in aloe gel.","Pour into ice cube tray and freeze.","In the morning, wrap one cube in thin cloth and glide over clean face."],notes:"Store cubes up to 2 weeks. Especially good for redness and endo-related skin sensitivity."}
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────
+let profile = {name:"",skinType:"",concerns:[],health:{endo:false,pregnant:false,hormonal:false,fragrance:false,nut:false}};
+let savedProducts = [];
+let routineSteps = {am:[],pm:[]};
+let journalEntries = [];
+let paoItems = [];
+let currentRoutineType = "am";
+let selectedJournalTags = [];
+let journalRating = 3;
+let obSkinType = "";
+let obConcerns = [];
+let obHealth = {};
+let lastScanResult = null;
+
+// ─── STORAGE ────────────────────────────────────────────────────────────
+function save() {
+  localStorage.setItem("gs2_profile", JSON.stringify(profile));
+  localStorage.setItem("gs2_products", JSON.stringify(savedProducts));
+  localStorage.setItem("gs2_routine", JSON.stringify(routineSteps));
+  localStorage.setItem("gs2_journal", JSON.stringify(journalEntries));
+  localStorage.setItem("gs2_pao", JSON.stringify(paoItems));
+}
+function load() {
+  try {
+    profile = JSON.parse(localStorage.getItem("gs2_profile")) || profile;
+    savedProducts = JSON.parse(localStorage.getItem("gs2_products")) || [];
+    routineSteps = JSON.parse(localStorage.getItem("gs2_routine")) || {am:[],pm:[]};
+    journalEntries = JSON.parse(localStorage.getItem("gs2_journal")) || [];
+    paoItems = JSON.parse(localStorage.getItem("gs2_pao")) || [];
+  } catch(e) {}
+}
+
+// ─── SPLASH ──────────────────────────────────────────────────────────────
+function hideSplash() {
+  setTimeout(() => {
+    const splash = document.getElementById('splash');
+    splash.classList.add('hiding');
+    setTimeout(() => { splash.style.display = 'none'; }, 500);
+  }, 2200);
+}
+
+// ─── ONBOARDING ─────────────────────────────────────────────────────────
+function selSkinType(t) {
+  obSkinType = t;
+  document.querySelectorAll('[id^="st-"]').forEach(el => el.classList.remove("sel"));
+  document.getElementById("st-" + t).classList.add("sel");
+}
+function toggleConcern(c) {
+  const idx = obConcerns.indexOf(c);
+  if (idx > -1) obConcerns.splice(idx,1); else obConcerns.push(c);
+  document.getElementById("sc-" + c).classList.toggle("sel", obConcerns.includes(c));
+}
+function toggleHealth(h) {
+  obHealth[h] = !obHealth[h];
+  document.getElementById("hc-" + h).classList.toggle("sel", obHealth[h]);
+}
+function obNext(step) {
+  if (step === 1) {
+    const n = document.getElementById("ob-name").value.trim();
+    if (!n) { toast("Please enter your name!"); return; }
+    profile.name = n;
+  }
+  document.getElementById("ob" + step).classList.remove("active");
+  document.getElementById("ob" + (step+1)).classList.add("active");
+}
+function finishOnboarding() {
+  profile.skinType = obSkinType;
+  profile.concerns = obConcerns;
+  profile.health = {...obHealth};
+  localStorage.setItem("gs2_onboarded", "1");
+  save();
+  document.getElementById("onboarding").style.display = "none";
+  document.getElementById("app").style.display = "flex";
+  initApp();
+  refreshSuiteSync();
+  if (profile.health && profile.health.endo) {
+    syncToCC('hormone_mode_toggled', { enabled: true, source: 'onboarding' });
+  }
+}
+
+// ─── SMART SUITE SYNC ─────────────────────────────────────────────────────
+const SYNC_KEY = "smart_suite_sync";
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { const d = readSync(); const ec = d.eclat || {}; Object.assign(ec, data); d.eclat = ec; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+function todayKeyGs2() { return new Date().toISOString().slice(0,10); }
+
+function renderSyncPanel() {
+  const sync = readSync();
+  const fs = sync.fitsmart || {};
+  const nr = sync.nourish || {};
+  const items = [];
+  if (fs.workoutToday && fs.workoutDate === todayKeyGs2()) {
+    items.push("🏋️ You worked out today — post-workout skin protocol activated in Ritual");
+    const el = document.getElementById("post-workout-box");
+    if (el) el.style.display = "block";
+  }
+  if (nr.caloriesToday && nr.calorieGoal) {
+    const pct = Math.round((nr.caloriesToday / nr.calorieGoal) * 100);
+    if (pct >= 80) items.push("🍽️ Eating well today — good gut-skin connection, keep it up");
+  }
+  if (fs.hormoneMode) items.push("🌸 Hormone mode active — DIY recipes filtered to anti-inflammatory only");
+  if (fs.focusMode) items.push("🧠 Focus Mode on — ritual steps kept simple and short");
+  if (items.length === 0) items.push("✦ Open other suite apps to see cross-app insights here");
+  const el = document.getElementById("gs2-sync-items");
+  if (el) el.innerHTML = items.map(t => `<div style="margin-bottom:4px;">• ${t}</div>`).join("");
+}
+
+// ─── COMMAND CENTER SYNC ──────────────────────────────────────────────────────
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({ app: 'eclat', type: eventType, data: data, ts: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
+
+function refreshSuiteSync() {
+  var todayStr = todayKeyGs2();
+  var hormoneMode = !!(profile.health && profile.health.endo);
+  writeSync({
+    hormoneMode: hormoneMode,
+    scannedProductsToday: savedProducts.filter(function(p) { return p.date && p.date === todayStr; }).length || savedProducts.length,
+    skinJournalToday: journalEntries.length > 0 && journalEntries[0].date === new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}),
+    paoTracked: paoItems.length
+  });
+  renderSyncPanel();
+}
+
+// ─── SOUND & ANIMATION ────────────────────────────────────────────────────────
+function playSound(type) {
+  try {
+    var freq = type === 'success' ? 800 : type === 'error' ? 400 : 600;
+    var duration = type === 'success' ? 200 : 100;
+    if (window.AudioContext || window.webkitAudioContext) {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration / 1000);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + duration / 1000);
+    }
+  } catch(e) {}
+}
+
+function emojiBurst(emojis) {
+  var arr = emojis || ['✨','💖','🌸','🎉','💗','🧴','💜','🌺'];
+  for (var i = 0; i < 10; i++) {
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;z-index:999;font-size:'+(24+Math.random()*16)+'px;pointer-events:none;left:'+(15+Math.random()*70)+'vw;top:'+(50+Math.random()*30)+'vh;animation:emojiFlyGlow 1.2s ease-out forwards;';
+    el.textContent = arr[Math.floor(Math.random() * arr.length)];
+    document.body.appendChild(el);
+    (function(e) { setTimeout(function() { if (e.parentNode) e.parentNode.removeChild(e); }, 1500); })(el);
+  }
+}
+
+// ─── CAMERA ─────────────────────────────────────────────────────────────
+var _camStream = null, _ocrText = "";
+
+function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast("Camera not available. Try uploading a photo."); return; }
+  var wrap = document.getElementById("camera-preview-wrap");
+  var vid = document.getElementById("camera-video");
+  wrap.style.display = "block";
+  document.getElementById("photo-preview-wrap").style.display = "none";
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } } })
+    .then(function(stream) { _camStream = stream; vid.srcObject = stream; })
+    .catch(function(err) { wrap.style.display = "none"; toast("Could not access camera. Try uploading a photo."); });
+}
+function stopCamera() {
+  if (_camStream) { _camStream.getTracks().forEach(function(t) { t.stop(); }); _camStream = null; }
+  document.getElementById("camera-preview-wrap").style.display = "none";
+}
+function snapPhoto() {
+  var vid = document.getElementById("camera-video");
+  var canvas = document.getElementById("camera-canvas");
+  canvas.width = vid.videoWidth; canvas.height = vid.videoHeight;
+  canvas.getContext("2d").drawImage(vid, 0, 0);
+  var dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+  stopCamera(); showPhotoPreview(dataUrl);
+}
+function pickPhoto() { document.getElementById("photo-file-input").click(); }
+function handlePhotoFile(evt) {
+  var file = evt.target.files && evt.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { showPhotoPreview(e.target.result); };
+  reader.readAsDataURL(file); evt.target.value = "";
+}
+function showPhotoPreview(dataUrl) {
+  var wrap = document.getElementById("photo-preview-wrap");
+  var img = document.getElementById("photo-preview-img");
+  var status = document.getElementById("ocr-status");
+  var useBtn = document.getElementById("ocr-use-btn");
+  img.src = dataUrl; wrap.style.display = "block";
+  status.innerHTML = '<span class="spinner"></span> Reading ingredients...';
+  status.style.display = "block"; useBtn.disabled = true; _ocrText = "";
+  loadTesseractAndRun(dataUrl);
+}
+function loadTesseractAndRun(dataUrl) {
+  if (window.Tesseract) { runOCR(dataUrl); return; }
+  var script = document.createElement("script");
+  script.src = "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js";
+  script.onload = function() { runOCR(dataUrl); };
+  script.onerror = function() { document.getElementById("ocr-status").innerHTML = "⚠️ Could not load text reader. Type ingredients manually."; document.getElementById("ocr-use-btn").disabled = true; };
+  document.head.appendChild(script);
+}
+function runOCR(dataUrl) {
+  var status = document.getElementById("ocr-status");
+  var useBtn = document.getElementById("ocr-use-btn");
+  Tesseract.recognize(dataUrl, "eng", {
+    logger: function(m) { if (m.status === "recognizing text" && m.progress) { status.innerHTML = '<span class="spinner"></span> Reading... ' + Math.round(m.progress * 100) + '%'; } }
+  }).then(function(result) {
+    var text = (result.data && result.data.text) ? result.data.text.trim() : "";
+    if (!text) { status.innerHTML = "⚠️ Could not read text. Try a clearer photo or type manually."; useBtn.disabled = true; return; }
+    _ocrText = cleanOcrIngredients(text);
+    status.innerHTML = '✅ Found ingredients! Tap "Use Text ↓"'; status.style.color = "var(--sage)"; useBtn.disabled = false;
+    document.getElementById("scan-input").value = _ocrText;
+    document.getElementById("scan-input").scrollIntoView({ behavior: "smooth", block: "center" });
+    playSound('success');
+  }).catch(function() { status.innerHTML = "⚠️ Text reading failed. Type ingredients manually."; useBtn.disabled = true; });
+}
+function cleanOcrIngredients(raw) {
+  var text = raw.replace(/\r\n/g," ").replace(/\n/g," ").replace(/ingredients?\s*:?\s*/i,"").replace(/\s{2,}/g," ").replace(/[|]/g,",").replace(/\.\s/g,", ").trim();
+  if (text.indexOf(",") === -1 && raw.indexOf("\n") > -1) { text = raw.split("\n").map(function(l) { return l.trim(); }).filter(Boolean).join(", "); }
+  return text;
+}
+function useOcrText() {
+  if (_ocrText) { document.getElementById("scan-input").value = _ocrText; document.getElementById("photo-preview-wrap").style.display = "none"; document.getElementById("scan-input").focus(); toast("Ingredients loaded! Review and tap Analyse ✦"); }
+}
+function retakePhoto() { document.getElementById("photo-preview-wrap").style.display = "none"; _ocrText = ""; document.getElementById("ocr-status").style.color = "var(--accent)"; }
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+function initApp() {
+  load(); refreshSuiteSync(); renderHome(); renderRoutine(); renderJournal(); renderPAO(); renderDIY(); initRatingStars(); initJournalTags();
+}
+
+window.onload = function() {
+  hideSplash();
+  if (localStorage.getItem("gs2_onboarded")) {
+    document.getElementById("onboarding").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+    initApp();
+  }
+};
+
+// ─── HOME / SCAN ─────────────────────────────────────────────────────────
+function renderHome() {
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? "Morning" : hour < 17 ? "Afternoon" : "Evening";
+  document.getElementById("scan-greeting").innerHTML = `${greet} <span>glow</span>${profile.name ? ', ' + profile.name : ''}`;
+  document.getElementById("home-scanned").textContent = savedProducts.length;
+  document.getElementById("home-routine").textContent = (routineSteps.am||[]).length + (routineSteps.pm||[]).length;
+  document.getElementById("home-pao").textContent = paoItems.length;
+  renderSavedProducts();
+}
+
+function scanIngredients() {
+  const raw = document.getElementById("scan-input").value.trim();
+  const productName = document.getElementById("product-name-input").value.trim() || "Unnamed Product";
+  if (!raw) { toast("Paste an ingredient list first!"); return; }
+  const ings = raw.split(/,|\n/).map(s => s.trim().toLowerCase()).filter(Boolean);
+  let safe = 0, caution = 0, avoid = 0, endoFlags = 0;
+  const results = [];
+  ings.forEach(ing => {
+    let matched = null;
+    for (const key of Object.keys(INGREDIENTS_DB)) {
+      if (ing === key || ing.includes(key) || key.includes(ing)) { matched = {name: ing, ...INGREDIENTS_DB[key]}; break; }
+    }
+    if (!matched) matched = {name: ing, status:"safe", label:"Safe", note:"No known concerns found in our database."};
+    if (matched.status === "safe") safe++;
+    else if (matched.status === "caution") caution++;
+    else if (matched.status === "avoid") avoid++;
+    else if (matched.status === "endo") { avoid++; endoFlags++; }
+    if (matched.endo) endoFlags++;
+    results.push(matched);
+  });
+  const score = Math.max(0, Math.min(100, Math.round(100 - (avoid * 15) - (caution * 5))));
+  lastScanResult = {productName, score, results, ings: raw};
+  displayScanResult(productName, score, results, endoFlags, results.length);
+  syncToCC('product_scanned', {productName, score, ingredientCount: results.length});
+  refreshSuiteSync();
+  playSound('success'); emojiBurst(['✨','💖','🧴']);
+}
+
+function displayScanResult(name, score, results, endoFlags, total) {
+  document.getElementById("scan-result").style.display = "block";
+  const ring = document.getElementById("score-ring");
+  const deg = Math.round((score / 100) * 360);
+  ring.style.setProperty("--pct", deg + "deg");
+  ring.className = "score-ring " + (score >= 70 ? "great" : score >= 45 ? "ok" : "poor");
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-product-name").textContent = name;
+  const verdict = score >= 80 ? "✅ Clean formula" : score >= 60 ? "⚠️ Mostly clean — a few concerns" : score >= 40 ? "⚠️ Several concerning ingredients" : "🚫 High concern formula";
+  document.getElementById("score-verdict").textContent = verdict;
+  const flags = document.getElementById("score-flags");
+  flags.innerHTML = "";
+  if (endoFlags > 0 && profile.health && profile.health.endo) {
+    flags.innerHTML += `<span style="font-size:11px;padding:4px 10px;border-radius:20px;background:#E8A59822;color:var(--rose);border:1px solid #E8A59844;">🌸 ${endoFlags} endo flag${endoFlags>1?"s":""}</span>`;
+  }
+  if (results.filter(r=>r.status==="avoid").length > 0) {
+    flags.innerHTML += `<span style="font-size:11px;padding:4px 10px;border-radius:20px;background:#C4687A22;color:var(--red);border:1px solid #C4687A44;">${results.filter(r=>r.status==="avoid").length} avoid</span>`;
+  }
+  const breakdown = document.getElementById("ingredient-results");
+  const sorted = [...results].sort((a,b) => { const order={avoid:0,endo:0,caution:1,safe:2}; return (order[a.status]||2)-(order[b.status]||2); });
+  breakdown.innerHTML = sorted.map(r =>
+    `<div class="ingredient-row" title="${r.note}">
+      <div class="ing-dot ${r.status === 'endo' ? 'endo' : r.status}"></div>
+      <div class="ing-name">${r.name.charAt(0).toUpperCase() + r.name.slice(1)}</div>
+      <div class="ing-badge ${r.status === 'endo' ? 'endo' : r.status}">${r.label}</div>
+    </div>`
+  ).join("");
+}
+
+function saveScannedProduct() {
+  if (!lastScanResult) return;
+  savedProducts.push({...lastScanResult, date: new Date().toISOString().slice(0,10)});
+  save(); writeSync({lastProductScanned: lastScanResult.productName, lastScanDate: todayKeyGs2()});
+  renderHome();
+  document.getElementById("scan-input").value = ""; document.getElementById("product-name-input").value = "";
+  document.getElementById("scan-result").style.display = "none"; lastScanResult = null; toast("Saved to cabinet ✓");
+}
+
+function getProductEmoji(name) {
+  const n = (name || "").toLowerCase();
+  if (n.includes("serum") || n.includes("ampoule") || n.includes("essence")) return "💧";
+  if (n.includes("moistur") || n.includes("cream") || n.includes("lotion") || n.includes("balm")) return "🫙";
+  if (n.includes("cleanser") || n.includes("wash") || n.includes("foam") || n.includes("soap")) return "🧼";
+  if (n.includes("spf") || n.includes("sunscreen") || n.includes("sunblock")) return "☀️";
+  if (n.includes("mask") || n.includes("peel") || n.includes("exfoli") || n.includes("scrub")) return "✨";
+  if (n.includes("toner") || n.includes("mist") || n.includes("spray")) return "🌊";
+  if (n.includes("oil") || n.includes("retinol") || n.includes("vitamin c")) return "🌿";
+  if (n.includes("aha") || n.includes("bha") || n.includes("acid")) return "⚗️";
+  if (n.includes("eye") || n.includes("lip")) return "👁️";
+  return "🧴";
+}
+
+function renderSavedProducts() {
+  const list = document.getElementById("saved-products-list");
+  if (savedProducts.length === 0) {
+    list.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:24px;font-weight:300;"><div style="font-size:32px;margin-bottom:8px;">🔍</div>No products in your cabinet yet.</div>';
+    return;
+  }
+  list.innerHTML = savedProducts.slice().reverse().map((p, i) => {
+    const score = p.score; const idx = savedProducts.length - 1 - i;
+    const isGood = score >= 70, isMed = score >= 45;
+    const scoreColor = isGood ? "#6ABFA0" : isMed ? "var(--gold)" : "var(--red)";
+    const scoreLabel = isGood ? "Clean formula" : isMed ? "Use with caution" : "Flagged ingredients";
+    const prodEmoji = getProductEmoji(p.productName);
+    return `<div style="background:var(--bg3);border-radius:14px;margin-bottom:10px;overflow:hidden;border:1px solid var(--border);">
+      <div style="padding:12px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);">
+        <span style="font-size:26px;">${prodEmoji}</span>
+        <div style="flex:1;">
+          <div style="font-family:var(--font-display);font-size:15px;font-style:italic;font-weight:600;color:var(--text);">${p.productName}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;font-weight:300;">${p.date}</div>
+        </div>
+        <div style="width:40px;height:40px;border-radius:50%;border:2px solid ${scoreColor};display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;font-weight:700;color:${scoreColor};">${score}</div>
+      </div>
+      <div style="padding:8px 14px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:11px;color:${scoreColor};font-weight:500;">${scoreLabel}</span>
+        <button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:4px;min-height:32px;min-width:32px;" onclick="deleteProduct(${idx})">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function deleteProduct(i) { savedProducts.splice(i, 1); save(); renderHome(); }
+
+// ─── ROUTINE ─────────────────────────────────────────────────────────────
+function setRoutineType(type) {
+  currentRoutineType = type;
+  document.getElementById("routine-am-btn").className = type === "am" ? "btn btn-terra btn-sm" : "btn btn-outline btn-sm";
+  document.getElementById("routine-pm-btn").className = type === "pm" ? "btn btn-terra btn-sm" : "btn btn-outline btn-sm";
+  renderRoutineSteps();
+}
+function renderRoutine() { renderRoutineSteps(); }
+function renderRoutineSteps() {
+  const steps = routineSteps[currentRoutineType] || [];
+  const el = document.getElementById("routine-steps-list");
+  if (steps.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:28px;font-weight:300;">No steps added yet. Build your ritual below.</div>'; return; }
+  el.innerHTML = steps.map((step, i) => `
+    <div class="routine-step">
+      <div class="step-num">${i+1}</div>
+      <div class="step-info">
+        <div class="step-name">${step.type}</div>
+        ${step.product ? `<div class="step-product">→ ${step.product}</div>` : ""}
+        ${step.notes ? `<div style="font-size:11px;color:var(--text3);margin-top:3px;font-weight:300;">${step.notes}</div>` : ""}
+      </div>
+      <button class="step-del" onclick="deleteRoutineStep(${i})">✕</button>
+    </div>
+  `).join("");
+}
+function addRoutineStep() {
+  const type = document.getElementById("step-type").value;
+  const product = document.getElementById("step-product").value.trim();
+  const notes = document.getElementById("step-notes").value.trim();
+  if (!routineSteps[currentRoutineType]) routineSteps[currentRoutineType] = [];
+  routineSteps[currentRoutineType].push({type, product, notes});
+  document.getElementById("step-product").value = ""; document.getElementById("step-notes").value = "";
+  save(); renderRoutineSteps();
+  document.getElementById("home-routine").textContent = (routineSteps.am||[]).length + (routineSteps.pm||[]).length;
+  syncToCC('routine_step_added', {type, product, period: currentRoutineType});
+  refreshSuiteSync();
+  playSound('success'); toast(type + " added to " + (currentRoutineType === 'am' ? 'morning' : 'evening') + " ritual ✓");
+}
+function deleteRoutineStep(i) { routineSteps[currentRoutineType].splice(i, 1); save(); renderRoutineSteps(); }
+
+// ─── JOURNAL ─────────────────────────────────────────────────────────────
+function initJournalTags() {
+  document.querySelectorAll("#journal-tags .skin-tag").forEach(tag => {
+    tag.addEventListener("click", () => {
+      const t = tag.dataset.tag; const idx = selectedJournalTags.indexOf(t);
+      if (idx > -1) selectedJournalTags.splice(idx,1); else selectedJournalTags.push(t);
+      tag.classList.toggle("sel", selectedJournalTags.includes(t));
+    });
+  });
+}
+function initRatingStars() {
+  const stars = document.getElementById("rating-stars"); stars.innerHTML = "";
+  for (let i = 1; i <= 5; i++) {
+    const s = document.createElement("span"); s.textContent = "⭐"; s.style.fontSize = "22px"; s.style.cursor = "pointer";
+    s.style.opacity = i <= journalRating ? "1" : "0.3"; s.onclick = () => { journalRating = i; updateStars(); };
+    stars.appendChild(s);
+  }
+}
+function updateStars() { document.querySelectorAll("#rating-stars span").forEach((s,i) => { s.style.opacity = i < journalRating ? "1" : "0.3"; }); }
+function saveJournalEntry() {
+  const notes = document.getElementById("journal-notes").value.trim();
+  if (!notes && selectedJournalTags.length === 0) { toast("Add some notes or select skin tags first!"); return; }
+  journalEntries.unshift({ date: new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}), tags:[...selectedJournalTags], notes, rating: journalRating });
+  if (journalEntries.length > 60) journalEntries.pop();
+  selectedJournalTags = []; journalRating = 3;
+  document.getElementById("journal-notes").value = "";
+  document.querySelectorAll("#journal-tags .skin-tag").forEach(t => t.classList.remove("sel"));
+  initRatingStars(); save(); renderJournalEntries();
+  syncToCC('journal_entry_saved', {rating: journalRating, tags: selectedJournalTags.length, hasNotes: notes.length > 0});
+  refreshSuiteSync();
+  playSound('success'); emojiBurst(['📓','💖','✨']); toast("Entry saved ✓");
+}
+function renderJournal() { renderJournalEntries(); }
+function renderJournalEntries() {
+  const el = document.getElementById("journal-entries-list");
+  if (journalEntries.length === 0) { el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:24px;font-size:13px;font-weight:300;">No entries yet. Log your skin daily to spot patterns.</div>'; return; }
+  el.innerHTML = journalEntries.slice(0,20).map((e,i) => `
+    <div class="journal-entry">
+      <div class="journal-date">${e.date} · ${"⭐".repeat(e.rating)}</div>
+      ${e.tags.length ? `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">${e.tags.map(t=>`<span style="font-size:11px;padding:3px 9px;background:var(--bg3);border-radius:20px;color:var(--text3);font-weight:300;">${t}</span>`).join("")}</div>` : ""}
+      ${e.notes ? `<div class="journal-body">${e.notes}</div>` : ""}
+    </div>
+  `).join("");
+}
+
+// ─── PAO ─────────────────────────────────────────────────────────────────
+function addPAO() {
+  const name = document.getElementById("pao-name").value.trim();
+  const opened = document.getElementById("pao-opened").value;
+  const months = parseInt(document.getElementById("pao-months").value);
+  const emoji = document.getElementById("pao-emoji").value.trim() || "🧴";
+  if (!name || !opened) { toast("Enter product name and opened date"); return; }
+  const exp = new Date(opened); exp.setMonth(exp.getMonth() + months);
+  paoItems.unshift({name, opened, months, expires: exp.toISOString().slice(0,10), emoji});
+  document.getElementById("pao-name").value = ""; document.getElementById("pao-emoji").value = "";
+  save(); renderPAO(); document.getElementById("home-pao").textContent = paoItems.length;
+  syncToCC('pao_tracked', {productName: name, expiryMonths: months});
+  refreshSuiteSync();
+  playSound('success'); emojiBurst([emoji, '✨', '💖']); toast(name + " tracked ✓");
+}
+function renderPAO() {
+  const el = document.getElementById("pao-list");
+  if (paoItems.length === 0) { el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:24px;font-size:13px;font-weight:300;">No products tracked. Add one above.</div>'; return; }
+  const today = new Date();
+  el.innerHTML = paoItems.map((p, i) => {
+    const exp = new Date(p.expires); const daysLeft = Math.ceil((exp - today) / 86400000);
+    const status = daysLeft < 0 ? "expired" : daysLeft <= 30 ? "soon" : "fresh";
+    const statusText = daysLeft < 0 ? "Expired" : daysLeft + " days left";
+    return `<div class="pao-item">
+      <div class="pao-icon">${p.emoji}</div>
+      <div class="pao-info">
+        <div class="pao-name">${p.name}</div>
+        <div class="pao-date">Opened ${p.opened} · ${p.months}M PAO · Expires ${p.expires}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="pao-badge ${status}">${statusText}</span>
+        <button style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;min-height:32px;min-width:32px;" onclick="deletePAO(${i})">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+function deletePAO(i) { paoItems.splice(i,1); save(); renderPAO(); document.getElementById("home-pao").textContent = paoItems.length; }
+
+// ─── DIY ─────────────────────────────────────────────────────────────────
+function renderDIY() {
+  const grid = document.getElementById("diy-grid");
+  const hormoneMode = profile.health && profile.health.endo;
+  const recipes = hormoneMode ? DIY_RECIPES.filter(r => r.endo) : DIY_RECIPES;
+  grid.innerHTML = recipes.map(r => `
+    <div class="diy-card" onclick="openDIY(${r.id})">
+      <div class="diy-top">
+        <div class="diy-emoji">${r.emoji}</div>
+        <div>
+          <div class="diy-name">${r.name}</div>
+          <div class="diy-sub">⏱ ${r.time} · ${r.skin.join(", ")} skin${r.endo ? " · 🌸 hormone-friendly" : ""}</div>
+        </div>
+      </div>
+      <div class="benefit-row">${r.benefits.map(b => `<span class="benefit-tag">${b}</span>`).join("")}</div>
+    </div>
+  `).join("");
+}
+function openDIY(id) {
+  const r = DIY_RECIPES.find(d => d.id === id); if (!r) return;
+  document.getElementById("diy-modal-content").innerHTML = `
+    <div style="font-size:44px;text-align:center;margin-bottom:10px;">${r.emoji}</div>
+    <div style="font-family:var(--font-display);font-size:22px;font-style:italic;font-weight:700;color:var(--accent);margin-bottom:4px;">${r.name}</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:12px;font-weight:300;">⏱ ${r.time} · ${r.skin.join(", ")} skin${r.endo ? " · 🌸 hormone-friendly" : ""}</div>
+    <div class="benefit-row" style="margin-bottom:16px;">${r.benefits.map(b=>`<span class="benefit-tag">${b}</span>`).join("")}</div>
+    <div class="section-title">Ingredients</div>
+    <ul style="list-style:none;margin-bottom:16px;">
+      ${r.ingredients.map(i=>`<li style="padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text2);display:flex;gap:10px;font-weight:300;"><span style="color:var(--accent);">✦</span>${i}</li>`).join("")}
+    </ul>
+    <div class="section-title">Steps</div>
+    ${r.steps.map((s,i)=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);"><div style="width:24px;height:24px;border-radius:50%;background:var(--accent3);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:var(--font-body);">${i+1}</div><div style="font-size:14px;color:var(--text2);font-weight:300;">${s}</div></div>`).join("")}
+    <div style="background:var(--bg3);border-radius:12px;padding:14px;margin-top:16px;font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;"><span style="color:var(--accent);">✦ Note:</span> ${r.notes}</div>
+  `;
+  document.getElementById("diy-modal").classList.add("open");
+}
+function closeDiyModal(e) { if (!e || e.target === document.getElementById("diy-modal")) { document.getElementById("diy-modal").classList.remove("open"); } }
+
+// ─── TABS ─────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("screen-" + tab).classList.add("active");
+  document.getElementById("nav-" + tab).classList.add("active");
+  document.getElementById("content").scrollTop = 0;
+  if (tab === "scan") renderHome();
+  if (tab === "routine") renderRoutine();
+  if (tab === "journal") renderJournal();
+  if (tab === "pao") renderPAO();
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById("toast"); t.textContent = msg;
+  t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2500);
+}
+</script>
+
+<a href="#" id="portfolio-back-btn" onclick="event.preventDefault();if(document.referrer&&document.referrer.indexOf(location.origin)>-1){history.back();}else{location.href='./bianca-ai-portfolio.html';}" style="display:block;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(30,10,20,.85);border:1px solid rgba(196,104,122,.25);border-radius:99px;color:#E8A598;font-size:.68rem;font-weight:600;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);text-decoration:none;font-family:'DM Sans',sans-serif;">← Back</a>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(30,10,20,.85);border:1px solid rgba(196,104,122,.25);border-radius:99px;color:#E8A598;font-size:.68rem;font-weight:600;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);font-family:'DM Sans',sans-serif;">Sign out</button>
+<script>
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter') return;
+  var gate=document.getElementById('auth-gate');
+  if(gate && gate.style.display!=='none' && getComputedStyle(gate).display!=='none'){
+    e.preventDefault();
+    if(typeof _checkAuth==='function') _checkAuth();
+  }
+});
+</script>
+</body>
+</html>

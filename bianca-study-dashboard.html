@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0d0a14"/>
 <title>Bianca's AI Study Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -10,18 +11,18 @@
 <style>
 /* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#08081a;color:#dde0f0;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% -10%,rgba(124,58,237,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 30% at 100% 80%,rgba(3,105,161,.08) 0%,transparent 50%);pointer-events:none;z-index:0}
+body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0d0a14;color:#dde0f0;min-height:100vh;max-width:430px;margin:0 auto}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% -10%,rgba(168,85,247,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 30% at 100% 80%,rgba(3,105,161,.08) 0%,transparent 50%);pointer-events:none;z-index:0}
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:#0d0d1f}
-::-webkit-scrollbar-thumb{background:#2e2e55;border-radius:99px}
-::-webkit-scrollbar-thumb:hover{background:#4a4a80}
+::-webkit-scrollbar-track{background:#1e1840}
+::-webkit-scrollbar-thumb{background:#5a4a80;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:#6a5a90}
 input,select,button,textarea{font-family:inherit}
 
 /* ── TASKS TAB ── */
 .tasks-section{margin-bottom:1.5rem}
 .tasks-section-label{font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .7rem;border-radius:6px;display:inline-flex;align-items:center;gap:.4rem;margin-bottom:.75rem}
-.tsl-active{background:rgba(124,58,237,.18);color:#a78bfa;border:1px solid rgba(124,58,237,.25)}
+.tsl-active{background:rgba(124,58,237,.18);color:#c084fc;border:1px solid rgba(124,58,237,.25)}
 .tsl-waiting{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.2)}
 .tsl-someday{background:rgba(100,116,139,.12);color:#94a3b8;border:1px solid rgba(100,116,139,.2)}
 .tsl-done{background:rgba(34,197,94,.1);color:#86efac;border:1px solid rgba(34,197,94,.2)}
@@ -29,8 +30,8 @@ input,select,button,textarea{font-family:inherit}
 .task-item:hover{border-color:rgba(255,255,255,.12)}
 .task-item.done-item{opacity:.45}
 .task-check{width:24px;height:24px;border-radius:7px;border:2px solid rgba(255,255,255,.2);background:transparent;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;margin-top:1px}
-.task-check:hover{border-color:#a78bfa;background:rgba(124,58,237,.15)}
-.task-check.checked{background:#7c3aed;border-color:#7c3aed}
+.task-check:hover{border-color:#c084fc;background:rgba(124,58,237,.15)}
+.task-check.checked{background:#a855f7;border-color:#a855f7}
 .task-check.checked::after{content:'✓';font-size:.78rem;color:white;font-weight:800}
 .task-body{flex:1;min-width:0}
 .task-title{font-size:.92rem;font-weight:700;color:#e0e8ff;line-height:1.45;margin-bottom:.2rem}
@@ -42,7 +43,7 @@ input,select,button,textarea{font-family:inherit}
 .task-add-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:.6rem .85rem;color:#dde0f0;font-size:.88rem;transition:border-color .18s}
 .task-add-input:focus{outline:none;border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.05)}
 .task-add-input::placeholder{color:rgba(255,255,255,.22)}
-.task-add-btn{background:rgba(124,58,237,.25);border:1px solid rgba(124,58,237,.35);border-radius:9px;padding:.6rem 1rem;color:#a78bfa;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s}
+.task-add-btn{background:rgba(124,58,237,.25);border:1px solid rgba(124,58,237,.35);border-radius:9px;padding:.6rem 1rem;color:#c084fc;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .18s}
 .task-add-btn:hover{background:rgba(124,58,237,.4);color:#c4b5fd}
 .tasks-progress{background:rgba(18,18,42,.85);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.85rem 1.1rem;margin-bottom:1.25rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
 .tp-stat{text-align:center;flex:1;min-width:55px}
@@ -51,7 +52,7 @@ input,select,button,textarea{font-family:inherit}
 .tasks-bar-wrap{flex:3;min-width:120px}
 .tasks-bar-label{font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:.35rem;display:flex;justify-content:space-between}
 .tasks-bar-track{height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
-.tasks-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#7c3aed,#a78bfa);transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.tasks-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#a855f7,#c084fc);transition:width .6s cubic-bezier(.34,1.56,.64,1)}
 /* ── CALENDAR / LINKEDIN TAB ── */
 .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
 .cal-nav{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.4rem .75rem;color:#a0a0cc;cursor:pointer;font-size:.85rem;transition:all .18s}
@@ -64,8 +65,8 @@ input,select,button,textarea{font-family:inherit}
 .cal-day{min-height:72px;border-right:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);padding:.45rem .5rem;position:relative;cursor:default;transition:background .15s}
 .cal-day:nth-child(7n){border-right:none}
 .cal-day.other-month{opacity:.25}
-.cal-day.today{background:rgba(124,58,237,.12)}
-.cal-day.today .cal-day-num{color:#a78bfa;font-weight:800}
+.cal-day.today{background:rgba(168,85,247,.12)}
+.cal-day.today .cal-day-num{color:#c084fc;font-weight:800}
 .cal-day.has-post{cursor:pointer}
 .cal-day.has-post:hover{background:rgba(255,255,255,.04)}
 .cal-day.selected{background:rgba(59,130,246,.1)}
@@ -119,8 +120,8 @@ input,select,button,textarea{font-family:inherit}
 /* Segmented milestone track */
 .xp-seg-track{position:relative;height:22px;margin:10px 0 7px;border-radius:99px;overflow:visible;z-index:1;}
 .xp-seg-inner{position:absolute;inset:0;border-radius:99px;overflow:hidden;}
-.xp-seg-full-bg{position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,#7c3aed 0%,#a78bfa 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%);opacity:.18;}
-.xp-seg-fill{position:absolute;left:0;top:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#7c3aed 0%,#a78bfa 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%);background-repeat:no-repeat;background-position:0 0;transition:width .8s cubic-bezier(.34,1.56,.64,1);overflow:hidden;}
+.xp-seg-full-bg{position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,#a855f7 0%,#c084fc 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%);opacity:.18;}
+.xp-seg-fill{position:absolute;left:0;top:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#a855f7 0%,#c084fc 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%);background-repeat:no-repeat;background-position:0 0;transition:width .8s cubic-bezier(.34,1.56,.64,1);overflow:hidden;}
 .xp-seg-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);background-size:200% 100%;animation:shimmer 2.5s infinite linear;}
 /* Phase-label strip below bar */
 .xp-phase-strip{display:flex;margin-bottom:4px;position:relative;z-index:1;}
@@ -137,7 +138,7 @@ input,select,button,textarea{font-family:inherit}
 .grade-skill-lbl{font-size:.88rem;font-weight:700;flex:1}
 .grade-skill-pct{font-size:.72rem;color:rgba(255,255,255,.35);flex-shrink:0}
 .grade-evidence{font-size:.75rem;color:#7a7aaa;margin-bottom:.4rem;line-height:1.55}
-.grade-improve{font-size:.74rem;background:rgba(124,58,237,.1);border-left:2px solid #7c3aed;border-radius:0 6px 6px 0;padding:.38rem .7rem;color:#c4b5fd;line-height:1.55}
+.grade-improve{font-size:.74rem;background:rgba(124,58,237,.1);border-left:2px solid #a855f7;border-radius:0 6px 6px 0;padding:.38rem .7rem;color:#c4b5fd;line-height:1.55}
 .grade-history-row{background:rgba(18,18,42,.6);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:.65rem .9rem;margin-bottom:.45rem;display:flex;align-items:center;gap:.7rem;cursor:pointer;transition:border-color .15s}
 .grade-history-row:hover{border-color:rgba(255,255,255,.13)}
 .grader-input{width:100%;background:#0a0a1f;border:1px solid rgba(167,139,250,.22);border-radius:9px;padding:.65rem .9rem;color:#dde0f0;font-size:.88rem;outline:none;margin-bottom:.65rem;font-family:inherit;box-sizing:border-box;transition:border-color .18s}
@@ -181,7 +182,7 @@ input,select,button,textarea{font-family:inherit}
 .tab-fade-left,.tab-fade-right{position:absolute;top:0;bottom:4px;width:48px;pointer-events:none;z-index:2;transition:opacity .2s;}
 .tab-fade-left{left:0;background:linear-gradient(to right,rgba(13,13,31,1) 0%,transparent 100%);}
 .tab-fade-right{right:0;background:linear-gradient(to left,rgba(13,13,31,1) 0%,transparent 100%);}
-.tab-scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(124,58,237,.25);border:1px solid rgba(124,58,237,.35);border-radius:99px;color:#a78bfa;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;z-index:3;transition:opacity .2s;padding:0;}
+.tab-scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(124,58,237,.25);border:1px solid rgba(124,58,237,.35);border-radius:99px;color:#c084fc;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;z-index:3;transition:opacity .2s;padding:0;}
 .tab-scroll-arrow:hover{background:rgba(124,58,237,.45);}
 .tab-scroll-arrow.left{left:2px;}
 .tab-scroll-arrow.right{right:2px;}
@@ -199,7 +200,7 @@ input,select,button,textarea{font-family:inherit}
 .banner.green::before{background:linear-gradient(90deg,rgba(34,197,94,.08),transparent)}
 .banner.amber{background:rgba(45,30,0,.85);border-left-color:#f59e0b;color:#fcd34d}
 .banner.amber::before{background:linear-gradient(90deg,rgba(245,158,11,.08),transparent)}
-.banner.purple{background:rgba(30,16,64,.85);border-left-color:#a78bfa;color:#c4b5fd}
+.banner.purple{background:rgba(30,16,64,.85);border-left-color:#c084fc;color:#c4b5fd}
 .banner.purple::before{background:linear-gradient(90deg,rgba(167,139,250,.08),transparent)}
 .banner.blue{background:rgba(15,30,64,.85);border-left-color:#60a5fa;color:#93c5fd}
 .banner.blue::before{background:linear-gradient(90deg,rgba(96,165,250,.08),transparent)}
@@ -278,7 +279,7 @@ input,select,button,textarea{font-family:inherit}
 /* ── MISC ── */
 .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .day-row{display:flex;gap:1rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.day-label{font-weight:700;font-size:.85rem;width:90px;flex-shrink:0;color:#a78bfa}
+.day-label{font-weight:700;font-size:.85rem;width:90px;flex-shrink:0;color:#c084fc}
 .daily-brief{background:linear-gradient(135deg,#0a1535 0%,#12276e 100%);color:white;border-radius:16px;padding:1.4rem 1.75rem;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden}
 .daily-brief::after{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(99,179,237,.12),transparent 70%);pointer-events:none}
 .source-card{background:rgba(18,18,42,.85);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.85rem 1rem;transition:border-color .18s}
@@ -317,11 +318,11 @@ input,select,button,textarea{font-family:inherit}
 </style>
 </head>
 <body>
-<a href="./bianca-ai-portfolio.html" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(13,13,26,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(167,139,250,.22);color:#a78bfa;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Portfolio</a>
-<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
+<a href="./bianca-ai-portfolio.html" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(13,13,26,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(167,139,250,.22);color:#c084fc;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Portfolio</a>
+<div id="auth-gate" style="position:fixed;inset:0;background:#14102a;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
   <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
-    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#c084fc;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
     <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
     <div style="position:relative;width:100%;margin-bottom:.3rem;">
       <input id="auth-input" type="password" placeholder="Password"
@@ -332,15 +333,15 @@ input,select,button,textarea{font-family:inherit}
     </div>
     <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
         <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:.45rem;cursor:pointer;">
-      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#a78bfa;"/>
+      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#c084fc;"/>
       <span style="color:#7070a8;font-size:.76rem;">👁 Show password as I type</span>
     </label>
 <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
-      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#c084fc;"/>
       <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
     </label>
     <button onclick="_checkAuth()"
-      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
+      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#a855f7,#c084fc);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
       Unlock →
     </button>
   </div>
@@ -390,8 +391,11 @@ function _hubLogout(){
 
 <div class="header">
   <div class="header-inner">
-    <div class="header-label">Bianca's Personal Study Dashboard</div>
-    <h1>AI Adoption &amp; Implementation</h1>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <a href="#" onclick="event.preventDefault();if(document.referrer&&document.referrer.indexOf(location.origin)>-1){history.back();}else{location.href='./index.html';}" style="color:#c084fc;font-size:14px;text-decoration:none;padding:4px 10px;border-radius:8px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.15);">←</a>
+      <div class="header-label">Bianca's Personal Study Dashboard</div>
+    </div>
+    <a href="./index.html" style="text-decoration:none;color:inherit;"><h1>AI Adoption &amp; Implementation</h1></a>
     <p>Finance → Tech Career Transition · Coursera-Certified · Portfolio-Integrated</p>
     <div class="xp-bar-wrap">
       <div class="xp-bar-top">
@@ -436,9 +440,9 @@ function _hubLogout(){
     <div style="font-size:.77rem;color:#7a7aaa;line-height:1.75;">
       You're exploring Bianca's interactive study system — built during Phase 1 of a self-directed AI curriculum.
       The full version includes
-      <span style="color:#a78bfa;font-weight:600;">skill &amp; project logging</span>,
-      <span style="color:#a78bfa;font-weight:600;">LinkedIn content workflow tools</span>, and
-      <span style="color:#a78bfa;font-weight:600;">curriculum planning across all four phases</span>.
+      <span style="color:#c084fc;font-weight:600;">skill &amp; project logging</span>,
+      <span style="color:#c084fc;font-weight:600;">LinkedIn content workflow tools</span>, and
+      <span style="color:#c084fc;font-weight:600;">curriculum planning across all four phases</span>.
       See the completed builds in the <a href="bianca-ai-portfolio.html" style="color:#38bdf8;text-decoration:none;font-weight:600;">AI Portfolio →</a>
     </div>
   </div>
@@ -462,7 +466,7 @@ function _hubLogout(){
 // DATA
 // ════════════════════════════════════════════════════════════
 const phases = [
-  {id:1,color:"#7c3aed",bg:"#1a0d3a",label:"Phase 1",title:"AI Foundations",weeks:"Weeks 1–4",xp:400,
+  {id:1,color:"#a855f7",bg:"#1a0d3a",label:"Phase 1",title:"AI Foundations",weeks:"Weeks 1–4",xp:400,
    courses:[
     {name:"Claude 101 — Anthropic",platform:"Anthropic",cert:true,priority:"✅ Already Completed!",note:"Anthropic's foundation course on Claude. Done and dusted — great start!",xp:80,preCompleted:true},
     {name:"IBM Prompt Engineering Basics — IBM",platform:"Coursera",cert:true,priority:"✅ Already Completed!",link:"https://www.coursera.org/learn/generative-ai-prompt-engineering-for-everyone",note:"IBM's prompt engineering foundations certificate. Already on your belt.",xp:60,preCompleted:true},
@@ -522,7 +526,7 @@ const levels = [
 ];
 
 const currentTools = [
-  {category:"Conversational AI (must-know)",color:"#7c3aed",tools:[
+  {category:"Conversational AI (must-know)",color:"#a855f7",tools:[
     {name:"Claude (Anthropic)",note:"Strong reasoning, responsible AI focus. You're using it now — list it confidently.",resume:true},
     {name:"ChatGPT (OpenAI)",note:"Most widely used. GPT-4o is the current flagship model.",resume:true},
     {name:"Gemini (Google)",note:"Deep Google Workspace integration. Strong for research.",resume:true},
@@ -607,7 +611,7 @@ const dailySources = [
     {name:"The Markup",url:"https://themarkup.org",note:"Investigative journalism on algorithmic systems, data, and their real effects on real people."},
     {name:"MIT Technology Review",url:"https://technologyreview.com",note:"Rigorous. Sceptical. Not cheerleading. The AI coverage is among the best for separating signal from noise."}
   ]},
-  {category:"Culture, money & how people actually live",color:"#7c3aed",sources:[
+  {category:"Culture, money & how people actually live",color:"#a855f7",sources:[
     {name:"New York Magazine / Intelligencer",url:"https://nymag.com/intelligencer",note:"Their economics and culture coverage is consistently worth reading."},
     {name:"N+1",url:"https://nplusonemag.com",note:"Literary and political essays. Dense but worth it. Read it to understand how to hold an argument with real conviction."},
     {name:"Harpers Magazine",url:"https://harpers.org",note:"Long-form journalism and essays. Authority built through specificity at full length."},
@@ -829,13 +833,13 @@ function calcXP(){
 
 const TOTAL_XP = 2600;
 const PHASE_COLORS = [
-  {start:0,   end:500,  color:'#a78bfa', dark:'#7c3aed', name:'Phase 1', label:'P1'},
+  {start:0,   end:500,  color:'#c084fc', dark:'#a855f7', name:'Phase 1', label:'P1'},
   {start:500,  end:1000, color:'#38bdf8', dark:'#0369a1', name:'Phase 2', label:'P2'},
   {start:1000, end:1500, color:'#34d399', dark:'#059669', name:'Phase 3', label:'P3'},
   {start:1500, end:2000, color:'#f472b6', dark:'#be185d', name:'Phase 4', label:'P4'},
   {start:2000, end:2600, color:'#fbbf24', dark:'#d97706', name:'Capstone', label:'Cap'},
 ];
-const PHASE_GRADIENT = 'linear-gradient(90deg,#7c3aed 0%,#a78bfa 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%)';
+const PHASE_GRADIENT = 'linear-gradient(90deg,#a855f7 0%,#c084fc 19.2%,#0369a1 19.3%,#38bdf8 38.4%,#059669 38.5%,#34d399 57.6%,#be185d 57.7%,#f472b6 76.8%,#d97706 76.9%,#fbbf24 100%)';
 
 function getPhaseForXP(xp){return PHASE_COLORS.find(p=>xp>=p.start&&xp<p.end)||PHASE_COLORS[PHASE_COLORS.length-1];}
 
@@ -981,11 +985,11 @@ window.addEventListener('popstate',function(e){
 // INTERLEAVED PLAN DATA
 // ════════════════════════════════════════════════════════════
 const INTERLEAVED = [
-  {week:'Week 1–2',phase:'Phase 1',color:'#7c3aed',focus:'AI Foundations — Start Here',items:[
+  {week:'Week 1–2',phase:'Phase 1',color:'#a855f7',focus:'AI Foundations — Start Here',items:[
     {course:'AI For Everyone — Andrew Ng (DeepLearning.AI)',type:'Course',hrs:6,action:'Watch all 4 weeks. Take notes in 3-bullet format (What I learned / How I\'d use it / My question).'},
     {course:'Google AI Essentials — Google',type:'Parallel (short)',hrs:3,action:'Start concurrently — this cert takes ~8hrs total and maps directly onto your LinkedIn profile.'},
   ],tip:'These two overlap perfectly. AI for Everyone gives you the mental model; Google AI Essentials gives you the credential.'},
-  {week:'Week 3–4',phase:'Phase 1',color:'#7c3aed',focus:'Generative AI + Deepen Prompting',items:[
+  {week:'Week 3–4',phase:'Phase 1',color:'#a855f7',focus:'Generative AI + Deepen Prompting',items:[
     {course:'Generative AI for Everyone — DeepLearning.AI',type:'Course',hrs:5,action:'Complete Google AI Essentials this week too. Two certs done by end of Week 4.'},
     {course:'Claude 102 — Anthropic',type:'Parallel (short)',hrs:4,action:'Start Claude 102 alongside GenAI for Everyone — Anthropic-specific depth while your foundation is fresh.'},
   ],tip:'By end of Week 4 you\'ll have: Claude 101 ✅, IBM Prompt Engineering ✅, AI for Everyone ✅, Google AI Essentials ✅, Generative AI for Everyone ✅. That\'s 5 certs in 4 weeks.'},
@@ -1028,7 +1032,7 @@ function renderRoadmapGuestView(el){
 
   const SECTIONS=[
     {
-      color:'#a78bfa',bg:'rgba(124,58,237,.08)',border:'rgba(124,58,237,.2)',
+      color:'#c084fc',bg:'rgba(124,58,237,.08)',border:'rgba(124,58,237,.2)',
       outcome:'AI Foundations',
       summary:'Understands how language models work — capabilities, limitations, and appropriate use cases.',
       courses:[
@@ -1126,7 +1130,7 @@ function renderRoadmap(){
     const btn=mk('button','btn');
     const isActive=roadmapView===v.key;
     btn.style.cssText=isActive
-      ?'background:linear-gradient(135deg,#7c3aed,#2563eb);color:white;font-size:.85rem;font-weight:700;border:none;'
+      ?'background:linear-gradient(135deg,#a855f7,#2563eb);color:white;font-size:.85rem;font-weight:700;border:none;'
       :'background:#1e1e35;color:#7a7aaa;border:1px solid #3a3a60;font-size:.85rem;';
     btn.textContent=v.label;
     btn.addEventListener('click',()=>{ roadmapView=v.key; renderRoadmap(); });
@@ -1382,7 +1386,7 @@ const GRADE_SKILLS=[
    keywords:['enablement','l&d','learning','training','change','adoption','rollout','workforce','upskill','reskill','onboarding','capability','curriculum','program','facilitation'],
    evidence:'Self-designed 18-week AI curriculum. Built Study Dashboard + Games Hub as learning-delivery tools.',
    improve:'Document the curriculum design as a 1-page case study. Add 1 enablement-framed project to portfolio.'},
-  {id:'product',label:'AI Product Management',color:'#a78bfa',
+  {id:'product',label:'AI Product Management',color:'#c084fc',
    keywords:['product','pm','product manager','roadmap','prototype','launch','mvp','backlog','stakeholder','requirements','strategy','build','develop'],
    evidence:'GainSmart/GlowSmart full product cycle: research → personas → competitive analysis → IP strategy → 11-slide launch deck.',
    improve:'Complete Duke AI Product Management cert (Phase 4). Write a PM-framed case study on GainSmart.'},
@@ -1715,7 +1719,7 @@ function renderCareer(){
       'Researching':{bg:'#1e1e35',c:'#7a7aaa'}
     };
     const gigGroups=[
-      {type:'Film & Arts',label:'Film & Arts',color:'#a78bfa',bg:'#1a0f3a'},
+      {type:'Film & Arts',label:'Film & Arts',color:'#c084fc',bg:'#1a0f3a'},
       {type:'Cafe',label:'Cafe',color:'#fbbf24',bg:'#2d1e00'},
       {type:'Remote / AI',label:'Remote / AI',color:'#34d399',bg:'#0d2218'}
     ];
@@ -1813,7 +1817,7 @@ function renderCareer(){
         '<div style="font-size:.81rem;color:#8888b0;margin-bottom:6px;line-height:1.55">'+contact.note+'</div>'+
         (contact.draft?
           '<button class="draft-toggle" data-id="'+contact.id+'" style="background:none;border:1px solid #2a2a4a;border-radius:6px;color:#93c5fd;font-size:.74rem;font-weight:600;padding:.22rem .6rem;cursor:pointer">'+(isExp?'\u25b2 Hide Draft':'\u2709 View Outreach Draft')+'</button>'+
-          (isExp?'<div style="background:#0d0d1a;border-radius:8px;padding:.85rem 1rem;font-size:.82rem;color:#c0c0e0;line-height:1.75;border-left:3px solid #7c3aed;margin-top:8px">'+contact.draft+'</div>':'')
+          (isExp?'<div style="background:#0d0d1a;border-radius:8px;padding:.85rem 1rem;font-size:.82rem;color:#c0c0e0;line-height:1.75;border-left:3px solid #a855f7;margin-top:8px">'+contact.draft+'</div>':'')
         :'');
       el.appendChild(card);
     });
@@ -1840,7 +1844,7 @@ function renderCareer(){
       '<input class="grader-input" id="grade-url" placeholder="🔗 Job listing URL — optional (for your reference only)" style="font-size:.8rem;"/>'+
       '<div style="font-size:.7rem;color:#5a5a80;margin-top:-6px;margin-bottom:8px;">ℹ️ Paste the URL for reference. Company sites can\'t be fetched directly — paste key lines below if you want a sharper match.</div>'+
       '<textarea class="grader-input" id="grade-role" rows="3" style="resize:vertical;" placeholder="Role keywords or paste job description... (e.g. AI enablement, responsible AI, product manager, L&D) — or skip and grade broadly">'+savedRole+'</textarea>'+
-      '<button class="btn" style="background:#7c3aed;color:white;font-size:.85rem;width:100%;padding:.65rem;" onclick="runGrader()">Grade this role →</button>';
+      '<button class="btn" style="background:#a855f7;color:white;font-size:.85rem;width:100%;padding:.65rem;" onclick="runGrader()">Grade this role →</button>';
     el.appendChild(formDiv);
 
     // Current result
@@ -1855,7 +1859,7 @@ function renderCareer(){
       // Grade header
       const hd=mk('div','');
       hd.style.cssText='display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;';
-      const sparseNote=curResult.sparse?'<div style="font-size:.7rem;color:#a78bfa;margin-top:3px;">ℹ️ Assessed from limited info — add more keywords to sharpen this.</div>':'';
+      const sparseNote=curResult.sparse?'<div style="font-size:.7rem;color:#c084fc;margin-top:3px;">ℹ️ Assessed from limited info — add more keywords to sharpen this.</div>':'';
       const urlNote=curResult.url?'<div style="font-size:.68rem;color:#5a5a80;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 '+curResult.url+'</div>':'';
       hd.innerHTML='<div class="grade-badge" style="background:'+g.bg+';color:'+g.color+';">'+g.g+'</div>'+
         '<div style="flex:1;min-width:0;">'+
@@ -1868,7 +1872,7 @@ function renderCareer(){
 
       if(rel.length>0){
         const mHd=mk('div','');
-        mHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4a4a80;margin-bottom:.75rem;';
+        mHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6a5a90;margin-bottom:.75rem;';
         mHd.textContent='Matched Skill Areas';
         resWrap.appendChild(mHd);
         rel.forEach(sk=>{
@@ -1887,14 +1891,14 @@ function renderCareer(){
 
       if(notRel.length>0){
         const nmHd=mk('div','');
-        nmHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4a4a80;margin-bottom:.6rem;margin-top:1rem;';
+        nmHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6a5a90;margin-bottom:.6rem;margin-top:1rem;';
         nmHd.textContent='Not Referenced in This Role';
         resWrap.appendChild(nmHd);
         const nmWrap=mk('div','');
         nmWrap.style.cssText='display:flex;flex-wrap:wrap;gap:.4rem;';
         notRel.forEach(sk=>{
           const chip=mk('span','');
-          chip.style.cssText='font-size:.71rem;font-weight:600;padding:.2rem .65rem;border-radius:99px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#4a4a80;';
+          chip.style.cssText='font-size:.71rem;font-weight:600;padding:.2rem .65rem;border-radius:99px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:#6a5a90;';
           chip.textContent=sk.label;
           nmWrap.appendChild(chip);
         });
@@ -1929,7 +1933,7 @@ function renderCareer(){
     // History
     if(gradHistory.length>0){
       const histHd=mk('div','');
-      histHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4a4a80;margin-bottom:.75rem;margin-top:'+(curResult?'.5rem':'1.25rem')+';';
+      histHd.style.cssText='font-size:.65rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6a5a90;margin-bottom:.75rem;margin-top:'+(curResult?'.5rem':'1.25rem')+';';
       histHd.textContent='Graded Roles — History';
       el.appendChild(histHd);
       [...gradHistory].reverse().forEach(g=>{
@@ -1940,12 +1944,12 @@ function renderCareer(){
             '<div style="font-size:.85rem;font-weight:700;">'+g.company+'</div>'+
             '<div style="font-size:.73rem;color:#5a5a8a;margin-top:1px;">'+g.role.slice(0,60)+(g.role.length>60?'…':'')+'</div>'+
           '</div>'+
-          '<div style="font-size:.7rem;color:#4a4a80;flex-shrink:0;">'+g.date+'</div>';
+          '<div style="font-size:.7rem;color:#6a5a90;flex-shrink:0;">'+g.date+'</div>';
         row.addEventListener('click',()=>{ lsSave('b_grade_current',g); renderCareer(); });
         el.appendChild(row);
       });
       const clearHistBtn=mk('button','btn');
-      clearHistBtn.style.cssText='background:transparent;color:#4a4a80;border:1px solid #2a2a4a;font-size:.75rem;margin-top:.5rem;';
+      clearHistBtn.style.cssText='background:transparent;color:#6a5a90;border:1px solid #2a2a4a;font-size:.75rem;margin-top:.5rem;';
       clearHistBtn.textContent='Clear history';
       clearHistBtn.addEventListener('click',()=>{ lsSave('b_grade_history',[]); renderCareer(); });
       el.appendChild(clearHistBtn);
@@ -1953,7 +1957,7 @@ function renderCareer(){
 
     if(!curResult&&gradHistory.length===0){
       const empty=mk('div','');
-      empty.style.cssText='text-align:center;padding:2rem 0;color:#4a4a80;font-size:.85rem;';
+      empty.style.cssText='text-align:center;padding:2rem 0;color:#6a5a90;font-size:.85rem;';
       empty.innerHTML='Enter a company and role above to get your first grade.';
       el.appendChild(empty);
     }
@@ -2069,12 +2073,12 @@ function renderStudyTips(){
     const detId='wd-'+i;
 
     const card=mk('div','');
-    card.style.cssText=`background:${isToday?'rgba(124,58,237,.12)':'rgba(18,18,42,.85)'};border:1px solid ${isToday?'rgba(167,139,250,.45)':'rgba(255,255,255,.07)'};border-left:3px solid ${isToday?'#a78bfa':isPast?'#2a2a4a':'rgba(255,255,255,.1)'};border-radius:12px;padding:.85rem 1rem;margin-bottom:.5rem;cursor:pointer;opacity:${isPast?.55:1};transition:border-color .18s;`;
+    card.style.cssText=`background:${isToday?'rgba(168,85,247,.12)':'rgba(18,18,42,.85)'};border:1px solid ${isToday?'rgba(167,139,250,.45)':'rgba(255,255,255,.07)'};border-left:3px solid ${isToday?'#c084fc':isPast?'#2a2a4a':'rgba(255,255,255,.1)'};border-radius:12px;padding:.85rem 1rem;margin-bottom:.5rem;cursor:pointer;opacity:${isPast?.55:1};transition:border-color .18s;`;
 
     const dn=day.toLocaleDateString('en-US',{weekday:'short'});
     const dd=day.toLocaleDateString('en-US',{month:'short',day:'numeric'});
     const badges=[];
-    if(isToday) badges.push(`<span style="background:#7c3aed;color:#fff;font-size:.6rem;font-weight:800;padding:.1rem .38rem;border-radius:99px;">TODAY</span>`);
+    if(isToday) badges.push(`<span style="background:#a855f7;color:#fff;font-size:.6rem;font-weight:800;padding:.1rem .38rem;border-radius:99px;">TODAY</span>`);
     if(liPost) badges.push(`<span style="background:rgba(251,191,36,.12);color:#fbbf24;font-size:.6rem;font-weight:700;padding:.1rem .38rem;border-radius:99px;border:1px solid rgba(251,191,36,.28);">📣 Post due</span>`);
     if(fus.length) badges.push(`<span style="background:rgba(52,211,153,.1);color:#34d399;font-size:.6rem;font-weight:700;padding:.1rem .38rem;border-radius:99px;border:1px solid rgba(52,211,153,.22);">🎯 Follow-up</span>`);
 
@@ -2106,7 +2110,7 @@ function renderStudyTips(){
         </div>`).join('')}
         <div style="font-size:.67rem;font-weight:700;color:#4a4a70;text-transform:uppercase;letter-spacing:.07em;margin-top:.4rem;margin-bottom:.35rem;">Connects to</div>
         <div style="display:flex;flex-wrap:wrap;gap:.35rem;">
-          ${_weekConnections(focus.type).map(c=>`<span style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.18);font-size:.68rem;padding:.13rem .45rem;border-radius:99px;cursor:default;" title="${c.note}">${c.tag}</span>`).join('')}
+          ${_weekConnections(focus.type).map(c=>`<span style="background:rgba(167,139,250,.1);color:#c084fc;border:1px solid rgba(167,139,250,.18);font-size:.68rem;padding:.13rem .45rem;border-radius:99px;cursor:default;" title="${c.note}">${c.tag}</span>`).join('')}
         </div>
       </div>`;
     card.onclick=()=>{const d=document.getElementById(detId);d.style.display=d.style.display==='none'?'block':'none';};
@@ -2124,7 +2128,7 @@ function renderStudyTips(){
   el.appendChild(ltNote);
 
   const TYPES=[
-    {icon:'📚',label:'Certification Study',color:'#a78bfa',what:'Course videos, notes, module completion',time:'25–45 min sprints',type:'learn'},
+    {icon:'📚',label:'Certification Study',color:'#c084fc',what:'Course videos, notes, module completion',time:'25–45 min sprints',type:'learn'},
     {icon:'🔧',label:'Project Build',color:'#38bdf8',what:'Apps, dashboards, carousels — built with AI',time:'45–90 min deep work',type:'apply'},
     {icon:'✍️',label:'LinkedIn Content',color:'#fbbf24',what:'Drafting posts, publishing carousels, replying',time:'20–40 min per post',type:'write'},
     {icon:'🎯',label:'Career Outreach',color:'#34d399',what:'Follow-ups, applications, networking, research',time:'15–30 min targeted',type:'career'},
@@ -2558,7 +2562,7 @@ const SEED_PROJECTS = [
     file:'linkedin_banner.png',
     type:'Visual Design (Canvas Design Skill)',
     date:'March 2026',
-    description:'1584×396px LinkedIn profile banner built with Python + Pillow using the canvas-design skill philosophy "Signal Convergence." Two overlapping arcs — amber (finance expertise) and violet (AI strategy) — meet at a warm luminous center point, visualizing the bridge between two fields without technical imagery. BigShoulders Bold for name, thin geometric sans for tagline. Corner labels: "Finance / Expertise" (amber, bottom-left) and "AI Enablement / & Strategy" (violet, bottom-right). Dark #0D0D1A background, human-centered, no neural network diagrams or model parameters.',
+    description:'1584×396px LinkedIn profile banner built with Python + Pillow using the canvas-design skill philosophy "Signal Convergence." Two overlapping arcs — amber (finance expertise) and violet (AI strategy) — meet at a warm luminous center point, visualizing the bridge between two fields without technical imagery. BigShoulders Bold for name, thin geometric sans for tagline. Corner labels: "Finance / Expertise" (amber, bottom-left) and "AI Enablement / & Strategy" (violet, bottom-right). Dark #14102a background, human-centered, no neural network diagrams or model parameters.',
     grades:{functionality:4,design:4,learning:3,usability:5,innovation:4},
     worked:'The overlapping arcs concept communicates the career pivot visually without words — anyone who glances at the banner understands "two worlds converging." Rejecting the v1 technical design (neural nets, model params) was the right call. The amber/violet palette reads immediately as two distinct disciplines merging.',
     improve:'The arcs could be more dynamic — explore adding a subtle particle trail along the arc paths. Typography hierarchy could be stronger: name slightly larger relative to tagline. Consider a second version with a photographic background (subtle bokeh or texture).',
@@ -2632,7 +2636,7 @@ function growthChart(allProjects){
   const path=pts.map((p,i)=>(i===0?`M${p.x.toFixed(1)},${p.y.toFixed(1)}`:`L${p.x.toFixed(1)},${p.y.toFixed(1)}`)).join(' ');
   const dots=pts.map(p=>{const col=p.v>=4?'#22c55e':p.v>=3?'#f59e0b':'#f87171';return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="5" fill="${col}" stroke="#0d0d1a" stroke-width="2"/><text x="${p.x.toFixed(1)}" y="${(p.y-10).toFixed(1)}" text-anchor="middle" font-size="10" fill="#a0a0c0">${p.v.toFixed(1)}</text>`;}).join('');
   const xLbls=allProjects.map((p,i)=>`<text x="${(pad+i*xStep).toFixed(1)}" y="${h-4}" text-anchor="middle" font-size="9" fill="#6b6b9a">${p.title.substring(0,9)}</text>`).join('');
-  return `<svg width="${w}" height="${h}" style="display:block;margin:0 auto;overflow:visible;"><path d="${path}" fill="none" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 2"/>${dots}${xLbls}</svg>`;
+  return `<svg width="${w}" height="${h}" style="display:block;margin:0 auto;overflow:visible;"><path d="${path}" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="4 2"/>${dots}${xLbls}</svg>`;
 }
 
 function improveTip(key,val){
@@ -2865,7 +2869,7 @@ const CORE_SKILLS = [
   {
     id:'prompt-engineering',
     category:'🤖 AI Tool Use',
-    categoryColor:'#7c3aed',
+    categoryColor:'#a855f7',
     categoryBg:'rgba(124,58,237,.2)',
     title:'Prompt Engineering (Applied)',
     level:'Intermediate',
@@ -3109,7 +3113,7 @@ const CORE_SKILLS = [
 
 // ── Skill category colour map (covers CORE_SKILLS + add-form options) ────────
 const CAT_META = {
-  '🤖 AI Tool Use':             {color:'#a78bfa',dark:'#7c3aed',bg:'rgba(124,58,237,.18)'},
+  '🤖 AI Tool Use':             {color:'#c084fc',dark:'#a855f7',bg:'rgba(124,58,237,.18)'},
   '🛠️ AI-Assisted Building':    {color:'#38bdf8',dark:'#0284c7',bg:'rgba(2,132,199,.18)'},
   '🤝 Human-AI Collaboration':  {color:'#34d399',dark:'#059669',bg:'rgba(5,150,105,.18)'},
   '💻 Technical Literacy':      {color:'#93c5fd',dark:'#1d4ed8',bg:'rgba(29,78,216,.18)'},
@@ -3152,7 +3156,7 @@ function allCategories(){
 // ── TOOLS & APPS CATALOGUE ────────────────────────────────────────────────────
 const TOOLS_CORE = [
   // AI Tools
-  {name:'Claude (Anthropic)',   icon:'🤖', cat:'AI Tools',         color:'#a78bfa', note:'Daily driver — prompting, building, research across all projects'},
+  {name:'Claude (Anthropic)',   icon:'🤖', cat:'AI Tools',         color:'#c084fc', note:'Daily driver — prompting, building, research across all projects'},
   {name:'ChatGPT',              icon:'💬', cat:'AI Tools',         color:'#74c69d', note:'Cross-reference, comparison, alternative perspectives'},
   {name:'Gemini',               icon:'✨', cat:'AI Tools',         color:'#fbbf24', note:'Google AI for additional research cross-checks'},
   // Code & Build
@@ -3160,7 +3164,7 @@ const TOOLS_CORE = [
   {name:'ReportLab',            icon:'📄', cat:'Code & Build',     color:'#f97316', note:'PDF carousel generation — 1080×1080px, all post artwork'},
   {name:'Pillow (PIL)',         icon:'🖼️', cat:'Code & Build',     color:'#38bdf8', note:'Screenshot cropping, image manipulation, banner creation'},
   {name:'HTML / CSS / JS',      icon:'🌐', cat:'Code & Build',     color:'#67e8f9', note:'Built 9 self-contained single-file apps — all offline-first'},
-  {name:'Web Crypto API',       icon:'🔐', cat:'Code & Build',     color:'#a78bfa', note:'SHA-256 client-side password hashing — no server required'},
+  {name:'Web Crypto API',       icon:'🔐', cat:'Code & Build',     color:'#c084fc', note:'SHA-256 client-side password hashing — no server required'},
   {name:'localStorage API',     icon:'💾', cat:'Code & Build',     color:'#93c5fd', note:'Client-side persistence for all apps — zero backend'},
   {name:'Netlify Forms',        icon:'📋', cat:'Code & Build',     color:'#6ee7b7', note:'Serverless form capture — access log, feedback, requests'},
   // Deploy & Ship
@@ -3176,12 +3180,12 @@ const TOOLS_CORE = [
   {name:'SVG (Inline)',         icon:'✏️', cat:'Design',           color:'#fb7185', note:'Custom bridge SVG hero icons across portfolio apps'},
   // Learning Platforms
   {name:'Coursera',             icon:'🎓', cat:'Learning Platforms',color:'#3b82f6', note:'IBM Prompt Engineering, Google certs — all completed'},
-  {name:'Anthropic Learn',      icon:'📚', cat:'Learning Platforms',color:'#a78bfa', note:'Claude 101 certification — 80 XP'},
+  {name:'Anthropic Learn',      icon:'📚', cat:'Learning Platforms',color:'#c084fc', note:'Claude 101 certification — 80 XP'},
   {name:'IBM Skills Network',   icon:'🔷', cat:'Learning Platforms',color:'#1d4ed8', note:'IBM Prompt Engineering Basics — 60 XP'},
 ];
 
 const TOOL_CATS = [
-  {name:'AI Tools',          color:'#a78bfa', bg:'rgba(124,58,237,.18)', icon:'🤖'},
+  {name:'AI Tools',          color:'#c084fc', bg:'rgba(124,58,237,.18)', icon:'🤖'},
   {name:'Code & Build',      color:'#67e8f9', bg:'rgba(6,182,212,.18)',  icon:'💻'},
   {name:'Deploy & Ship',     color:'#34d399', bg:'rgba(52,211,153,.18)', icon:'🚀'},
   {name:'Analytics & Data',  color:'#fbbf24', bg:'rgba(217,119,6,.18)',  icon:'📊'},
@@ -3385,7 +3389,7 @@ function renderSkillsOverview(el){
       stroke-dasharray="${circumference}" stroke-dashoffset="${dashOffset}"
       stroke-linecap="round" transform="rotate(-90 ${svgSize/2} ${svgSize/2})"/>
     <defs><linearGradient id="lvlGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#a78bfa"/>
+      <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#c084fc"/>
     </linearGradient></defs>
     <text x="${svgSize/2}" y="${svgSize/2+6}" text-anchor="middle" font-size="18" fill="white" style="font-style:normal;">${lvlNow.icon}</text>
   </svg>
@@ -3619,7 +3623,7 @@ function logNewSkill(){
 // SKILL GRID TAB
 // ════════════════════════════════════════════════════════════
 const TARGET_ROLES = [
-  {role:'AI Product Manager',color:'#7c3aed',keySkills:['Prompt Engineering','AI Product Dev','Technical Literacy','Human-AI Collab','Project Management','Data Analysis'],hiringNote:'Duke AI PM Cert + portfolio = entry-level ready'},
+  {role:'AI Product Manager',color:'#a855f7',keySkills:['Prompt Engineering','AI Product Dev','Technical Literacy','Human-AI Collab','Project Management','Data Analysis'],hiringNote:'Duke AI PM Cert + portfolio = entry-level ready'},
   {role:'Responsible AI Analyst',color:'#dc2626',keySkills:['AI Ethics','Data Analysis','Risk Frameworks','Research Writing','Governance','Technical Literacy'],hiringNote:'Google Responsible AI + Wharton + audit portfolio'},
   {role:'AI Adoption / Enablement Lead',color:'#059669',keySkills:['Human-AI Collab','Learning Design','Facilitation','Change Mgmt','Prompt Engineering','Communication'],hiringNote:'Headspace JD match — workshop evidence required'},
   {role:'AI Tools Specialist',color:'#0891b2',keySkills:['Prompt Engineering','AI Product Dev','Tool Evaluation','Technical Literacy','Training Design','Data Literacy'],hiringNote:'Blackbaud JD match — tool usage depth matters'},
@@ -3652,7 +3656,7 @@ function renderSkillGrid(){
   const ROLE_FITS=[
     {role:'AI Enablement Lead',icon:'🎓',color:'#34d399',cats:['enablement','ai-literacy','content'],
      why:"Designed her own 18-week AI curriculum and built the tools to deliver it — dashboard, games hub, morning brief."},
-    {role:'AI Product Manager',icon:'🚀',color:'#a78bfa',cats:['product','technical','finance'],
+    {role:'AI Product Manager',icon:'🚀',color:'#c084fc',cats:['product','technical','finance'],
      why:"Full product cycle on GainSmart/GlowSmart — market research, personas, IP strategy, 11-slide launch deck."},
     {role:'Responsible AI Analyst',icon:'⚖️',color:'#f87171',cats:['responsible-ai','finance','mission'],
      why:"7 years model governance + caught 2 live AI hallucinations in her own research + published the lesson."},
@@ -3687,7 +3691,7 @@ function renderSkillGrid(){
       }).filter(r=>r.hits>0).sort((a,b)=>b.hits-a.hits);
 
       let ph='';
-      ph+='<div style="font-size:.78rem;font-weight:800;color:#a78bfa;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.07em;">Based on what you picked — Bianca fits:</div>';
+      ph+='<div style="font-size:.78rem;font-weight:800;color:#c084fc;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.07em;">Based on what you picked — Bianca fits:</div>';
 
       if(!scored.length){
         ph+='<div style="font-size:.78rem;color:#7a7aaa;margin-bottom:.75rem;">No direct role match yet — try selecting a couple more skills.</div>';
@@ -3704,7 +3708,7 @@ function renderSkillGrid(){
       const prompt=encodeURIComponent(
         `I'm evaluating Bianca Kugblenu for a role that values: ${selLabels}.\n\nHere is her background:\n• 7 years in finance (model governance, stress testing, regulatory reporting)\n• Phase 1 of self-directed 18-week AI curriculum — active March 2026\n• Built and deployed 7 AI apps: study dashboard, games hub, morning brief, health tracker, portfolio\n• Caught 2 AI hallucinations in a 13-page research paper and published the lesson as a case study\n• Skills: AI Literacy, Responsible AI, AI Enablement, Product Development, Finance & Data Rigour, Technical Literacy, AI Content Strategy\n• Targeting: AI PM, AI Enablement Lead, Responsible AI Analyst — NYC, $100K+\n\nHow well does Bianca fit a role centred on ${selLabels}? Be specific — where is she strong, where are the gaps, what would you ask her?`
       );
-      ph+=`<a href="https://claude.ai/new?q=${prompt}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.85rem;padding:.6rem .9rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;font-weight:700;font-size:.78rem;border-radius:10px;text-decoration:none;">✦ Ask Claude about this fit →</a>`;
+      ph+=`<a href="https://claude.ai/new?q=${prompt}" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.85rem;padding:.6rem .9rem;background:linear-gradient(135deg,#a855f7,#c084fc);color:#fff;font-weight:700;font-size:.78rem;border-radius:10px;text-decoration:none;">✦ Ask Claude about this fit →</a>`;
       ph+=`<div class="sg-select-hint">Tap more cards to refine · Tap a flipped card to unselect</div>`;
 
       panelEl.innerHTML=ph;
@@ -3758,10 +3762,10 @@ function renderSkillGrid(){
     const avgTarget=Math.round(SKILL_STATUS.reduce((s,x)=>s+x.target,0)/SKILL_STATUS.length);
     const ovDiv=mk('div','');
     ovDiv.style.cssText='background:rgba(124,58,237,.1);border:1px solid rgba(167,139,250,.2);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.25rem;';
-    ovDiv.innerHTML='<div style="font-size:.72rem;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Overall Readiness</div>'
+    ovDiv.innerHTML='<div style="font-size:.72rem;font-weight:700;color:#c084fc;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Overall Readiness</div>'
       +'<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">'
       +'<div style="flex:1;min-width:150px;background:rgba(255,255,255,.07);border-radius:99px;height:12px;overflow:hidden;">'
-      +'<div style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:99px;height:100%;width:'+avgCurrent+'%;transition:width .6s;"></div></div>'
+      +'<div style="background:linear-gradient(90deg,#a855f7,#c084fc);border-radius:99px;height:100%;width:'+avgCurrent+'%;transition:width .6s;"></div></div>'
       +'<span style="font-size:1.3rem;font-weight:900;color:#c4b5fd;">'+avgCurrent+'%</span>'
       +'<span style="font-size:.8rem;color:#7a7aaa;">Target '+avgTarget+'% · +'+Math.round(avgTarget-avgCurrent)+' pts to close</span></div>';
     el.appendChild(ovDiv);
@@ -3840,7 +3844,7 @@ function renderSkillGrid(){
 const PROMPT_LIBRARY = [
   // ── ARCHITECTURE & SYSTEM DESIGN ────────────────────────────────────────────
   {
-    id:'arch-01',cat:'Architecture & System Design',catColor:'#a78bfa',catBg:'rgba(124,58,237,.15)',
+    id:'arch-01',cat:'Architecture & System Design',catColor:'#c084fc',catBg:'rgba(124,58,237,.15)',
     title:'Single-Page App Architecture Review',
     tags:['SPA','localStorage','auth','JS'],
     body:`You are a senior frontend architect reviewing a single-page application built in vanilla HTML + JavaScript. The app uses:
@@ -3858,7 +3862,7 @@ Audit the file for:
 Output a structured report with severity levels (Critical / Warning / Info) and exact line numbers for each finding.`
   },
   {
-    id:'arch-02',cat:'Architecture & System Design',catColor:'#a78bfa',catBg:'rgba(124,58,237,.15)',
+    id:'arch-02',cat:'Architecture & System Design',catColor:'#c084fc',catBg:'rgba(124,58,237,.15)',
     title:'Multi-App Shared Auth Design',
     tags:['auth','localStorage','cross-app','session'],
     body:`I'm building [N] HTML apps deployed to the same Netlify domain. I want users to log in once and be recognised across all apps on that domain.
@@ -3873,7 +3877,7 @@ Design a shared authentication system using only localStorage and vanilla JS tha
 Include: the auth IIFE pattern, the logout function, and a guest-mode visibility function that hides owner-only elements.`
   },
   {
-    id:'arch-03',cat:'Architecture & System Design',catColor:'#a78bfa',catBg:'rgba(124,58,237,.15)',
+    id:'arch-03',cat:'Architecture & System Design',catColor:'#c084fc',catBg:'rgba(124,58,237,.15)',
     title:'Browser History API for SPA Navigation',
     tags:['history','popstate','navigation','back-button'],
     body:`Build a browser-history-aware navigation system for a single-page app that shows and hides sections using display:none/block. Requirements:
@@ -4281,7 +4285,7 @@ function renderPrompts(){
   html+='<div style="margin-bottom:1.2rem;"><div style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:.25rem;">💡 Prompt Library</div>';
   html+='<div style="font-size:.76rem;color:#5a5a8a;line-height:1.6;">Reusable prompt templates built from real build sessions. Copy any prompt, replace the bracketed placeholders, and use directly in Claude, ChatGPT, or Gemini.</div></div>';
   html+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.4rem;" id="prompt-cat-filter">';
-  html+='<button onclick="filterPrompts(null)" id="pcat-all" style="background:#a78bfa;color:#fff;border:none;border-radius:99px;padding:.3rem .75rem;font-size:.7rem;font-weight:700;cursor:pointer;">All ('+PROMPT_LIBRARY.length+')</button>';
+  html+='<button onclick="filterPrompts(null)" id="pcat-all" style="background:#c084fc;color:#fff;border:none;border-radius:99px;padding:.3rem .75rem;font-size:.7rem;font-weight:700;cursor:pointer;">All ('+PROMPT_LIBRARY.length+')</button>';
   cats.forEach((meta,cat)=>{
     const id='pcat-'+cat.replace(/\W+/g,'-');
     html+=`<button onclick="filterPrompts('${cat.replace(/'/g,"\'")}'" id="${id}" style="background:${meta.bg};color:${meta.color};border:1px solid ${meta.color}30;border-radius:99px;padding:.3rem .75rem;font-size:.7rem;font-weight:600;cursor:pointer;">${cat} (${meta.prompts.length})</button>`;
@@ -4297,7 +4301,7 @@ function renderPrompts(){
       html+=`<div style="flex:1;min-width:0;"><div style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:.3rem;">${p.title}</div>`;
       html+=`<div style="display:flex;flex-wrap:wrap;gap:4px;">${p.tags.map(t=>`<span style="font-size:.6rem;background:${meta.bg};color:${meta.color};border:1px solid ${meta.color}25;border-radius:99px;padding:1px 7px;font-weight:600;">${t}</span>`).join('')}</div></div>`;
       html+=`<div style="display:flex;gap:5px;flex-shrink:0;align-items:flex-start;margin-top:2px;">`;
-      html+=`<button id="pbtn-${p.id}" onclick="togglePrompt('${p.id}')" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);border-radius:99px;padding:.28rem .65rem;font-size:.68rem;font-weight:700;cursor:pointer;white-space:nowrap;">▸ View Prompt</button>`;
+      html+=`<button id="pbtn-${p.id}" onclick="togglePrompt('${p.id}')" style="background:rgba(167,139,250,.1);color:#c084fc;border:1px solid rgba(167,139,250,.2);border-radius:99px;padding:.28rem .65rem;font-size:.68rem;font-weight:700;cursor:pointer;white-space:nowrap;">▸ View Prompt</button>`;
       html+=`<button id="pcopy-${p.id}" onclick="copyPrompt('${p.id}')" style="background:rgba(255,255,255,.05);color:#c0c0e0;border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:.28rem .65rem;font-size:.68rem;font-weight:700;cursor:pointer;">📋 Copy</button>`;
       html+=`</div></div>`;
       html+=`<div id="pb-${p.id}" style="display:none;margin-top:.85rem;"><pre style="font-size:.72rem;color:#c4b5fd;line-height:1.65;white-space:pre-wrap;word-break:break-word;background:rgba(124,58,237,.07);border:1px solid rgba(167,139,250,.15);border-radius:10px;padding:.85rem .9rem;margin:0;font-family:'Segoe UI',system-ui,sans-serif;">${p.body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre></div>`;
@@ -4315,7 +4319,7 @@ function filterPrompts(cat){
   if(!cat){
     sections.forEach(s=>s.style.display='block');
     const allBtn=document.getElementById('pcat-all');
-    if(allBtn) allBtn.style.background='#a78bfa';
+    if(allBtn) allBtn.style.background='#c084fc';
   } else {
     sections.forEach(s=>{ s.style.display = s.dataset.cat===cat?'block':'none'; });
   }
@@ -4326,7 +4330,7 @@ function filterPrompts(cat){
 // RESOURCES TAB
 // ════════════════════════════════════════════════════════════
 const RESOURCES = [
-  {cat:'🎓 Learning Platforms',color:'#7c3aed',items:[
+  {cat:'🎓 Learning Platforms',color:'#a855f7',items:[
     {name:'Coursera',url:'https://coursera.org',note:'Home of all your certs — Google, IBM, Duke, Wharton, DeepLearning.AI.',tag:'FREE'},
     {name:'DeepLearning.AI',url:'https://deeplearning.ai',note:'Andrew Ng\'s platform. AI for Everyone + Generative AI for Everyone are here. Short, dense, rigorous.',tag:'FREE'},
     {name:'Anthropic Skilljar',url:'https://anthropic.skilljar.com',note:'Claude 101 ✅ and Claude 102 are here. Anthropic\'s official learning path.',tag:'FREE'},
@@ -4412,10 +4416,10 @@ const SEED_LESSONS = [
 ];
 const XP_MILESTONES = [
   {xp:0,label:'Starting Point',note:'Clean slate. Finance background. Curiosity.',color:'#6b7280'},
-  {xp:80,label:'Claude 101 ✅',note:'First AI certification earned. Foundation confirmed.',color:'#7c3aed'},
+  {xp:80,label:'Claude 101 ✅',note:'First AI certification earned. Foundation confirmed.',color:'#a855f7'},
   {xp:140,label:'IBM Prompt Engineering ✅',note:'Two certs in 30 days. Momentum established.',color:'#0891b2'},
   {xp:300,label:'AI Literate 📚',note:'Level threshold — building toward practitioner.',color:'#059669'},
-  {xp:500,label:'Phase 1 Complete',note:'5 certs. First interleaved block done.',color:'#7c3aed'},
+  {xp:500,label:'Phase 1 Complete',note:'5 certs. First interleaved block done.',color:'#a855f7'},
   {xp:700,label:'AI Practitioner 🛠️',note:'Real tools. Real projects. Real evidence.',color:'#0891b2'},
   {xp:1000,label:'Phase 2 Complete',note:'Data skills unlocked. IBM + Google certs in hand.',color:'#0891b2'},
   {xp:1200,label:'AI Analyst 📊',note:'Can evaluate, not just use, AI systems.',color:'#059669'},
@@ -4438,13 +4442,13 @@ function renderGrowth(){
   el.appendChild(xpLabel);
   const timeline=mk('div','');
   timeline.style.cssText='position:relative;padding-left:1.75rem;margin-bottom:1.75rem;';
-  timeline.innerHTML='<div style="position:absolute;left:.6rem;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#7c3aed,#0891b2,#059669,#be185d,#d97706);opacity:.3;border-radius:2px;"></div>';
+  timeline.innerHTML='<div style="position:absolute;left:.6rem;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#a855f7,#0891b2,#059669,#be185d,#d97706);opacity:.3;border-radius:2px;"></div>';
   XP_MILESTONES.forEach(m=>{
     const reached=currentXP>=m.xp;
     const isCurrent=currentXP>=m.xp && (XP_MILESTONES.find(n=>n.xp>m.xp)?.xp??9999)>currentXP;
     const row=mk('div','');
     row.style.cssText='display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.75rem;position:relative;';
-    row.innerHTML='<div style="position:absolute;left:-1.15rem;top:.2rem;width:12px;height:12px;border-radius:50%;background:'+(reached?m.color:'#2e2e55')+';border:2px solid '+(reached?m.color:'#3a3a60')+';box-shadow:'+(isCurrent?'0 0 0 4px '+m.color+'33':'none')+';flex-shrink:0;"></div>'
+    row.innerHTML='<div style="position:absolute;left:-1.15rem;top:.2rem;width:12px;height:12px;border-radius:50%;background:'+(reached?m.color:'#5a4a80')+';border:2px solid '+(reached?m.color:'#3a3a60')+';box-shadow:'+(isCurrent?'0 0 0 4px '+m.color+'33':'none')+';flex-shrink:0;"></div>'
       +'<div style="opacity:'+(reached?1:.45)+';"><div style="display:flex;align-items:center;gap:.5rem;margin-bottom:2px;">'
       +'<span style="font-weight:700;font-size:.9rem;color:'+(reached?'#dde0f0':'#6a6a9a')+'">'+m.label+'</span>'
       +'<span style="font-size:.72rem;font-weight:700;background:rgba(255,255,255,.06);color:#5a5a8a;padding:.1rem .4rem;border-radius:99px;">'+m.xp+' XP</span>'
@@ -4465,7 +4469,7 @@ function renderGrowth(){
   const statsCard=mk('div','card');
   statsCard.style.marginBottom='.75rem';
   statsCard.innerHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;">'
-    +'<div style="flex:1;min-width:80px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);border-radius:12px;padding:.7rem .9rem;"><div style="font-size:1.5rem;font-weight:900;color:#c4b5fd;">'+studyHrs+'h</div><div style="font-size:.72rem;color:#8a7ab8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">📚 Study</div></div>'
+    +'<div style="flex:1;min-width:80px;background:rgba(168,85,247,.12);border:1px solid rgba(124,58,237,.25);border-radius:12px;padding:.7rem .9rem;"><div style="font-size:1.5rem;font-weight:900;color:#c4b5fd;">'+studyHrs+'h</div><div style="font-size:.72rem;color:#8a7ab8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">📚 Study</div></div>'
     +'<div style="flex:1;min-width:80px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:12px;padding:.7rem .9rem;"><div style="font-size:1.5rem;font-weight:900;color:#38bdf8;">'+practiceHrs+'h</div><div style="font-size:.72rem;color:#4a9ab8;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">⚡ AI Practice</div></div>'
     +'<div style="flex:1;min-width:80px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.7rem .9rem;"><div style="font-size:1.5rem;font-weight:900;color:#dde0f0;">'+totalHrs+'h</div><div style="font-size:.72rem;color:#7a7aaa;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">🕐 Total</div></div>'
     +'</div>';
@@ -4480,7 +4484,7 @@ function renderGrowth(){
     const suggCard=mk('div','card');
     suggCard.style.cssText='border:1px solid rgba(251,191,36,.2);background:rgba(45,30,0,.7);margin-bottom:.75rem;';
     suggCard.innerHTML='<div style="font-size:.82rem;color:#fcd34d;font-weight:600;margin-bottom:.85rem;">You\'ve completed work that doesn\'t appear in your hours log yet. Quick-log it now to keep your record accurate.</div>';
-    const PHASE_COLS=['#a78bfa','#38bdf8','#34d399','#f472b6','#fbbf24'];
+    const PHASE_COLS=['#c084fc','#38bdf8','#34d399','#f472b6','#fbbf24'];
     suggestions.forEach(s=>{
       const row=mk('div','');
       row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;';
@@ -4557,7 +4561,7 @@ function renderGrowth(){
       const sr=mk('div','');
       sr.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.83rem;gap:.5rem;';
       sr.innerHTML='<span style="font-size:.62rem;font-weight:800;padding:.15rem .4rem;border-radius:99px;background:'+(isStudy?'rgba(124,58,237,.2)':'rgba(56,189,248,.15)')+';color:'+(isStudy?'#c4b5fd':'#38bdf8')+';flex-shrink:0;">'+(isStudy?'STUDY':'AI PRACTICE')+'</span>'
-        +(isPlatform?'<span style="font-size:.62rem;background:rgba(168,139,250,.15);color:#a78bfa;padding:.1rem .35rem;border-radius:99px;flex-shrink:0;">🤖</span>':'')
+        +(isPlatform?'<span style="font-size:.62rem;background:rgba(168,139,250,.15);color:#c084fc;padding:.1rem .35rem;border-radius:99px;flex-shrink:0;">🤖</span>':'')
         +'<span style="color:#a0a0c0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+s.activity+'</span>'
         +'<span style="color:'+(isStudy?'#c4b5fd':'#38bdf8')+';font-weight:700;flex-shrink:0;">'+s.hrs+'h</span>';
       sessDiv.appendChild(sr);
@@ -4582,7 +4586,7 @@ function renderGrowth(){
   const allLessons=[...lsGet('b_lessons',[]).slice().reverse(),...SEED_LESSONS];
   allLessons.forEach(l=>{
     const card=mk('div','');
-    card.style.cssText='background:rgba(18,18,42,.85);border:1px solid rgba(255,255,255,.07);border-left:3px solid #7c3aed;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.6rem;';
+    card.style.cssText='background:rgba(18,18,42,.85);border:1px solid rgba(255,255,255,.07);border-left:3px solid #a855f7;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:.6rem;';
     card.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem;flex-wrap:wrap;gap:.3rem;">'
       +'<span style="font-size:.7rem;font-weight:700;background:rgba(124,58,237,.2);color:#c4b5fd;padding:.15rem .5rem;border-radius:99px;">'+l.category+'</span>'
       +'<span style="font-size:.72rem;color:#5a5a8a;">'+l.date+'</span>'
@@ -4711,7 +4715,7 @@ function renderTasks(){
     <div class="tp-stat"><div class="tp-n" style="color:#fcd34d">${waiting.length}</div><div class="tp-l">Waiting</div></div>
     <div class="tp-stat"><div class="tp-n" style="color:#86efac">${done.length}</div><div class="tp-l">Done</div></div>
     <div class="tasks-bar-wrap">
-      <div class="tasks-bar-label"><span>Today's progress</span><span style="color:#a78bfa;font-weight:700">${pct}%</span></div>
+      <div class="tasks-bar-label"><span>Today's progress</span><span style="color:#c084fc;font-weight:700">${pct}%</span></div>
       <div class="tasks-bar-track"><div class="tasks-bar-fill" style="width:${pct}%"></div></div>
     </div>`;
   el.appendChild(prog);
@@ -4780,7 +4784,7 @@ function renderTasks(){
       addRow.innerHTML = `
         <input class="task-add-input" id="${inputId}" type="text" placeholder="Add to ${section}… (or tap 🎤)" onkeydown="if(event.key==='Enter')tasksAdd('${section}')"/>
         <button class="task-add-btn" onclick="tasksAdd('${section}')">+ Add</button>
-        <button type="button" title="Voice input" onclick="dashVoice('${inputId}')" style="background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25);border-radius:9px;padding:.6rem .65rem;color:#a78bfa;cursor:pointer;font-size:.85rem;flex-shrink:0;transition:all .18s;" id="vbtn-${inputId}">🎤</button>`;
+        <button type="button" title="Voice input" onclick="dashVoice('${inputId}')" style="background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25);border-radius:9px;padding:.6rem .65rem;color:#c084fc;cursor:pointer;font-size:.85rem;flex-shrink:0;transition:all .18s;" id="vbtn-${inputId}">🎤</button>`;
       wrap.appendChild(addRow);
     }
 
@@ -4813,12 +4817,12 @@ function dashVoice(inputId){
   };
   _dvRec.onend=()=>{
     _dvActive=false;
-    if(btn){btn.textContent='🎤';btn.style.color='#a78bfa';}
+    if(btn){btn.textContent='🎤';btn.style.color='#c084fc';}
     if(inp) inp.placeholder='Add task…';
   };
   _dvRec.onerror=()=>{
     _dvActive=false;
-    if(btn){btn.textContent='🎤';btn.style.color='#a78bfa';}
+    if(btn){btn.textContent='🎤';btn.style.color='#c084fc';}
   };
   _dvRec.start();
 }
@@ -5269,8 +5273,31 @@ setTabGroup(getTabGroup(_startTab), true);
 switchTab(_startTab, false);
 // Init tab fades after render
 setTimeout(updateTabFades, 100);
+
+// ── SMART SUITE SYNC ──
+var SYNC_KEY = 'smart_suite_sync';
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { var d = readSync(); var s = d.study || {}; Object.assign(s, data); d.study = s; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({ app: 'study', type: eventType, data: data, ts: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
+function refreshSuiteSync() {
+  var completedCerts = typeof CERTS !== 'undefined' ? CERTS.filter(function(c) { return c.done; }).length : 0;
+  var totalXP = typeof xpTotal === 'function' ? xpTotal() : 0;
+  writeSync({
+    completedCerts: completedCerts,
+    totalXP: totalXP,
+    lastDate: new Date().toISOString().split('T')[0]
+  });
+}
+refreshSuiteSync();
 </script>
-<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#c084fc;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
 <script>
 document.addEventListener('keydown',function(e){
   if(e.key!=='Enter') return;

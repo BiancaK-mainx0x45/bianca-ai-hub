@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="quill">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%2328140A'/%3E%3Cpath d='M60 100 Q60 78 58 58 Q57 42 60 18' fill='none' stroke='%237A4A18' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M60 18 Q82 24 92 40 Q100 56 90 74 Q80 90 62 104 Q60 88 58 58 Q57 42 60 18 Z' fill='%23C8782A'/%3E%3Cpath d='M60 18 Q78 28 84 46 Q88 60 78 76' fill='none' stroke='%23E8A840' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M60 18 Q38 26 30 46 Q24 62 36 80 Q46 94 60 104 Q60 88 58 58 Q57 42 60 18 Z' fill='%23A86020'/%3E%3Cpath d='M60 18 Q57 10 60 6 Q63 10 60 18' fill='%23F0C860' opacity='0.8'/%3E%3Cpath d='M60 104 L54 116 L60 112 L66 116 L60 104 Z' fill='%23F0D898'/%3E%3C/svg%3E">
+<title>quill</title>
+<meta name="apple-mobile-web-app-title" content="quill">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%2328140A'/%3E%3Cpath d='M60 100 Q60 78 58 58 Q57 42 60 18' fill='none' stroke='%237A4A18' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M60 18 Q82 24 92 40 Q100 56 90 74 Q80 90 62 104 Q60 88 58 58 Q57 42 60 18 Z' fill='%23C8782A'/%3E%3Cpath d='M60 18 Q78 28 84 46 Q88 60 78 76' fill='none' stroke='%23E8A840' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M60 18 Q38 26 30 46 Q24 62 36 80 Q46 94 60 104 Q60 88 58 58 Q57 42 60 18 Z' fill='%23A86020'/%3E%3Cpath d='M60 18 Q57 10 60 6 Q63 10 60 18' fill='%23F0C860' opacity='0.8'/%3E%3Cpath d='M60 104 L54 116 L60 112 L66 116 L60 104 Z' fill='%23F0D898'/%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/json,{}">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   QUILL. — Merged Design System
+   Palette: Aged ivory body, sepia ink, dark mahogany header
+   Typography: Cormorant Garamond (serif soul) + DM Sans (body)
+═══════════════════════════════════════════ */
+:root{
+  --bg:#F0E6CE;
+  --card:#EAD8B0;
+  --cardborder:#CEB888;
+  --inner:#E2CFA0;
+  --divider:#D4C098;
+  --hdr:#28140A;
+  --hdrborder:#381C0C;
+  --hdrfaint:#1E0E06;
+  --text:#1A0C04;
+  --muted:#6A4020;
+  --dim:#9A7048;
+  --faint:#B89860;
+  --gold:#C8902A;
+  --goldlt:#E0A840;
+  --orange:#E07020;
+  --green:#5A8A40;
+  --blue:#3A6898;
+  --purple:#6A4898;
+  --rose:#A84860;
+  --teal:#3A7870;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--hdr);}
+body{font-family:'DM Sans','Segoe UI',sans-serif;color:var(--text);}
+.app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative;}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+.scroll{flex:1;overflow-y:auto;overflow-x:clip;padding:14px;}
+.scroll::-webkit-scrollbar{width:0;}
+
+/* HEADER */
+.hdr{background:var(--hdr);padding:18px 18px 14px;flex-shrink:0;border-bottom:1px solid var(--hdrborder);}
+.hdr-row{display:flex;justify-content:space-between;align-items:baseline;}
+.logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;font-weight:700;color:#F0D898;letter-spacing:-1px;font-style:italic;line-height:1;}
+.logo span{color:var(--orange);}
+.logo-sub{font-size:10px;color:#A07848;margin-top:2px;font-family:'DM Sans',sans-serif;letter-spacing:0.3px;}
+.hdr-right{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:#7A4820;font-style:italic;}
+.chips-row{display:flex;gap:6px;margin-top:12px;}
+.chip{flex:1;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);border-radius:7px;padding:8px 7px;}
+.chip-l{font-size:9px;color:#D4B888;margin-bottom:2px;font-family:'DM Sans',sans-serif;}
+.chip-v{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:700;color:#F0D898;line-height:1;}
+
+/* NAV */
+.nav{display:flex;background:var(--hdr);border-top:1px solid var(--hdrborder);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nb{flex:none;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;background:none;border:none;border-top:2px solid transparent;min-width:52px;}
+.nb.on{border-top-color:var(--orange);}
+.nb-l{font-size:11px;color:#C8A878;font-weight:500;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.nb.on .nb-l{color:var(--orange);}
+
+/* SECTION TITLES */
+.sec{font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;font-weight:700;color:var(--text);font-style:italic;margin-bottom:10px;margin-top:4px;}
+.sec-small{font-size:9px;color:var(--dim);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-family:'DM Sans',sans-serif;}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;padding:13px 14px;border:1px solid var(--cardborder);margin-bottom:10px;}
+.card-accent{background:var(--card);border-radius:12px;padding:13px 14px;border:1px solid var(--cardborder);border-left:3px solid var(--orange);margin-bottom:10px;}
+.dk{background:var(--hdr);border-radius:12px;padding:13px 14px;border:1px solid var(--hdrborder);margin-bottom:10px;}
+
+/* SHELF */
+.shelf{background:#0C0502;border-radius:0;padding:22px 16px 16px;border-top:12px solid #1E0C04;border-bottom:10px solid #1E0C04;margin-bottom:16px;margin-left:-14px;margin-right:-14px;width:calc(100% + 28px);}
+.shelf-lbl{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:#C8A878;letter-spacing:3px;text-transform:uppercase;font-style:italic;margin-bottom:18px;text-align:center;}
+.spines{display:flex;gap:10px;align-items:flex-end;justify-content:center;perspective:600px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.spines::-webkit-scrollbar{display:none;}
+.spine{cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;flex-shrink:0;transform-style:preserve-3d;}
+.spine:hover{transform:translateY(-8px) rotateY(-4deg);z-index:2;}
+.spine-inner{border-radius:3px 6px 6px 3px;overflow:hidden;box-shadow:3px 3px 8px rgba(0,0,0,0.5),-1px 0 2px rgba(0,0,0,0.3);border-left:3px solid rgba(0,0,0,0.25);position:relative;}
+.spine-inner::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,0.12) 0%,transparent 40%,transparent 80%,rgba(0,0,0,0.15) 100%);pointer-events:none;border-radius:3px 6px 6px 3px;}
+.spine-inner img{display:block;width:100%;height:100%;object-fit:cover;border-radius:3px 6px 6px 3px;}
+.spine-pct{position:absolute;bottom:4px;right:4px;font-size:11px;font-weight:700;background:rgba(200,144,42,0.92);color:#fff;padding:2px 5px;border-radius:3px;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
+
+/* PROGRESS BAR */
+.pbar{height:4px;background:var(--divider);border-radius:99px;overflow:hidden;margin:8px 0 3px;}
+.pfill{height:100%;border-radius:99px;transition:width 0.4s;}
+
+/* BOOK CARD */
+.book-row{display:flex;gap:12px;align-items:flex-start;}
+.bcover{width:54px;height:76px;border-radius:3px 6px 6px 3px;overflow:hidden;flex-shrink:0;border:1px solid var(--cardborder);}
+.bcover img{width:100%;height:100%;object-fit:cover;}
+.bcover-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.btitle{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;font-weight:700;color:var(--text);font-style:italic;line-height:1.2;}
+.bauthor{font-size:11px;color:var(--muted);margin-top:2px;}
+.bmeta{font-size:10px;color:var(--dim);margin-top:2px;}
+.bppd{font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:700;color:var(--orange);line-height:1;}
+.bppd-sub{font-size:10px;color:var(--muted);}
+
+/* STATUS PILLS */
+.spill{display:inline-block;font-size:9px;font-weight:500;padding:2px 8px;border-radius:99px;margin-top:4px;}
+.s-reading{background:#1A3A10;color:#90D870;}
+.s-tbr{background:#0E2A4A;color:#70B0E8;}
+.s-done{background:#2A1A00;color:#E8C070;}
+.s-dnf{background:#3A1010;color:#E87070;}
+.s-paused{background:#2A1A38;color:#C090E8;}
+
+/* ENTRY TYPES */
+.etype-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.etype{padding:5px 10px;border-radius:99px;font-size:11px;cursor:pointer;border:1px solid var(--cardborder);background:var(--inner);color:var(--muted);}
+.etype.on{border-color:var(--orange);background:rgba(224,112,32,0.12);color:var(--orange);}
+
+/* JOURNAL ENTRIES */
+.jentry{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--cardborder);border-left:3px solid var(--orange);position:relative;}
+.jentry-date{font-family:'Cormorant Garamond',Georgia,serif;font-size:11px;color:var(--dim);font-style:italic;margin-bottom:4px;}
+.jentry-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.jentry-body{font-size:12px;color:var(--muted);line-height:1.7;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif;}
+.jentry-book{font-size:10px;color:var(--dim);margin-top:5px;}
+.jtype-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;}
+
+/* VOCAB */
+.vword{font-family:'Cormorant Garamond',Georgia,serif;font-size:22px;font-weight:700;color:var(--text);font-style:italic;}
+.vdef{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px;}
+.vsrc{font-size:10px;color:var(--dim);margin-top:4px;font-style:italic;}
+
+/* THEME TAGS */
+.theme-tag{display:inline-block;font-size:10px;font-weight:500;padding:3px 9px;border-radius:99px;margin:2px 3px 2px 0;}
+.tt-active{background:rgba(106,72,152,0.15);border:1px solid rgba(106,72,152,0.4);color:var(--purple);}
+.tt-inactive{background:var(--inner);border:1px solid var(--divider);color:var(--dim);}
+
+/* INPUTS */
+.inp{width:100%;background:var(--inner);border:1px solid var(--cardborder);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);margin-bottom:8px;font-family:'DM Sans',sans-serif;}
+.inp::placeholder{color:var(--faint);}
+textarea.inp{min-height:80px;resize:none;}
+select.inp{background:var(--inner);color:var(--text);}
+select.inp option{background:var(--bg);}
+
+/* BUTTONS */
+.btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:11px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;transition:opacity 0.1s;margin-bottom:8px;}
+.btn:active{opacity:0.85;}
+.btn-outline{background:transparent;color:var(--orange);border:1.5px solid var(--orange);border-radius:11px;padding:9px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-sm{background:var(--inner);color:var(--muted);border:1px solid var(--cardborder);border-radius:7px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-sm.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+
+/* DISCOVER */
+.disc-card{background:var(--card);border-radius:12px;padding:13px 14px;border:1px solid var(--cardborder);margin-bottom:8px;}
+.disc-label{font-size:9px;color:var(--orange);font-weight:500;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px;font-family:'DM Sans',sans-serif;}
+.disc-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:4px;}
+.disc-body{font-size:11px;color:var(--muted);line-height:1.6;}
+.conn-card{background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--cardborder);margin-bottom:7px;}
+.conn-line{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:var(--text);line-height:1.6;font-style:italic;}
+.conn-books{font-size:10px;color:var(--gold);margin-top:3px;font-family:'DM Sans',sans-serif;}
+
+/* GAMES */
+.game-card{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--cardborder);margin-bottom:10px;cursor:pointer;transition:border-color 0.12s;}
+.game-card:hover{border-color:var(--orange);}
+.game-icon{font-size:26px;margin-bottom:8px;display:block;}
+.game-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-weight:700;color:var(--text);font-style:italic;margin-bottom:3px;}
+.game-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.game-xp{font-size:10px;color:var(--gold);font-weight:500;margin-top:6px;}
+.game-area{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--cardborder);margin-bottom:12px;}
+.game-q{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:14px;font-style:italic;}
+.game-opts{display:flex;flex-direction:column;gap:7px;}
+.game-opt{background:var(--inner);border:1px solid var(--cardborder);border-radius:9px;padding:10px 13px;cursor:pointer;font-size:12px;color:var(--text);text-align:left;font-family:'DM Sans',sans-serif;transition:all 0.12s;}
+.game-opt:hover{border-color:var(--orange);}
+.game-opt.correct{background:#1A3A10;border-color:#5A8A40;color:#90D870;}
+.game-opt.wrong{background:#3A1010;border-color:#A84040;color:#E87070;}
+.xp-pill{font-size:10px;color:var(--purple);font-weight:500;background:rgba(106,72,152,0.12);padding:3px 9px;border-radius:99px;border:1px solid rgba(106,72,152,0.25);}
+.level-row{display:flex;align-items:center;gap:10px;}
+.level-num{font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-weight:700;color:var(--gold);}
+
+/* COLLAPSIBLE PILLS */
+.cpill{border-radius:12px;border:1px solid var(--cardborder);margin-bottom:10px;overflow:hidden;}
+.cpill-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;background:var(--card);}
+.cpill-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-weight:700;color:var(--text);font-style:italic;}
+.cpill-icon{font-size:16px;margin-right:8px;}
+.cpill-arrow{font-size:11px;color:var(--muted);transition:transform 0.2s;}
+.cpill.open .cpill-arrow{transform:rotate(180deg);}
+.cpill-body{display:none;padding:0 14px 12px;background:var(--card);}
+.cpill.open .cpill-body{display:block;}
+.lbl-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--divider);}
+.lbl-row:last-child{border-bottom:none;}
+.lr-l{font-size:12px;color:var(--muted);}
+.lr-v{font-size:12px;font-weight:500;color:var(--text);}
+
+/* THINK PIECES */
+.tp-card{background:var(--card);border-radius:12px;padding:13px 14px;border:1px solid var(--cardborder);margin-bottom:8px;}
+.tp-cat{font-size:9px;color:var(--teal);font-weight:500;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;font-family:'DM Sans',sans-serif;}
+.tp-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4;font-style:italic;}
+.tp-preview{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px;}
+.tp-body-full{font-size:12px;color:var(--muted);line-height:1.7;margin-top:8px;padding-top:8px;border-top:1px solid var(--divider);display:none;}
+.tts-btn{background:var(--inner);border:1px solid var(--cardborder);border-radius:7px;padding:5px 11px;font-size:11px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:5px;}
+.tts-btn.playing{border-color:var(--teal);color:var(--teal);}
+.wref{background:var(--card);border-radius:11px;padding:11px 13px;border:1px solid var(--cardborder);margin-bottom:7px;}
+.wref-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;font-weight:700;color:var(--text);font-style:italic;margin-bottom:3px;}
+.wref-body{font-size:11px;color:var(--muted);line-height:1.6;}
+.filter-row{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px;padding-bottom:2px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fp{padding:5px 11px;border-radius:99px;font-size:11px;cursor:pointer;border:1px solid var(--cardborder);background:var(--inner);color:var(--muted);white-space:nowrap;}
+.fp.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+.quick-rule{font-size:12px;color:var(--muted);line-height:1.7;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif;padding:8px 0;border-bottom:1px solid var(--divider);}
+.quick-rule:last-child{border-bottom:none;}
+.quick-num{font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;font-weight:700;color:var(--gold);margin-right:6px;}
+
+/* TIMER */
+.timer-big{font-family:'Cormorant Garamond',Georgia,serif;font-size:56px;font-weight:700;color:#F0D898;line-height:1;letter-spacing:2px;text-align:center;}
+.timer-est{font-size:11px;color:#5A3010;text-align:center;margin-top:4px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(26,12,4,0.7);z-index:100;align-items:flex-end;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--bg);border-radius:20px 20px 0 0;padding:18px 16px 24px;width:100%;border:1px solid var(--cardborder);max-height:88vh;overflow-y:auto;}
+.modal-title{font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;font-weight:700;color:var(--text);font-style:italic;margin-bottom:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--hdr);color:#F0D898;padding:8px 18px;border-radius:99px;font-size:12px;font-family:'DM Sans',sans-serif;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;border:1px solid var(--hdrborder);}
+.toast.show{opacity:1;}
+
+/* BURST */
+@keyframes burst{0%{opacity:1;transform:scale(0.5);}60%{opacity:1;transform:scale(1.5);}100%{opacity:0;transform:scale(2);}}
+.burst-el{position:fixed;pointer-events:none;font-size:22px;animation:burst 0.75s ease forwards;z-index:999;}
+
+/* BACK BUTTON */
+.back-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#C8A878;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:10;}
+
+/* ── SPLASH ── */
+#splash{position:fixed;inset:0;background:var(--hdr);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#splash-icon{opacity:0;transform:scale(0.7) translateY(10px);animation:splashIconIn 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;}
+#splash-logo{opacity:0;transform:translateY(18px);animation:splashNameIn 0.6s ease 0.9s forwards;font-family:'Cormorant Garamond',Georgia,serif;font-size:46px;font-weight:700;font-style:italic;color:#F0D898;letter-spacing:-1px;line-height:1;}
+#splash-logo span{color:#E07020;}
+#splash-bar{opacity:0;animation:splashSubIn 0.5s ease 1.3s forwards;width:36px;height:1px;background:#E07020;}
+#splash-sub{opacity:0;animation:splashSubIn 0.5s ease 1.4s forwards;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#5A3010;font-family:'DM Sans',sans-serif;font-weight:400;}
+@keyframes splashIconIn{to{opacity:1;transform:scale(1) translateY(0);}}
+@keyframes splashNameIn{to{opacity:1;transform:translateY(0);}}
+@keyframes splashSubIn{to{opacity:1;}}
+@keyframes splashFadeOut{to{opacity:0;pointer-events:none;}}
+#splash.hiding{animation:splashFadeOut 0.5s ease forwards;}
+
+</style>
+</head>
+<body>
+<!-- SPLASH -->
+<div id="splash">
+  <div id="splash-icon" style="font-size:64px;line-height:1;">🪶</div>
+  <div id="splash-logo">quill</div>
+  <div id="splash-bar"></div>
+  <div id="splash-sub">Library, journal, reading games</div>
+</div>
+
+<div class="app" id="app">
+
+<!-- SHELF -->
+<div id="s-shelf" class="screen active">
+<div class="hdr" style="position:relative;">
+  <button class="back-btn" onclick="goBack()" title="Back to hub">&#8592;</button>
+  <div class="hdr-row">
+    <div style="display:flex;align-items:center;gap:10px;"><a href="./index.html" style="text-decoration:none;"><div class="logo">quill <span style="font-style:normal;">🪶</span></div><div class="logo-sub">Library, journal, reading games</div></a></div>
+    <div class="hdr-right" id="streak-hdr"></div>
+  </div>
+  <div class="chips-row">
+    <div class="chip"><div class="chip-l">Reading</div><div class="chip-v" id="c-reading" style="color:#E8D080;">0</div></div>
+    <div class="chip"><div class="chip-l">TBR</div><div class="chip-v" id="c-tbr" style="color:#88B8D8;">0</div></div>
+    <div class="chip"><div class="chip-l">Done</div><div class="chip-v" id="c-done" style="color:#C8902A;">0</div></div>
+    <div class="chip"><div class="chip-l">Pages</div><div class="chip-v" id="c-pages" style="color:#E07020;">0</div></div>
+  </div>
+</div>
+<div class="scroll" id="shelf-scroll"></div>
+</div>
+
+<!-- JOURNAL -->
+<div id="s-journal" class="screen">
+<div class="hdr">
+  <div class="hdr-row"><div class="logo">quill<span>.</span></div><div class="hdr-right" id="j-datestr"></div></div>
+</div>
+<div class="scroll">
+  <div class="sec">Today's entry</div>
+  <div class="card">
+    <div class="etype-row">
+      <div class="etype on" data-type="reflection" onclick="setEtype(this)">&#x1F4AD; Reflection</div>
+      <div class="etype" data-type="quote" onclick="setEtype(this)">&#x1F4AC; Quote</div>
+      <div class="etype" data-type="vocab" onclick="setEtype(this)">&#x1F4D6; Vocab</div>
+      <div class="etype" data-type="theme" onclick="setEtype(this)">&#x1F52E; Theme</div>
+      <div class="etype" data-type="chapter" onclick="setEtype(this)">&#x1F4D1; Chapter</div>
+      <div class="etype" data-type="booksummary" onclick="setEtype(this)">&#x2B50; Summary</div>
+    </div>
+    <select class="inp" id="j-book"><option value="">Select book...</option></select>
+    <input class="inp" id="j-title" placeholder="Entry title...">
+    <textarea class="inp" id="j-body" placeholder="Write here..."></textarea>
+    <div id="j-vocab-extra" style="display:none;">
+      <input class="inp" id="j-word" placeholder="Word">
+      <input class="inp" id="j-def" placeholder="Definition">
+      <input class="inp" id="j-sentence" placeholder="Use in a sentence">
+    </div>
+    <button class="btn" onclick="saveEntry()">Save entry</button>
+  </div>
+  <div class="sec">Themes across your shelf</div>
+  <div class="card" id="themes-tracker"></div>
+  <div class="sec">Vocab bank</div>
+  <div class="card" id="vocab-bank"></div>
+  <div class="sec">All entries</div>
+  <div id="entries-list"></div>
+</div>
+</div>
+
+<!-- DISCOVER -->
+<div id="s-discover" class="screen">
+<div class="hdr">
+  <div class="hdr-row"><div class="logo">quill<span>.</span></div></div>
+  <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:#C8B080;margin-top:3px;">Discover</div>
+</div>
+<div class="scroll">
+  <div class="sec">Cross-shelf connections</div>
+  <div id="connections-list"></div>
+  <div class="sec">Deep dives by book</div>
+  <select class="inp" id="disc-sel" onchange="renderResources()"><option value="">All books</option></select>
+  <div id="resources-list"></div>
+  <div class="sec">Case studies</div>
+  <div id="case-studies-list"></div>
+  <div class="sec">Read next</div>
+  <div id="read-next-list"></div>
+</div>
+</div>
+
+<!-- GAMES -->
+<div id="s-games" class="screen">
+<div class="hdr">
+  <div class="hdr-row">
+    <div class="logo">quill<span>.</span></div>
+    <div class="xp-pill" id="xp-hdr">0 XP</div>
+  </div>
+  <div class="level-row" style="margin-top:10px;">
+    <div class="level-num" id="level-hdr">Level 1</div>
+    <div style="flex:1;"><div class="pbar" style="margin:0;"><div class="pfill" id="xp-bar" style="width:0%;background:var(--purple);"></div></div></div>
+    <div style="font-size:10px;color:var(--dim);" id="xp-next">100 to next</div>
+  </div>
+</div>
+<div class="scroll" id="games-scroll">
+  <div id="game-list"></div>
+  <div id="game-play" style="display:none;"></div>
+</div>
+</div>
+
+<!-- STATS -->
+<div id="s-stats" class="screen">
+<div class="hdr">
+  <div class="hdr-row"><div class="logo">quill<span>.</span></div></div>
+  <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:#C8B080;margin-top:3px;">Stats</div>
+</div>
+<div class="scroll" id="stats-scroll"></div>
+</div>
+
+<!-- PLANNER -->
+<div id="s-planner" class="screen">
+<div class="hdr">
+  <div class="hdr-row"><div class="logo">quill<span>.</span></div></div>
+  <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:#C8B080;margin-top:3px;">Planner</div>
+</div>
+<div class="scroll" id="planner-scroll"></div>
+</div>
+
+<!-- LIBRARY -->
+<div id="s-library" class="screen">
+<div class="hdr">
+  <div class="hdr-row"><div class="logo">quill<span>.</span></div></div>
+  <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-style:italic;color:#C8B080;margin-top:3px;">Library</div>
+</div>
+<div class="scroll">
+  <div class="sec">Think pieces</div>
+  <div class="filter-row" id="tp-filters"></div>
+  <div id="think-pieces"></div>
+  <div class="sec">Writing references</div>
+  <div id="writing-refs"></div>
+  <div class="sec">Rules quickref</div>
+  <div class="card" id="writing-rules"></div>
+</div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nb on" data-screen="s-shelf" onclick="goTo('s-shelf',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="2.5" height="12" rx="1" fill="var(--orange)"/><rect x="6.5" y="5" width="2.5" height="10" rx="1" fill="var(--orange)"/><rect x="11" y="2" width="2.5" height="13" rx="1" fill="var(--orange)"/><rect x="15" y="6" width="2.5" height="9" rx="1" fill="var(--orange)"/><line x1="1" y1="15.5" x2="17" y2="15.5" stroke="var(--orange)" stroke-width="1.5"/></svg>
+    <div class="nb-l">Shelf</div>
+  </button>
+  <button class="nb" data-screen="s-journal" onclick="goTo('s-journal',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="2" width="12" height="14" rx="2" stroke="#A07848" stroke-width="1.4"/><path d="M6 6h6M6 9h6M6 12h4" stroke="#A07848" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <div class="nb-l">Journal</div>
+  </button>
+  <button class="nb" data-screen="s-discover" onclick="goTo('s-discover',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#A07848" stroke-width="1.4"/><path d="M6 12l2-4 4-2-2 4-4 2z" stroke="#A07848" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    <div class="nb-l">Discover</div>
+  </button>
+  <button class="nb" data-screen="s-games" onclick="goTo('s-games',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="3" stroke="#A07848" stroke-width="1.4"/><path d="M6 10h3M7.5 8.5v3M12 10h.5M12 10h-.5" stroke="#A07848" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <div class="nb-l">Games</div>
+  </button>
+  <button class="nb" data-screen="s-stats" onclick="goTo('s-stats',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14V8M7 14V4M11 14V9M15 14V6" stroke="#A07848" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <div class="nb-l">Stats</div>
+  </button>
+  <button class="nb" data-screen="s-planner" onclick="goTo('s-planner',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="13" rx="2" stroke="#A07848" stroke-width="1.4"/><path d="M6 2v2M12 2v2M2 8h14" stroke="#A07848" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <div class="nb-l">Planner</div>
+  </button>
+  <button class="nb" data-screen="s-library" onclick="goTo('s-library',this)">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14V4l6 3 6-3v10l-6-3-6 3z" stroke="#A07848" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div class="nb-l">Library</div>
+  </button>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal-add" onclick="if(event.target===this)closeModal('modal-add')">
+<div class="modal">
+  <div class="modal-title">Add a book</div>
+  <div style="display:flex;gap:7px;">
+    <input class="inp" id="add-title" placeholder="Title *" style="flex:1;margin:0;">
+    <button class="btn-sm" style="margin:0;padding:6px 10px;font-size:11px;white-space:nowrap;" onclick="searchBook()">Find</button>
+  </div>
+  <div id="add-results" style="display:none;max-height:140px;overflow-y:auto;margin-bottom:8px;border:1px solid var(--cardborder);border-radius:8px;background:var(--inner);"></div>
+  <input class="inp" id="add-author" placeholder="Author">
+  <div style="display:flex;gap:7px;">
+    <input class="inp" id="add-pages" type="number" placeholder="Total pages" style="flex:1;">
+    <input class="inp" id="add-curpage" type="number" placeholder="Current page" style="flex:1;">
+  </div>
+  <input class="inp" id="add-isbn" placeholder="ISBN (for cover art)">
+  <div id="add-preview" style="display:none;text-align:center;margin-bottom:8px;"><img id="add-preview-img" style="width:60px;height:86px;object-fit:cover;border-radius:4px;border:1px solid var(--cardborder);"></div>
+  <input class="inp" id="add-deadline" type="date">
+  <select class="inp" id="add-status">
+    <option value="tbr">TBR</option>
+    <option value="reading">Reading</option>
+    <option value="done">Done</option>
+    <option value="dnf">DNF</option>
+    <option value="paused">Paused</option>
+  </select>
+  <div style="display:flex;gap:8px;">
+    <button class="btn-outline" style="flex:1;" onclick="closeModal('modal-add')">Cancel</button>
+    <button class="btn" style="flex:2;margin:0;" onclick="addBook()">Add to shelf</button>
+  </div>
+</div>
+</div>
+
+<div class="modal-bg" id="modal-book" onclick="if(event.target===this)closeModal('modal-book')">
+<div class="modal" id="modal-book-body"></div>
+</div>
+
+<div class="modal-bg" id="modal-timer" onclick="if(event.target===this)closeModal('modal-timer')">
+<div class="modal">
+  <div class="modal-title">Reading timer</div>
+  <select class="inp" id="timer-sel" onchange="timerBookChanged()"><option value="">Select book...</option></select>
+  <div style="background:var(--hdr);border-radius:12px;padding:18px 14px;margin-bottom:12px;border:1px solid var(--hdrborder);">
+    <div class="timer-big" id="t-disp">00:00</div>
+    <div class="timer-est" id="t-est">-- pages estimated</div>
+  </div>
+  <div style="display:flex;gap:7px;margin-bottom:10px;">
+    <button class="btn" style="flex:2;margin:0;" id="t-start" onclick="tStart()">Start</button>
+    <button class="btn-outline" style="flex:1;" onclick="tPause()">Pause</button>
+    <button class="btn-outline" style="flex:1;" onclick="tReset()">Reset</button>
+  </div>
+  <div id="t-post" style="display:none;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:7px;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif;">How many pages did you read?</div>
+    <div style="display:flex;gap:7px;">
+      <input class="inp" type="number" id="t-pages" placeholder="Pages" style="flex:1;margin:0;">
+      <button class="btn" style="flex:1;margin:0;" onclick="logSession()">Log session</button>
+    </div>
+  </div>
+  <button class="btn-outline" style="width:100%;margin-top:8px;" onclick="closeModal('modal-timer')">Close</button>
+</div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// QUILL. — Complete Application Logic
+// ══════════════════════════════════════
+
+// ── MERGED THEMES ──
+var THEMES = ['identity','memory','grief','power','love','freedom','time','belonging',
+  'algorithmic bias','uncertainty','systemic inequality','human connection','critical thinking',
+  'structural truth','personal narrative'];
+
+// ── CONNECTIONS (Quill literary + RC thematic) ──
+var CONNECTIONS = [
+  {line:"Both novels treat silence not as absence but as the loudest possible speech act.",books:["Intermezzo","Normal People"]},
+  {line:"Power and access to language are structurally linked. Those who can name a thing control it.",books:["James","The Secret History"]},
+  {line:"Time becomes elastic when grief distorts perception. Chronology bends around loss.",books:["Orbital","Intermezzo"]},
+  {line:"The outsider's gaze clarifies what insiders have normalised into invisibility.",books:["James","Normal People"]},
+  {line:"Bodies carry what language refuses. Every posture is a confession.",books:["Normal People","Orbital"]},
+  {line:"Beauty and violence are not opposites in these narratives. They are collaborators.",books:["The Secret History","Intermezzo"]},
+  {line:"Home is never simply a place. It is a theory of belonging that keeps revising itself.",books:["James","Orbital"]},
+  {line:"Both argue for human judgment in high-stakes decisions.",books:["Weapons of Math Destruction","Co-Intelligence"]},
+  {line:"Both show how systems harm marginalized communities.",books:["Weapons of Math Destruction","Thick"]},
+  {line:"Both demand structural analysis and moral clarity.",books:["Thick","The Fire Next Time"]},
+  {line:"Both examine behavior and emotional truth.",books:["The Psychology of Money","The White Album"]},
+  {line:"Both value observation and description as ways of knowing.",books:["Co-Intelligence","The White Album"]},
+  {line:"Both trace the roots of injustice systemically.",books:["Weapons of Math Destruction","The Fire Next Time"]},
+];
+
+// ── RESOURCES ──
+var RESOURCES = [
+  {book:"Intermezzo",type:"Essay",title:"On grief's grammar",body:"How loss reshapes syntax. The incomplete sentence as emotional form in contemporary literary fiction."},
+  {book:"Intermezzo",type:"Interview",title:"Sally Rooney on dual consciousness",body:"The author discusses writing two minds simultaneously and the ethical challenges of access."},
+  {book:"Intermezzo",type:"Craft",title:"Chess as narrative metaphor",body:"How Rooney uses chess as both plot engine and structural analogy."},
+  {book:"James",type:"Context",title:"Huckleberry Finn and its discontents",body:"Understanding what Everett is doing requires knowing what Twain did and why it became a problem."},
+  {book:"James",type:"Essay",title:"Double consciousness: Du Bois and the literary tradition",body:"From The Souls of Black Folk to contemporary fiction."},
+  {book:"James",type:"Interview",title:"Percival Everett on rewriting received texts",body:"Why the most powerful literary act is sometimes returning to a canonical text and asking: but what about?"},
+  {book:"Orbital",type:"Science",title:"What astronauts actually see",body:"The physical and psychological reality of viewing Earth from the ISS."},
+  {book:"Orbital",type:"Essay",title:"The lyric novel: genre at its edges",body:"When a novel abandons plot to become something closer to a sustained meditation."},
+  {book:"Normal People",type:"Craft",title:"Rooney's dialogue technique",body:"The absence of quotation marks as a formal argument about the permeability of self and other."},
+  {book:"Normal People",type:"Theory",title:"Class reproduction in Irish fiction",body:"Economic precarity as backdrop and driver in post-Celtic Tiger literary culture."},
+  {book:"The Secret History",type:"Craft",title:"The inverted mystery structure",body:"Tartt tells us who died on page one. How suspense survives when whodunit is already answered."},
+  {book:"The Secret History",type:"Theory",title:"Greek tragedy and modern guilt",body:"The five classical unities and how Tartt uses and violates them."},
+  {book:"Co-Intelligence",type:"Interview",title:"Ethan Mollick on practical AI use",body:"From the author: how AI collaboration actually works day to day."},
+  {book:"Co-Intelligence",type:"Documentary",title:"AlphaGo (2017)",body:"The story of DeepMind's AI beating the world Go champion. Human-AI collaboration in real time."},
+  {book:"Weapons of Math Destruction",type:"Documentary",title:"Coded Bias (2020)",body:"Joy Buolamwini's fight against facial recognition bias. Essential viewing."},
+  {book:"Weapons of Math Destruction",type:"Article",title:"Machine Bias (ProPublica)",body:"The investigation that exposed COMPAS algorithm racial bias in criminal sentencing."},
+  {book:"Thick",type:"Documentary",title:"13th (2016)",body:"Ava DuVernay on mass incarceration and the 13th Amendment. Structural analysis in action."},
+  {book:"Thick",type:"Article",title:"The Case for Reparations (Ta-Nehisi Coates)",body:"The Atlantic longform essay on systemic racism. Thick analysis at its best."},
+  {book:"The Fire Next Time",type:"Documentary",title:"I Am Not Your Negro (2016)",body:"Raoul Peck's documentary built from Baldwin's unfinished manuscript."},
+  {book:"The Psychology of Money",type:"Documentary",title:"Inside Job (2010)",body:"Oscar-winning doc on the 2008 financial crisis. Behavior under uncertainty, on a global scale."},
+  {book:"The White Album",type:"Documentary",title:"Joan Didion: The Center Will Not Hold (2017)",body:"Netflix doc on Didion's life and method. Watch how she observes."},
+];
+
+// ── CASE STUDIES (merged) ──
+var CASE_STUDIES = [
+  {title:"Unreliable narration in Intermezzo",book:"Intermezzo",body:"Rooney employs dual POV to create productive dissonance. Each narrator's blind spots illuminate the other's reality.",tags:["narrative","POV"]},
+  {title:"Silence as grief language",book:"Intermezzo",body:"Extended pauses and incomplete sentences carry more emotional weight than dialogue in key confrontations.",tags:["grief","language"]},
+  {title:"The picaresque updated",book:"James",body:"Everett transforms the classic picaresque structure by centering interiority over episodic adventure.",tags:["structure","genre"]},
+  {title:"Dialect as political act",book:"James",body:"James's shifting register dramatizes double consciousness.",tags:["language","power"]},
+  {title:"Lyric time in Orbital",book:"Orbital",body:"Harvey dissolves chronological time, replacing it with cyclical, orbital time.",tags:["time","structure"]},
+  {title:"Class and speech acts",book:"Normal People",body:"Who speaks first in any scene is never accidental. Rooney uses conversational initiation as a class register.",tags:["class","power"]},
+  {title:"The gothic domesticated",book:"The Secret History",body:"Tartt relocates Gothic conventions into the quotidian. The horror is never supernatural but always social.",tags:["genre","gothic"]},
+  {title:"COMPAS Recidivism Algorithm",book:"Weapons of Math Destruction",body:"Risk assessment tool used in US courts that showed racial bias, perpetuating systemic injustice.",tags:["algorithmic bias","justice"]},
+  {title:"Medical AI Diagnostics",book:"Co-Intelligence",body:"How AI systems trained on limited datasets can miss diagnoses in underrepresented populations.",tags:["AI","healthcare"]},
+  {title:"Ferguson and Police Data",book:"Thick",body:"How data collection itself can become a tool of oppression when the system collecting it is unjust.",tags:["power","data"]},
+  {title:"Investment Decision-Making",book:"The Psychology of Money",body:"How emotional bias affects financial decisions and why understanding behavior matters more than pure models.",tags:["behavior","finance"]},
+];
+
+// ── READ NEXT (merged) ──
+var READ_NEXT = [
+  {title:"The Remains of the Day",author:"Kazuo Ishiguro",why:"Shares Intermezzo's preoccupation with what is left unsaid across years of proximity.",isbn:"9780679731726"},
+  {title:"Beloved",author:"Toni Morrison",why:"For readers of James. Morrison's formal experiment with trauma, voice, and historical haunting.",isbn:"9781400033416"},
+  {title:"Conversations with Friends",author:"Sally Rooney",why:"The companion piece to Normal People. Sharper, colder, equally precise.",isbn:"9780571333134"},
+  {title:"If We Were Villains",author:"M.L. Rio",why:"Dark academe after The Secret History. Theater replaces classics, consequences stay Gothic.",isbn:"9781250095466"},
+  {title:"Giovanni's Room",author:"James Baldwin",why:"Economy of language and devastating emotional precision.",isbn:"9780307386120"},
+  {title:"Race After Technology",author:"Ruha Benjamin",why:"If you loved Weapons of Math Destruction, this goes deeper into how tech designs inequality.",isbn:"9781479837243"},
+  {title:"The Alignment Problem",author:"Brian Christian",why:"Co-Intelligence made you curious about human-AI collaboration. This is the technical deep dive.",isbn:"9780393868333"},
+  {title:"Thinking, Fast and Slow",author:"Daniel Kahneman",why:"The behavioral economics bible. Housel stands on Kahneman's shoulders.",isbn:"9780374533557"},
+  {title:"Between the World and Me",author:"Ta-Nehisi Coates",why:"The spiritual successor to Baldwin's letter. Same fire, new century.",isbn:"9780451482211"},
+  {title:"All About Love",author:"bell hooks",why:"Thick asks you to see clearly. hooks asks you to love clearly. Both demand intellectual honesty.",isbn:"9780060959470"},
+  {title:"Piranesi",author:"Susanna Clarke",why:"Strange beauty and philosophical depth in an impossibly contained world.",isbn:"9781635575644"},
+  {title:"The Waves",author:"Virginia Woolf",why:"For Orbital readers. Consciousness over event, time over plot.",isbn:"9780156949606"},
+];
+
+// ── GAME QUOTES (merged) ──
+var GAME_QUOTES = [
+  {q:"'People can have a relationship with very little material basis and remain intact.'",source:"Normal People",theme:"love"},
+  {q:"'My mind had become water. Every passage drained out before I could hold it.'",source:"Orbital",theme:"time"},
+  {q:"'He had been speaking two languages since childhood, and both had a word for what he could not become.'",source:"James",theme:"identity"},
+  {q:"'Grief is not a single house but a city, and you keep finding new streets.'",source:"Intermezzo",theme:"grief"},
+  {q:"'Beauty is the most dangerous weapon. It makes you believe in the thing doing harm.'",source:"The Secret History",theme:"power"},
+  {q:"'To belong fully anywhere, you must be willing to half-belong everywhere else.'",source:"Orbital",theme:"belonging"},
+  {q:"'The past is never where you left it. It follows.'",source:"James",theme:"memory"},
+  {q:"'She wanted to ask him something she already knew the answer to.'",source:"Normal People",theme:"love"},
+  {q:"'Silence in their family was not empty. It was load-bearing.'",source:"Intermezzo",theme:"memory"},
+  {q:"'What we call education is mostly the careful management of who knows what about whom.'",source:"The Secret History",theme:"power"},
+  {q:"'AI is not neutral. It reflects the values of those who build it.'",source:"Weapons of Math Destruction",theme:"algorithmic bias"},
+  {q:"'Money is not about returns. It is about what you believe about your future.'",source:"The Psychology of Money",theme:"uncertainty"},
+  {q:"'Observation is an act of love.'",source:"The White Album",theme:"personal narrative"},
+  {q:"'Intelligence without collaboration is just optimization.'",source:"Co-Intelligence",theme:"human connection"},
+  {q:"'The moment you stop seeing systems and start blaming individuals, you have already lost.'",source:"The Fire Next Time",theme:"structural truth"},
+];
+
+// ── GAMES ──
+var GAMES = [
+  {id:'speed-recap',name:'Speed Recap',desc:'Match each quote to its source book as quickly as possible.',icon:'\u26A1',xpPer:12},
+  {id:'theme-detective',name:'Theme Detective',desc:'Identify the central theme woven through a passage.',icon:'\uD83D\uDD2E',xpPer:15},
+  {id:'connect-dots',name:'Connect the Dots',desc:'Match a resonant statement to the two books it bridges.',icon:'\uD83D\uDD17',xpPer:20},
+  {id:'vocab-challenge',name:'Vocab Challenge',desc:'Match literary terms to their precise definitions.',icon:'\uD83D\uDCD6',xpPer:10},
+  {id:'case-study',name:'Case Study Analyst',desc:'Identify the craft technique at work in a passage.',icon:'\uD83D\uDD2C',xpPer:25},
+];
+
+// ── THINK PIECES ──
+var THINK_PIECES = [
+  {id:1,cat:"Craft",title:"Why the best first sentences are never about the plot",preview:"A great opening sentence is a contract. What exactly is it promising? Almost never 'a story.' Almost always 'a way of seeing.'",body:"The first sentence of any serious novel is a formal declaration. It establishes register, velocity, distance, and implicitly, everything the book will care about."},
+  {id:2,cat:"Theory",title:"The unreliable narrator as ethical technology",preview:"Unreliability is not a trick. It is a formal argument about the nature of all narration.",body:"Every narrator is unreliable. The difference is degree of self-awareness and degree of author-sanctioned manipulation."},
+  {id:3,cat:"Reading",title:"Why difficult books change you more than easy ones",preview:"The cognitive demand of a difficult text is not a flaw to be overcome. It is the mechanism of transformation.",body:"When a text resists easy comprehension, the reader is forced into active processing. The mind is genuinely working."},
+  {id:4,cat:"Craft",title:"Dialogue as argument: how great novelists fight on the page",preview:"Dialogue in literary fiction is not transcribed speech. It is a stylised form.",body:"Amateur dialogue explains. Professional dialogue withholds. The most powerful exchanges are characterised by the management of what is not said."},
+  {id:5,cat:"Theory",title:"Class in contemporary literary fiction",preview:"Literary fiction has become willing to address race and gender directly. Class remains oddly euphemised.",body:"Sally Rooney is unusual for her willingness to name class relations directly. Most literary fiction engages with class through atmosphere rather than explicit analysis."},
+  {id:6,cat:"Reading",title:"On rereading: why the second time is the first time you actually read it",preview:"The first reading is for plot. The second reading is for the book.",body:"The second reading releases you from plot anxiety. You know what happens. You can pay attention to how it happens."},
+  {id:7,cat:"Craft",title:"The paragraph as unit of thought",preview:"The sentence is the cell. The paragraph is the organ.",body:"A sentence can be beautiful without a paragraph being coherent. The paragraph is where thought develops."},
+  {id:8,cat:"Theory",title:"What literary fiction actually does: a defence",preview:"Literary fiction is often accused of elitism. This misunderstands what it is for.",body:"Reading literary fiction measurably improves theory of mind: the capacity to model other people's mental states."},
+  {id:9,cat:"Craft",title:"Why the best endings refuse to resolve",preview:"A satisfying ending and a resolved ending are not the same thing.",body:"Literary fiction rarely deals in problems that can be solved. The best endings establish a new relationship between the reader and the questions."},
+  {id:10,cat:"Reading",title:"On keeping a reading journal",preview:"The act of articulating a response forces the response to become legible.",body:"Reading without writing is like eating without digesting. Writing about what you read forces you to locate your responses in language."},
+  {id:11,cat:"Theory",title:"The gaze and its discontents",preview:"The question of who looks and who is looked at is never neutral.",body:"What is interesting in recent fiction is the formal experimentation with this problem."},
+  {id:12,cat:"Craft",title:"Time in fiction: the novel's greatest formal resource",preview:"The novel can move through time in ways no other art form can.",body:"Novelists who understand time use it as a primary expressive tool. The pace at which a novel moves through time is an argument about what matters."},
+  {id:13,cat:"Reading",title:"The ethical case for the DNF",preview:"The duty to finish what you start is a Protestant work ethic applied to pleasure. There is no such duty.",body:"The DNF is not failure. It is information. It tells you something about what you need from reading right now."},
+  {id:14,cat:"Craft",title:"The uses of restraint",preview:"'Show don't tell' and 'less is more' are craft principles that have calcified into dogma.",body:"The actual craft principle is: know what you are doing and why. Sometimes telling is more powerful than showing."},
+  {id:15,cat:"Theory",title:"Why character is not psychology",preview:"Literary characters are not people. They are formal constructs that generate effects in readers.",body:"What we call 'depth' in a character is the capacity of the language-pattern to generate multiple, non-contradictory responses simultaneously."},
+  {id:16,cat:"Reading",title:"The case for reading one author deeply",preview:"Reading five Ishiguro novels teaches you something that reading five novels by five authors cannot.",body:"Reading multiple works by a single author trains you to see their obsessions, their technical solutions, their evolution."},
+  {id:17,cat:"Theory",title:"Genre and literary fiction: a false distinction",preview:"The genre/literary distinction is a marketing category and a snobbery.",body:"The most interesting work always exceeds its category. Genre is a set of conventions. Literary ambition is a commitment to precision."},
+  {id:18,cat:"Craft",title:"On the first paragraph you should delete",preview:"Your second paragraph is almost always your real beginning.",body:"Writers typically begin in the wrong place. Read your first draft and ask: does the story begin on the first line, or on the third paragraph?"},
+  {id:19,cat:"Reading",title:"How to read a novel you are not sure you are ready for",preview:"Literary difficulty is almost never about intelligence. It is about familiarity.",body:"When a novel feels too difficult, the temptation is to conclude the problem is cognitive. Almost always, it is not."},
+  {id:20,cat:"Theory",title:"The political novel: can fiction change how we think?",preview:"Political fiction risks didacticism on one side and evasion on the other.",body:"The best political fiction embeds political analysis in narrative situation rather than extracting it as argument."},
+];
+
+// ── WRITING REFERENCES ──
+var WRITING_REFS = [
+  {title:"The Sense of an Ending, Kermode",body:"Essential framework for understanding how narrative endings create retroactive meaning."},
+  {title:"The Art of Fiction, John Gardner",body:"Dense, demanding, and irreplaceable. Gardner on fictional dream, psychic distance, and what makes prose fail."},
+  {title:"On Writing, Stephen King",body:"The memoir half is essential. King's insistence on reading widely before writing anything is the advice most writers need."},
+  {title:"Bird by Bird, Anne Lamott",body:"For the paralysis that precedes writing. The shitty first draft, the inch-wide picture frame."},
+  {title:"Aspects of the Novel, E.M. Forster",body:"Story vs. plot. Flat and round characters. The voice in which Forster delivers these distinctions is itself a masterclass."},
+  {title:"The Elements of Style, Strunk and White",body:"Read it once for the rules, read it again to understand which rules you can break and why."},
+];
+
+// ── WRITING RULES ──
+var WRITING_RULES = [
+  "Cut the first paragraph. Your second paragraph is almost always your real beginning.",
+  "If a scene does not change anything, it does not belong.",
+  "Every line of dialogue should do at least two things simultaneously.",
+  "The adjective is the writer's enemy. Trust your nouns.",
+  "Read every sentence aloud. The ear catches what the eye forgives.",
+  "Know why your chapter ends where it ends.",
+  "Specificity is the difference between 'a car' and 'a 1987 Buick Regal with a bumper sticker.'",
+  "Your characters should want things on every page, even if it is only a glass of water.",
+  "The scene you are most reluctant to write is probably the most important scene.",
+  "Subtext is what the character cannot bring themselves to say directly. Put it everywhere.",
+];
+
+// ── SEED BOOKS (merged: Quill literary + RC nonfiction) ──
+var SEED_BOOKS = [
+  {id:101,title:"Co-Intelligence",author:"Ethan Mollick",pages:256,currentPage:245,status:"reading",deadline:"",isbn:"9780593716717",color:"#2A5A4A",themes:["human connection"],genre:"AI/Technology"},
+  {id:102,title:"Weapons of Math Destruction",author:"Cathy O'Neil",pages:272,currentPage:272,status:"done",deadline:"",isbn:"9780553418835",color:"#5A2A2A",themes:["algorithmic bias","power"],genre:"Technology/Ethics"},
+  {id:103,title:"The Psychology of Money",author:"Morgan Housel",pages:256,currentPage:0,status:"tbr",deadline:"",isbn:"9780857197689",color:"#4A4A2A",themes:["uncertainty"],genre:"Finance"},
+  {id:104,title:"Thick",author:"Tressie McMillan Cottom",pages:256,currentPage:200,status:"reading",deadline:"",isbn:"9781620972434",color:"#5A3A5A",themes:["critical thinking","systemic inequality"],genre:"Essays"},
+  {id:105,title:"The Fire Next Time",author:"James Baldwin",pages:128,currentPage:128,status:"done",deadline:"",isbn:"9780679744726",color:"#6B4A2A",themes:["structural truth","freedom"],genre:"Essays"},
+  {id:106,title:"The White Album",author:"Joan Didion",pages:224,currentPage:50,status:"reading",deadline:"",isbn:"9780374532079",color:"#3A3A6B",themes:["personal narrative","time"],genre:"Essays"},
+];
+
+var SEED_SESSIONS = [
+  {book:"Co-Intelligence",secs:1800,pages:22,date:"Mar 19"},
+  {book:"Thick",secs:2100,pages:25,date:"Mar 18"},
+  {book:"The White Album",secs:1500,pages:18,date:"Mar 17"},
+];
+
+var SEED_ENTRIES = [
+  {id:1,type:"reflection",book:"Weapons of Math Destruction",title:"Algorithms as opinions",body:"O'Neil's core argument: models are opinions embedded in mathematics. They carry the biases of their creators and the limitations of their data.",date:"Mar 19"},
+  {id:2,type:"reflection",book:"Co-Intelligence",title:"AI as collaborator",body:"Mollick frames it not as replacement but as partnership. The question is not what AI can do, but what we become when we work alongside it.",date:"Mar 18"},
+];
+
+// ══════════ STATE ══════════
+var LS = {books:'q_books',entries:'q_entries',xp:'q_xp',level:'q_level',sessions:'q_sessions',gameScores:'q_gscores'};
+function ls(k,d){try{var v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+var books = ls(LS.books, SEED_BOOKS);
+var entries = ls(LS.entries, SEED_ENTRIES);
+var xp = ls(LS.xp, 0);
+var level = ls(LS.level, 1);
+var sessions = ls(LS.sessions, SEED_SESSIONS);
+var gameScores = ls(LS.gameScores, {});
+var currentEtype = 'reflection';
+var currentGame = null, gameQ = 0, gameScore = 0, gameAnswered = false;
+var timerSecs = 0, timerRunning = false, timerInterval = null;
+var ttsActive = null;
+var currentTpFilter = 'All';
+var prevScreen = 's-shelf';
+
+// ══════════ NAVIGATION ══════════
+function goTo(id, el) {
+  prevScreen = document.querySelector('.screen.active').id;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');b.querySelector('.nb-l').style.color='';});
+  document.getElementById(id).classList.add('active');
+  if(el){el.classList.add('on');}
+  var sc = document.getElementById(id).querySelector('.scroll');
+  if(sc) sc.scrollTop = 0;
+  if(id==='s-shelf') renderShelf();
+  if(id==='s-journal') renderJournal();
+  if(id==='s-discover') renderDiscover();
+  if(id==='s-games') renderGameList();
+  if(id==='s-stats') renderStats();
+  if(id==='s-planner') renderPlanner();
+  if(id==='s-library') renderLibrary();
+}
+
+function goBack() {
+  if(document.referrer && document.referrer.indexOf(location.origin) > -1) {
+    history.back();
+  } else {
+    location.href = './bianca-ai-portfolio.html';
+  }
+}
+
+// ══════════ MODALS ══════════
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+// ══════════ HELPERS ══════════
+// Verified cover URLs (same ISBNs confirmed working in HQ)
+var COVER_MAP = {
+  '9780593716717': 'https://covers.openlibrary.org/b/isbn/9780593716717-L.jpg',
+  '9780553418835': 'https://covers.openlibrary.org/b/isbn/9780553418835-L.jpg',
+  '9780857197689': 'https://covers.openlibrary.org/b/isbn/9780857197689-L.jpg',
+  '9781620972434': 'https://covers.openlibrary.org/b/isbn/9781620972434-L.jpg',
+  '9780679744726': 'https://covers.openlibrary.org/b/isbn/9780679744726-L.jpg',
+  '9780374532079': 'https://covers.openlibrary.org/b/isbn/9780374532079-L.jpg',
+  '9781479837243': 'https://covers.openlibrary.org/b/isbn/9781479837243-L.jpg',
+  '9780393868333': 'https://covers.openlibrary.org/b/isbn/9780393868333-L.jpg',
+  '9780679731726': 'https://covers.openlibrary.org/b/isbn/9780679731726-L.jpg',
+  '9781400033416': 'https://covers.openlibrary.org/b/isbn/9781400033416-L.jpg',
+  '9780571333134': 'https://covers.openlibrary.org/b/isbn/9780571333134-L.jpg',
+  '9781250095466': 'https://covers.openlibrary.org/b/isbn/9781250095466-L.jpg',
+  '9780307386120': 'https://covers.openlibrary.org/b/isbn/9780307386120-L.jpg',
+  '9780374533557': 'https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg',
+  '9780451482211': 'https://covers.openlibrary.org/b/isbn/9780451482211-L.jpg',
+  '9780060959470': 'https://covers.openlibrary.org/b/isbn/9780060959470-L.jpg',
+  '9781635575644': 'https://covers.openlibrary.org/b/isbn/9781635575644-L.jpg',
+  '9780156949606': 'https://covers.openlibrary.org/b/isbn/9780156949606-L.jpg'
+};
+function coverUrl(b){
+  if(b.coverUrl) return b.coverUrl;
+  if(COVER_MAP[b.isbn]) return COVER_MAP[b.isbn];
+  return 'https://covers.openlibrary.org/b/isbn/' + (b.isbn || '0000000000') + '-L.jpg';
+}
+function spineColor(b){return b.color || '#3A2A10';}
+function coverFallback(img, title, color, author) {
+  img.style.display='none';
+  var fb = img.parentNode.querySelector('.cover-fb');
+  if(!fb){
+    fb = document.createElement('div');
+    fb.className='cover-fb';
+    fb.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 6px;text-align:center;font-family:Georgia,serif;color:rgba(255,255,255,0.92);line-height:1.3;background:'+color+';overflow:hidden;';
+    var titleDiv = '<div style="font-size:10px;font-weight:700;word-wrap:break-word;overflow-wrap:break-word;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;">' + title + '</div>';
+    var authorDiv = author ? '<div style="font-size:8px;font-weight:400;opacity:0.7;margin-top:3px;word-wrap:break-word;overflow-wrap:break-word;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">' + author + '</div>' : '';
+    fb.innerHTML = titleDiv + authorDiv;
+    img.parentNode.appendChild(fb);
+  }
+}
+function coverCheck(img, title, color, author) {
+  if(img.naturalWidth < 10 || img.naturalHeight < 10) coverFallback(img, title, color, author);
+}
+
+function burst(emoji) {
+  for(var i = 0; i < 6; i++) {
+    var el = document.createElement('div');
+    el.className = 'burst-el';
+    el.textContent = emoji;
+    el.style.top = Math.round(20 + Math.random()*60) + '%';
+    el.style.left = Math.round(10 + Math.random()*80) + '%';
+    document.body.appendChild(el);
+    setTimeout(function(e){e.remove();}, 900, el);
+  }
+}
+
+function togPill(el){el.classList.toggle('open');}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');}, 2200);
+}
+
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({app:'quill', type:eventType, data:data, ts:new Date().toISOString()});
+    if(events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e){}
+}
+
+// ══════════ SMART SUITE SYNC ══════════
+var SUITE_SYNC_KEY = 'smart_suite_sync';
+function readSuiteSync() { try { return JSON.parse(localStorage.getItem(SUITE_SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSuiteSync(partial) {
+  try {
+    var current = readSuiteSync();
+    var q = current.quill || {};
+    Object.keys(partial).forEach(function(k) { q[k] = partial[k]; });
+    current.quill = q;
+    localStorage.setItem(SUITE_SYNC_KEY, JSON.stringify(current));
+  } catch(e) {}
+}
+function refreshSuiteSync() {
+  var reading = books.filter(function(b) { return b.status === 'reading'; });
+  var done = books.filter(function(b) { return b.status === 'done'; });
+  var vocabCount = entries.filter(function(e) { return e.type === 'vocab' && e.word; }).length;
+  writeSuiteSync({
+    booksReading: reading.length,
+    booksFinished: done.length,
+    vocabCount: vocabCount,
+    totalEntries: entries.length,
+    lastBookFinished: done.length > 0 ? done[0].title : null,
+    currentlyReading: reading.length > 0 ? reading[0].title : null
+  });
+}
+
+// ══════════ SOUND ══════════
+var audioCtx = null;
+function playSound(type) {
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    if(type === 'page'){o.frequency.value = 800; g.gain.value = 0.08; o.type = 'sine';}
+    else if(type === 'done'){o.frequency.value = 523; g.gain.value = 0.1; o.type = 'triangle';}
+    else if(type === 'xp'){o.frequency.value = 660; g.gain.value = 0.06; o.type = 'sine';}
+    else {o.frequency.value = 440; g.gain.value = 0.05; o.type = 'sine';}
+    o.start(); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3); o.stop(audioCtx.currentTime + 0.3);
+  } catch(e){}
+}
+
+// ══════════ SHELF ══════════
+function renderShelf() {
+  var groups = {reading:[],tbr:[],done:[],dnf:[],paused:[]};
+  books.forEach(function(b){if(groups[b.status]) groups[b.status].push(b);});
+  var totalPages = books.reduce(function(a,b){return a + (b.currentPage || 0);}, 0);
+  document.getElementById('c-reading').textContent = groups.reading.length;
+  document.getElementById('c-tbr').textContent = groups.tbr.length;
+  document.getElementById('c-done').textContent = groups.done.length;
+  document.getElementById('c-pages').textContent = totalPages >= 1000 ? (totalPages/1000).toFixed(1) + 'k' : totalPages;
+
+  // Streak
+  var streak = ls('q_streak', 0);
+  var streakEl = document.getElementById('streak-hdr');
+  if(streak > 0) streakEl.textContent = 'day ' + streak + ' \uD83D\uDD25';
+  else streakEl.textContent = '';
+
+  var scroll = document.getElementById('shelf-scroll');
+  scroll.innerHTML = '';
+
+  // Shelf visual — only currently reading books
+  var shelf = document.createElement('div');
+  shelf.className = 'shelf';
+  shelf.innerHTML = '<div class="shelf-lbl">on the shelf</div>';
+  var spinesDiv = document.createElement('div');
+  spinesDiv.className = 'spines';
+  var onShelf = books.filter(function(b){ return b.status === 'reading' || b.status === 'paused'; });
+  onShelf.forEach(function(b){
+    var h = 120 + Math.floor((b.pages || 300)/600*40);
+    var w = Math.round(h * 0.67);
+    var pct = b.pages ? Math.round((b.currentPage/b.pages)*100) : 0;
+    var d = document.createElement('div');
+    d.className = 'spine';
+    d.onclick = function(){openBookModal(b.id);};
+    var safeTitle = b.title.replace(/'/g,"\\'");
+    var safeAuthor = b.author.replace(/'/g,"\\'");
+    d.innerHTML = '<div class="spine-inner" style="width:'+w+'px;height:'+h+'px;background:'+spineColor(b)+';position:relative;"><img src="'+coverUrl(b)+'" style="width:100%;height:100%;object-fit:cover;display:block;" onload="coverCheck(this,\''+safeTitle+'\',\''+spineColor(b)+'\',\''+safeAuthor+'\')" onerror="coverFallback(this,\''+safeTitle+'\',\''+spineColor(b)+'\',\''+safeAuthor+'\')"><div class="spine-pct">'+pct+'%</div></div>';
+    spinesDiv.appendChild(d);
+  });
+  var addBtn = document.createElement('div');
+  addBtn.style.cssText = 'width:24px;height:36px;border:1px dashed rgba(120,90,50,0.35);border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(120,90,50,0.4);font-size:13px;transition:all 0.15s;align-self:center;';
+  addBtn.textContent = '+';
+  addBtn.onmouseover = function(){this.style.borderColor='var(--orange)';this.style.color='var(--orange)';};
+  addBtn.onmouseout = function(){this.style.borderColor='rgba(120,90,50,0.35)';this.style.color='rgba(120,90,50,0.4)';};
+  addBtn.onclick = function(){openModal('modal-add');};
+  spinesDiv.appendChild(addBtn);
+  shelf.appendChild(spinesDiv);
+  scroll.appendChild(shelf);
+
+  var inner = document.createElement('div');
+  inner.style.padding = '0';
+  scroll.appendChild(inner);
+
+  // Today entry
+  var todayEntry = entries[0];
+  if(todayEntry){
+    var ec = document.createElement('div');
+    ec.className = 'card-accent';
+    ec.innerHTML = '<div class="jentry-date">' + todayEntry.date + ' \u00B7 ' + todayEntry.type + '</div>' + (todayEntry.title ? '<div class="jentry-title">' + todayEntry.title + '</div>' : '') + '<div class="jentry-body" style="font-size:13px;">' + todayEntry.body + '</div><div class="jentry-book">' + todayEntry.book + '</div>';
+    inner.appendChild(ec);
+  }
+
+  // Currently reading
+  if(groups.reading.length){
+    var h2 = document.createElement('div'); h2.className = 'sec'; h2.textContent = 'In progress'; inner.appendChild(h2);
+    groups.reading.forEach(function(b){ inner.appendChild(buildBookCard(b)); });
+  }
+
+  // TBR strip
+  if(groups.tbr.length){
+    var h3 = document.createElement('div'); h3.className = 'sec'; h3.textContent = 'Up next'; inner.appendChild(h3);
+    var strip = document.createElement('div');
+    strip.style.cssText = 'display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:12px;padding-bottom:4px;';
+    groups.tbr.forEach(function(b){
+      var d = document.createElement('div');
+      d.style.cssText = 'flex-shrink:0;width:80px;cursor:pointer;';
+      d.onclick = function(){openBookModal(b.id);};
+      var st = b.title.replace(/'/g,"\\'");
+      var sa = b.author.replace(/'/g,"\\'");
+      d.innerHTML = '<div style="width:80px;height:115px;border-radius:3px 6px 6px 3px;overflow:hidden;background:'+spineColor(b)+';border:1px solid var(--cardborder);position:relative;box-shadow:2px 2px 6px rgba(0,0,0,0.4);"><img src="'+coverUrl(b)+'" style="width:100%;height:100%;object-fit:cover;" onload="coverCheck(this,\''+st+'\',\''+spineColor(b)+'\',\''+sa+'\')" onerror="coverFallback(this,\''+st+'\',\''+spineColor(b)+'\',\''+sa+'\')"></div><div style="font-size:9px;color:var(--dim);margin-top:4px;text-align:center;line-height:1.3;">'+b.pages+'p</div>';
+      strip.appendChild(d);
+    });
+    inner.appendChild(strip);
+  }
+
+  // Vocab of the day
+  var vocabs = entries.filter(function(e){return e.type==='vocab' && e.word;});
+  if(vocabs.length){
+    var vcard = document.createElement('div'); vcard.className = 'card';
+    var v = vocabs[0];
+    vcard.innerHTML = '<div class="sec-small" style="margin-bottom:6px;">Word of the day</div><div class="vword">'+v.word+'</div><div class="vdef">'+v.def+'</div><div class="vsrc">from '+v.book+'</div>';
+    inner.appendChild(vcard);
+  }
+
+  // Done + DNF
+  ['done','dnf'].forEach(function(status){
+    if(!groups[status].length) return;
+    var label = status === 'done' ? 'Finished' : 'Did not finish';
+    var hs = document.createElement('div'); hs.className = 'sec'; hs.textContent = label; inner.appendChild(hs);
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;';
+    groups[status].forEach(function(b){
+      var d = document.createElement('div');
+      d.style.cssText = 'cursor:pointer;';
+      d.onclick = function(){openBookModal(b.id);};
+      var st2 = b.title.replace(/'/g,"\\'");
+      var sa2 = b.author.replace(/'/g,"\\'");
+      d.innerHTML = '<div style="width:64px;height:92px;border-radius:2px 5px 5px 2px;overflow:hidden;background:'+spineColor(b)+';border:1px solid var(--cardborder);opacity:'+(status==='dnf'?'0.6':'1')+';position:relative;box-shadow:2px 2px 6px rgba(0,0,0,0.4);"><img src="'+coverUrl(b)+'" style="width:100%;height:100%;object-fit:cover;" onload="coverCheck(this,\''+st2+'\',\''+spineColor(b)+'\',\''+sa2+'\')" onerror="coverFallback(this,\''+st2+'\',\''+spineColor(b)+'\',\''+sa2+'\')"></div>';
+      row.appendChild(d);
+    });
+    inner.appendChild(row);
+  });
+}
+
+function buildBookCard(b) {
+  var pct = b.pages ? Math.round((b.currentPage/b.pages)*100) : 0;
+  var remaining = b.pages - b.currentPage;
+  var ppd = 0, daysLeft = 0, deadlineStr = '';
+  if(b.deadline){
+    var today = new Date(); var dl = new Date(b.deadline);
+    daysLeft = Math.max(1, Math.round((dl - today)/(1000*60*60*24)));
+    ppd = Math.ceil(remaining/daysLeft);
+    deadlineStr = dl.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="book-row"><div class="bcover"><img src="'+coverUrl(b)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';" style="width:100%;height:100%;object-fit:cover;"><div class="bcover-fb" style="display:none;background:'+spineColor(b)+';font-size:18px;">\uD83D\uDCD6</div></div><div style="flex:1;"><div class="btitle">'+b.title+'</div><div class="bauthor">'+b.author+'</div><div class="pbar"><div class="pfill" style="width:'+pct+'%;background:var(--orange);"></div></div><div class="bmeta">'+b.currentPage+' / '+b.pages+' pages \u00B7 '+pct+'%'+(deadlineStr ? ' \u00B7 '+deadlineStr : '')+'</div></div>'+(ppd > 0 ? '<div style="text-align:right;padding-top:4px;"><div class="bppd">'+ppd+'</div><div class="bppd-sub">pg/day</div></div>' : '')+'</div><div style="display:flex;gap:7px;margin-top:10px;"><input type="number" class="inp" id="pg-'+b.id+'" placeholder="Update page..." style="flex:1;margin:0;font-size:12px;padding:7px 10px;" min="0" max="'+b.pages+'"><button style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:7px 13px;font-size:11px;cursor:pointer;font-family:Cormorant Garamond,Georgia,serif;font-style:italic;" onclick="updatePage('+b.id+')">Update</button><button class="btn-sm" onclick="openTimerFor('+b.id+')">Timer</button></div>';
+  return card;
+}
+
+function openBookModal(id) {
+  var b = books.find(function(x){return x.id === id;}); if(!b) return;
+  var pct = b.pages ? Math.round((b.currentPage/b.pages)*100) : 0;
+  var remaining = b.pages - b.currentPage;
+  var ppd = 0, daysLeft = 0, deadlineStr = 'No deadline set';
+  if(b.deadline){var today = new Date();var dl = new Date(b.deadline);daysLeft = Math.max(1,Math.round((dl-today)/(1000*60*60*24)));ppd = Math.ceil(remaining/daysLeft);deadlineStr = dl.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+  var statusLabels = {reading:'Reading',tbr:'TBR',done:'Done',dnf:'DNF',paused:'Paused'};
+  var statusClasses = {reading:'s-reading',tbr:'s-tbr',done:'s-done',dnf:'s-dnf',paused:'s-paused'};
+  var c = document.getElementById('modal-book-body');
+  c.innerHTML = '<div style="display:flex;gap:13px;margin-bottom:14px;"><div style="width:90px;height:130px;border-radius:3px 7px 7px 3px;overflow:hidden;flex-shrink:0;border:1px solid var(--cardborder);background:'+spineColor(b)+';position:relative;"><img src="'+coverUrl(b)+'" style="width:100%;height:100%;object-fit:cover;" onload="coverCheck(this,\''+b.title.replace(/'/g,"\\'")+'\',\''+spineColor(b)+'\',\''+b.author.replace(/'/g,"\\'")+'\' )" onerror="coverFallback(this,\''+b.title.replace(/'/g,"\\'")+'\',\''+spineColor(b)+'\',\''+b.author.replace(/'/g,"\\'")+'\')"></div><div style="flex:1;"><div class="btitle" style="font-size:17px;">'+b.title+'</div><div class="bauthor">'+b.author+'</div>'+(b.genre ? '<div style="font-size:10px;color:var(--dim);margin-top:2px;">'+b.genre+'</div>' : '')+'<div class="spill '+statusClasses[b.status]+'">'+statusLabels[b.status]+'</div></div></div><div class="pbar"><div class="pfill" style="width:'+pct+'%;background:var(--orange);"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px;"><span>'+b.currentPage+' / '+b.pages+' pages</span><span>'+pct+'% complete</span></div>'+(ppd > 0 ? '<div style="background:var(--inner);border-radius:10px;padding:10px 12px;margin-bottom:12px;"><div class="bppd">'+ppd+'</div><div class="bppd-sub">pages/day to finish by '+deadlineStr+' ('+daysLeft+' days left)</div></div>' : '<div style="font-size:11px;color:var(--dim);margin-bottom:12px;font-style:italic;">No deadline set</div>')+'<div style="margin-bottom:12px;"><div class="sec-small" style="margin-bottom:6px;">Update page</div><div style="display:flex;gap:7px;"><input type="number" class="inp" id="modal-pg" value="'+b.currentPage+'" style="flex:1;margin:0;"><button class="btn" style="flex:1;margin:0;font-size:12px;" onclick="updatePage('+b.id+',true)">Update</button></div></div>'+(b.deadline ? '' : '<div style="margin-bottom:12px;"><div class="sec-small" style="margin-bottom:6px;">Set deadline</div><div style="display:flex;gap:7px;"><input type="date" class="inp" id="modal-deadline" style="flex:1;margin:0;"><button class="btn-sm" onclick="setDeadline('+b.id+')">Set</button></div></div>')+'<div style="display:flex;gap:7px;margin-bottom:12px;"><button class="btn-sm" style="flex:1;" onclick="cycleStatus('+b.id+')">Change status</button><button class="btn-sm" style="flex:1;" onclick="openTimerFor('+b.id+');closeModal(\'modal-book\');">Timer</button></div><div style="display:flex;gap:7px;"><button class="btn-outline" style="flex:1;" onclick="closeModal(\'modal-book\')">Close</button><button class="btn-sm" style="flex:1;background:rgba(200,60,60,0.15);color:#e05050;border:1px solid rgba(200,60,60,0.3);" onclick="removeBook('+b.id+')">Remove</button></div>';
+  openModal('modal-book');
+}
+
+function updatePage(id, fromModal) {
+  var b = books.find(function(x){return x.id === id;}); if(!b) return;
+  var inp = fromModal ? document.getElementById('modal-pg') : document.getElementById('pg-'+id);
+  var val = parseInt(inp && inp.value);
+  if(isNaN(val)) return;
+  var oldPage = b.currentPage;
+  b.currentPage = Math.min(b.pages, Math.max(0, val));
+  if(b.currentPage >= b.pages){b.status = 'done'; burst('\uD83C\uDF89'); playSound('done'); syncToCC('book_finished', {title:b.title});}
+  else if(b.currentPage > oldPage){playSound('page');}
+  lss(LS.books, books);
+  refreshSuiteSync();
+  if(fromModal) closeModal('modal-book');
+  renderShelf();
+  showToast('Page updated to ' + b.currentPage);
+}
+
+function setDeadline(id) {
+  var b = books.find(function(x){return x.id === id;}); if(!b) return;
+  var inp = document.getElementById('modal-deadline');
+  if(inp && inp.value){b.deadline = inp.value; lss(LS.books, books); closeModal('modal-book'); showToast('Deadline set');}
+}
+
+function cycleStatus(id) {
+  var b = books.find(function(x){return x.id === id;}); if(!b) return;
+  var order = ['tbr','reading','paused','done','dnf'];
+  b.status = order[(order.indexOf(b.status)+1) % order.length];
+  lss(LS.books, books); closeModal('modal-book'); renderShelf();
+}
+
+function removeBook(id) {
+  var b = books.find(function(x){return x.id === id;});
+  if(!b) return;
+  var idx = books.indexOf(b);
+  if(idx > -1) books.splice(idx, 1);
+  lss(LS.books, books);
+  closeModal('modal-book');
+  renderShelf();
+  showToast(b.title + ' removed');
+  syncToCC('book_removed', {title: b.title});
+  refreshSuiteSync();
+}
+
+function searchBook() {
+  var q = document.getElementById('add-title').value.trim();
+  if(!q) return;
+  var box = document.getElementById('add-results');
+  box.style.display = 'block';
+  box.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--dim);text-align:center;">Searching...</div>';
+  fetch('https://openlibrary.org/search.json?q=' + encodeURIComponent(q) + '&limit=5&fields=title,author_name,isbn,number_of_pages_median,cover_i')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(!data.docs || !data.docs.length){ box.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--dim);text-align:center;">No results found</div>'; return; }
+      var h = '';
+      data.docs.forEach(function(doc, i){
+        var title = (doc.title || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        var author = doc.author_name ? doc.author_name[0].replace(/"/g, '&quot;').replace(/'/g, '&#39;') : '';
+        var isbn = doc.isbn && doc.isbn.length ? doc.isbn[0] : '';
+        var pages = doc.number_of_pages_median || 0;
+        var coverId = doc.cover_i || 0;
+        var thumbSrc = coverId ? 'https://covers.openlibrary.org/b/id/' + coverId + '-S.jpg' : '';
+        h += '<div onclick="pickSearchResult(\'' + title.replace(/'/g, "\\\\'") + '\',\'' + author.replace(/'/g, "\\\\'") + '\',' + pages + ',\'' + isbn + '\',' + coverId + ')" style="display:flex;gap:8px;align-items:center;padding:8px 10px;cursor:pointer;border-bottom:1px solid var(--divider);">';
+        if(thumbSrc) h += '<img src="' + thumbSrc + '" style="width:28px;height:40px;object-fit:cover;border-radius:3px;flex-shrink:0;" onerror="this.style.display=\'none\'">';
+        h += '<div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + title + '</div><div style="font-size:10px;color:var(--dim);">' + author + (pages ? ' &middot; ' + pages + 'p' : '') + '</div></div></div>';
+      });
+      box.innerHTML = h;
+    })
+    .catch(function(){ box.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--rose);text-align:center;">Search failed. Add manually.</div>'; });
+}
+
+function pickSearchResult(title, author, pages, isbn, coverId) {
+  document.getElementById('add-title').value = title;
+  document.getElementById('add-author').value = author;
+  if(pages) document.getElementById('add-pages').value = pages;
+  if(isbn) document.getElementById('add-isbn').value = isbn;
+  document.getElementById('add-results').style.display = 'none';
+  var preview = document.getElementById('add-preview');
+  if(coverId) {
+    document.getElementById('add-preview-img').src = 'https://covers.openlibrary.org/b/id/' + coverId + '-M.jpg';
+    preview.style.display = 'block';
+  } else { preview.style.display = 'none'; }
+}
+
+function addBook() {
+  var title = document.getElementById('add-title').value.trim(); if(!title) return;
+  var b = {id:Date.now(), title:title, author:document.getElementById('add-author').value || '', pages:parseInt(document.getElementById('add-pages').value) || 200, currentPage:parseInt(document.getElementById('add-curpage').value) || 0, status:document.getElementById('add-status').value, deadline:document.getElementById('add-deadline').value, isbn:document.getElementById('add-isbn').value || '0000000000', color:['#6B3A2A','#2A4A6B','#2A6B3A','#4A2A6B','#6B6B2A','#2A6B6B'][Math.floor(Math.random()*6)], themes:[], genre:'Fiction'};
+  books.push(b); lss(LS.books, books);
+  closeModal('modal-add');
+  ['add-title','add-author','add-pages','add-curpage','add-isbn','add-deadline'].forEach(function(i){document.getElementById(i).value='';});
+  document.getElementById('add-results').style.display = 'none';
+  document.getElementById('add-preview').style.display = 'none';
+  burst('\uD83D\uDCDA'); showToast(title + ' added to shelf');
+  syncToCC('book_added', {title:title});
+  refreshSuiteSync();
+  renderShelf();
+}
+
+// ══════════ JOURNAL ══════════
+var etypeColors = {reflection:'var(--orange)',quote:'var(--blue)',vocab:'var(--purple)',theme:'var(--rose)',chapter:'var(--green)',booksummary:'var(--gold)'};
+
+function setEtype(el) {
+  document.querySelectorAll('.etype').forEach(function(e){e.classList.remove('on');});
+  el.classList.add('on'); currentEtype = el.dataset.type;
+  document.getElementById('j-vocab-extra').style.display = currentEtype === 'vocab' ? 'block' : 'none';
+}
+
+function saveEntry() {
+  var body = document.getElementById('j-body').value.trim(); if(!body) return;
+  var entry = {id:Date.now(), type:currentEtype, book:document.getElementById('j-book').value, title:document.getElementById('j-title').value.trim(), body:body, date:'Today'};
+  if(currentEtype === 'vocab'){entry.word = document.getElementById('j-word').value; entry.def = document.getElementById('j-def').value; entry.sentence = document.getElementById('j-sentence').value;}
+  entries.unshift(entry); lss(LS.entries, entries); gainXP(20); burst('\u270D\uFE0F');
+  ['j-title','j-body','j-word','j-def','j-sentence'].forEach(function(i){document.getElementById(i).value='';});
+  showToast('Entry saved +20 XP');
+  syncToCC('journal_entry', {type:currentEtype, book:entry.book});
+  refreshSuiteSync();
+  renderJournal();
+}
+
+function renderJournal() {
+  var sel = document.getElementById('j-book');
+  sel.innerHTML = '<option value="">Select book...</option>';
+  books.forEach(function(b){sel.innerHTML += '<option value="'+b.title+'">'+b.title+'</option>';});
+  document.getElementById('j-datestr').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+  // Themes
+  var tt = document.getElementById('themes-tracker');
+  var html = '<div style="display:flex;flex-wrap:wrap;gap:5px;">';
+  THEMES.forEach(function(t){
+    var booksHaving = books.filter(function(b){return (b.themes||[]).indexOf(t) !== -1;});
+    var active = booksHaving.length > 0;
+    html += '<div class="theme-tag '+(active ? 'tt-active' : 'tt-inactive')+'" title="'+booksHaving.map(function(b){return b.title;}).join(', ')+'">'+t+(active ? ' \u00B7'+booksHaving.length : '')+'</div>';
+  });
+  tt.innerHTML = html + '</div>';
+
+  // Vocab
+  var vb = document.getElementById('vocab-bank');
+  var vocabs = entries.filter(function(e){return e.type === 'vocab' && e.word;});
+  if(!vocabs.length){vb.innerHTML = '<div style="font-size:12px;color:var(--dim);font-style:italic;">No vocab entries yet.</div>';}
+  else{
+    var vh = '<div style="display:flex;flex-direction:column;gap:10px;">';
+    vocabs.slice(0,8).forEach(function(v){vh += '<div><div class="vword">'+v.word+'</div><div class="vdef">'+v.def+'</div>'+(v.sentence ? '<div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic;">"'+v.sentence+'"</div>' : '')+'</div>';});
+    vb.innerHTML = vh + '</div>';
+  }
+
+  // Entries
+  var el = document.getElementById('entries-list'); el.innerHTML = '';
+  if(!entries.length){el.innerHTML = '<div class="card"><div style="font-size:12px;color:var(--dim);font-style:italic;">No entries yet. Start writing above.</div></div>'; return;}
+  entries.slice(0,25).forEach(function(e){
+    var d = document.createElement('div'); d.className = 'jentry';
+    d.innerHTML = '<div class="jentry-date"><span class="jtype-dot" style="background:'+(etypeColors[e.type]||'var(--gold)')+';"></span>'+e.date+' \u00B7 '+e.type+(e.book ? ' \u00B7 '+e.book : '')+'</div>'+(e.title ? '<div class="jentry-title">'+e.title+'</div>' : '')+'<div class="jentry-body">'+e.body+'</div>';
+    if(e.type === 'vocab' && e.word) d.innerHTML += '<div class="vword" style="font-size:16px;margin-top:6px;">'+e.word+'</div><div class="vdef" style="font-size:11px;">'+e.def+'</div>';
+    el.appendChild(d);
+  });
+}
+
+// ══════════ DISCOVER ══════════
+function renderDiscover() {
+  var cl = document.getElementById('connections-list'); cl.innerHTML = '';
+  CONNECTIONS.forEach(function(c){cl.innerHTML += '<div class="conn-card"><div class="conn-line">'+c.line+'</div><div class="conn-books">'+c.books.join(' \u00B7 ')+'</div></div>';});
+
+  var sel = document.getElementById('disc-sel');
+  sel.innerHTML = '<option value="">All books</option>';
+  books.forEach(function(b){sel.innerHTML += '<option value="'+b.title+'">'+b.title+'</option>';});
+  renderResources();
+
+  var csl = document.getElementById('case-studies-list'); csl.innerHTML = '';
+  CASE_STUDIES.forEach(function(cs){csl.innerHTML += '<div class="disc-card"><div class="disc-label">Case study \u00B7 '+cs.book+'</div><div class="disc-title">'+cs.title+'</div><div class="disc-body">'+cs.body+'</div></div>';});
+
+  var rnl = document.getElementById('read-next-list'); rnl.innerHTML = '';
+  READ_NEXT.forEach(function(r){
+    rnl.innerHTML += '<div class="disc-card" style="display:flex;gap:10px;align-items:flex-start;"><div style="width:56px;height:80px;border-radius:3px;overflow:hidden;flex-shrink:0;background:var(--inner);border:1px solid var(--cardborder);position:relative;"><img src="'+(COVER_MAP[r.isbn] || ('https://covers.openlibrary.org/b/isbn/'+r.isbn+'-L.jpg'))+'" style="width:100%;height:100%;object-fit:cover;" onload="coverCheck(this,\''+r.title.replace(/'/g,"\\'")+'\',\'var(--inner)\',\''+r.author.replace(/'/g,"\\'")+'\' )" onerror="coverFallback(this,\''+r.title.replace(/'/g,"\\'")+'\',\'var(--inner)\',\''+r.author.replace(/'/g,"\\'")+'\')"></div><div><div class="disc-title">'+r.title+'</div><div style="font-size:11px;color:var(--muted);">'+r.author+'</div><div class="disc-body" style="margin-top:4px;">'+r.why+'</div></div></div>';
+  });
+}
+
+function renderResources() {
+  var filter = document.getElementById('disc-sel').value;
+  var rl = document.getElementById('resources-list'); rl.innerHTML = '';
+  var filtered = filter ? RESOURCES.filter(function(r){return r.book === filter;}) : RESOURCES;
+  filtered.forEach(function(r){rl.innerHTML += '<div class="disc-card"><div class="disc-label">'+r.type+' \u00B7 '+r.book+'</div><div class="disc-title">'+r.title+'</div><div class="disc-body">'+r.body+'</div></div>';});
+}
+
+// ══════════ GAMES ══════════
+function renderGameList() {
+  updateXPDisplay();
+  var gl = document.getElementById('game-list'); gl.innerHTML = '';
+  document.getElementById('game-play').style.display = 'none';
+  document.getElementById('game-list').style.display = 'block';
+  GAMES.forEach(function(g){
+    var best = gameScores[g.id] || 0;
+    var d = document.createElement('div'); d.className = 'game-card';
+    d.onclick = function(){startGame(g.id);};
+    d.innerHTML = '<span class="game-icon">'+g.icon+'</span><div class="game-title">'+g.name+'</div><div class="game-desc">'+g.desc+'</div><div class="game-xp">+'+g.xpPer+' XP per correct \u00B7 Best: '+best+'/5</div>';
+    gl.appendChild(d);
+  });
+}
+
+function startGame(gid) {
+  currentGame = gid; gameQ = 0; gameScore = 0; gameAnswered = false;
+  document.getElementById('game-list').style.display = 'none';
+  document.getElementById('game-play').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  var g = GAMES.find(function(x){return x.id === currentGame;});
+  var q = makeQuestion(currentGame, gameQ);
+  if(!q){endGame(); return;}
+  var pv = document.getElementById('game-play');
+  pv.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><button class="btn-sm" onclick="renderGameList()">\u2190 Games</button><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:18px;font-weight:700;color:var(--gold);">'+gameScore+'</div><div class="xp-pill">'+g.name+'</div></div><div style="font-size:11px;color:var(--dim);margin-bottom:8px;">Question '+(gameQ+1)+' of 5</div><div class="game-area"><div class="game-q">'+q.question+'</div><div class="game-opts">'+(q.options.map(function(o,i){return '<button class="game-opt" onclick="answerQ(this,'+i+','+q.correct+')">'+o+'</button>';})).join('')+'</div></div>';
+}
+
+function makeQuestion(gid, qi) {
+  if(qi >= 5) return null;
+  var allBooks = [].concat(new Set(GAME_QUOTES.map(function(x){return x.source;})));
+  // Deduplicate
+  var bookSet = {};
+  GAME_QUOTES.forEach(function(x){bookSet[x.source] = true;});
+  var books_ = Object.keys(bookSet);
+
+  if(gid === 'speed-recap' || gid === 'theme-detective'){
+    var q = GAME_QUOTES[(qi * 3 + Math.floor(Math.random()*2)) % GAME_QUOTES.length];
+    if(gid === 'speed-recap'){
+      var wrong = books_.filter(function(b){return b !== q.source;}).sort(function(){return Math.random()-0.5;}).slice(0,3);
+      var opts = [q.source].concat(wrong).sort(function(){return Math.random()-0.5;});
+      return {question:'Which book contains this passage?\n\n'+q.q, options:opts, correct:opts.indexOf(q.source)};
+    } else {
+      var themes_ = Object.keys(bookSet);
+      var allThemes = {};
+      GAME_QUOTES.forEach(function(x){allThemes[x.theme] = true;});
+      var thArr = Object.keys(allThemes);
+      var opts2 = [q.theme].concat(thArr.filter(function(t){return t !== q.theme;}).slice(0,3)).sort(function(){return Math.random()-0.5;});
+      return {question:'What theme is most central to this passage?\n\n'+q.q, options:opts2, correct:opts2.indexOf(q.theme)};
+    }
+  }
+  if(gid === 'connect-dots'){
+    var c = CONNECTIONS[qi % CONNECTIONS.length];
+    var allPairs = CONNECTIONS.map(function(x){return x.books.join(' & ');});
+    var opts3 = [c.books.join(' & ')].concat(allPairs.filter(function(p){return p !== c.books.join(' & ');}).sort(function(){return Math.random()-0.5;}).slice(0,3)).sort(function(){return Math.random()-0.5;});
+    return {question:'Which two books does this connect?\n\n"'+c.line+'"', options:opts3, correct:opts3.indexOf(c.books.join(' & '))};
+  }
+  if(gid === 'vocab-challenge'){
+    var terms = [['Unreliable narrator','A narrator whose credibility is compromised','Ellipsis','In media res'],['Dramatic irony','Reader knows more than the character','Soliloquy','Pastiche'],['Free indirect discourse','Blending narrator and character voice','Polyphony','Diegesis'],['Prolepsis','A flash-forward or anticipation of future events','Analepsis','Metafiction'],['Anachrony','Events told out of chronological order','Catharsis','Verisimilitude']];
+    var t = terms[qi % terms.length];
+    var opts4 = [t[0]].concat(t.slice(2)).sort(function(){return Math.random()-0.5;});
+    return {question:'Which term means:\n\n"'+t[1]+'"', options:opts4, correct:opts4.indexOf(t[0])};
+  }
+  if(gid === 'case-study'){
+    var cs = CASE_STUDIES[qi % CASE_STUDIES.length];
+    var allTags = ['narrative','structure','language','theme','imagery','voice','time','symbolism','algorithmic bias','justice','AI','healthcare','power','data','behavior','finance'];
+    var correct = (cs.tags && cs.tags[0]) || 'narrative';
+    var opts5 = [correct].concat(allTags.filter(function(t){return t !== correct;}).sort(function(){return Math.random()-0.5;}).slice(0,3)).sort(function(){return Math.random()-0.5;});
+    return {question:'What element is central to this case study?\n\n'+cs.title+'\n\n"'+cs.body.substring(0,120)+'..."', options:opts5, correct:opts5.indexOf(correct)};
+  }
+  return null;
+}
+
+function answerQ(el, chosen, correct) {
+  if(gameAnswered) return; gameAnswered = true;
+  var opts = document.querySelectorAll('.game-opt');
+  opts[correct].classList.add('correct');
+  if(chosen !== correct) opts[chosen].classList.add('wrong');
+  else{gameScore++; burst('\u2728'); var g = GAMES.find(function(x){return x.id === currentGame;}); gainXP(g.xpPer); playSound('xp');}
+  setTimeout(function(){gameQ++; gameAnswered = false; renderQuestion();}, 1400);
+}
+
+function endGame() {
+  var g = GAMES.find(function(x){return x.id === currentGame;});
+  if(!gameScores[currentGame] || gameScore > gameScores[currentGame]) gameScores[currentGame] = gameScore;
+  lss(LS.gameScores, gameScores);
+  if(gameScore === 5) burst('\uD83C\uDF89');
+  syncToCC('game_complete', {game:g.name, score:gameScore});
+  var pv = document.getElementById('game-play');
+  pv.innerHTML = '<div class="game-area" style="text-align:center;padding:20px;"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:44px;font-weight:900;color:var(--gold);">'+gameScore+'/5</div><div style="font-size:13px;color:var(--muted);margin:6px 0 16px;font-style:italic;">'+g.name+' complete</div><div class="xp-pill" style="display:inline-block;margin-bottom:16px;">+'+gameScore*g.xpPer+' XP earned</div><button class="btn" onclick="startGame(\''+currentGame+'\')">Play again</button><button class="btn-outline" style="width:100%;" onclick="renderGameList()">All games</button></div>';
+}
+
+// ══════════ XP ══════════
+function gainXP(n) {
+  xp += n;
+  var thresholds = [0,100,250,500,900,1500,2400];
+  while(level < thresholds.length - 1 && xp >= thresholds[level]) level++;
+  lss(LS.xp, xp); lss(LS.level, level); updateXPDisplay();
+}
+function updateXPDisplay() {
+  var th = [0,100,250,500,900,1500,2400];
+  var lvlXp = th[Math.min(level-1, th.length-1)];
+  var nextXp = th[Math.min(level, th.length-1)];
+  var pct = nextXp > lvlXp ? Math.round(((xp-lvlXp)/(nextXp-lvlXp))*100) : 100;
+  var xpEl = document.getElementById('xp-hdr'); if(xpEl) xpEl.textContent = xp + ' XP';
+  var lvlEl = document.getElementById('level-hdr'); if(lvlEl) lvlEl.textContent = 'Level ' + level;
+  var barEl = document.getElementById('xp-bar'); if(barEl) barEl.style.width = Math.min(100, pct) + '%';
+  var nxtEl = document.getElementById('xp-next'); if(nxtEl) nxtEl.textContent = (nextXp - xp) + ' to next';
+}
+
+// ══════════ STATS ══════════
+function renderStats() {
+  var sc = document.getElementById('stats-scroll'); sc.innerHTML = '';
+  var reading = books.filter(function(b){return b.status === 'reading';});
+  var done = books.filter(function(b){return b.status === 'done';});
+  var dnf = books.filter(function(b){return b.status === 'dnf';});
+  var tbr = books.filter(function(b){return b.status === 'tbr';});
+  var totalPgs = books.reduce(function(a,b){return a + (b.currentPage || 0);}, 0);
+  var totalSecs = sessions.reduce(function(a,s){return a + s.secs;}, 0);
+  var avgMin = sessions.length ? Math.round(totalSecs/sessions.length/60) : 0;
+  var pagesPerSession = sessions.length ? Math.round(sessions.reduce(function(a,s){return a + s.pages;},0)/sessions.length) : 0;
+
+  // Top stat chips
+  sc.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;"><div style="flex:1;min-width:70px;background:var(--inner);border-radius:10px;padding:8px;text-align:center;"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:20px;font-weight:700;color:var(--orange);">'+books.length+'</div><div style="font-size:9px;color:var(--dim);">Books</div></div><div style="flex:1;min-width:70px;background:var(--inner);border-radius:10px;padding:8px;text-align:center;"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:20px;font-weight:700;color:var(--gold);">'+totalPgs.toLocaleString()+'</div><div style="font-size:9px;color:var(--dim);">Pages</div></div><div style="flex:1;min-width:70px;background:var(--inner);border-radius:10px;padding:8px;text-align:center;"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:20px;font-weight:700;color:var(--green);">'+done.length+'</div><div style="font-size:9px;color:var(--dim);">Finished</div></div><div style="flex:1;min-width:70px;background:var(--inner);border-radius:10px;padding:8px;text-align:center;"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:20px;font-weight:700;color:var(--purple);">'+xp+'</div><div style="font-size:9px;color:var(--dim);">XP</div></div></div>';
+
+  var statsGroups = [
+    {title:'Library',icon:'\uD83D\uDCDA',rows:[
+      {l:'Total books',v:books.length},{l:'Currently reading',v:reading.length},{l:'Finished',v:done.length},
+      {l:'TBR pile',v:tbr.length},{l:'DNF',v:dnf.length},
+      {l:'DNF rate',v:books.length ? Math.round(dnf.length/books.length*100)+'%' : '0%'},
+      {l:'Total pages read',v:totalPgs.toLocaleString()},{l:'Journal entries',v:entries.length},
+    ]},
+    {title:'Writing and Growth',icon:'\u270D\uFE0F',rows:[
+      {l:'Journal entries',v:entries.length},
+      {l:'Vocab collected',v:entries.filter(function(e){return e.type === 'vocab';}).length},
+      {l:'Reflections',v:entries.filter(function(e){return e.type === 'reflection';}).length},
+      {l:'Quotes saved',v:entries.filter(function(e){return e.type === 'quote';}).length},
+      {l:'XP earned',v:xp},{l:'Level',v:level},
+    ]},
+    {title:'Reading Time',icon:'\u23F1',rows:[
+      {l:'Sessions logged',v:sessions.length},
+      {l:'Avg session',v:avgMin + ' min'},
+      {l:'Total time',v:Math.round(totalSecs/3600*10)/10 + ' hrs'},
+      {l:'Pages per session',v:pagesPerSession},
+    ]},
+    {title:'Games',icon:'\uD83C\uDFAE',rows:GAMES.map(function(g){return {l:g.name + ' best',v:(gameScores[g.id]||0)+'/5'};})},
+  ];
+
+  statsGroups.forEach(function(sg, i){
+    var pill = document.createElement('div');
+    pill.className = 'cpill' + (i === 0 ? ' open' : '');
+    pill.innerHTML = '<div class="cpill-hdr" onclick="togPill(this.parentElement)"><div style="display:flex;align-items:center;"><span class="cpill-icon">'+sg.icon+'</span><div class="cpill-title">'+sg.title+'</div></div><div class="cpill-arrow">\u25BC</div></div><div class="cpill-body">'+(sg.rows.map(function(r){return '<div class="lbl-row"><div class="lr-l">'+r.l+'</div><div class="lr-v">'+r.v+'</div></div>';}).join(''))+'</div>';
+    sc.appendChild(pill);
+  });
+
+  // Per-book progress
+  var bookPill = document.createElement('div');
+  bookPill.className = 'cpill';
+  var bpHtml = '';
+  books.filter(function(b){return b.status === 'reading';}).forEach(function(b){
+    var pct = b.pages ? Math.round((b.currentPage/b.pages)*100) : 0;
+    bpHtml += '<div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text);font-weight:500;">'+b.title+'</span><span style="color:var(--dim);">'+pct+'%</span></div><div class="pbar"><div class="pfill" style="width:'+pct+'%;background:var(--orange);"></div></div></div>';
+  });
+  if(!bpHtml) bpHtml = '<div style="font-size:11px;color:var(--dim);font-style:italic;">No books currently reading.</div>';
+  bookPill.innerHTML = '<div class="cpill-hdr" onclick="togPill(this.parentElement)"><div style="display:flex;align-items:center;"><span class="cpill-icon">\uD83D\uDCD6</span><div class="cpill-title">Book Progress</div></div><div class="cpill-arrow">\u25BC</div></div><div class="cpill-body">'+bpHtml+'</div>';
+  sc.appendChild(bookPill);
+}
+
+// ══════════ PLANNER ══════════
+function renderPlanner() {
+  var sc = document.getElementById('planner-scroll'); sc.innerHTML = '';
+  var reading = books.filter(function(b){return b.status === 'reading';});
+  var tbr = books.filter(function(b){return b.status === 'tbr';});
+  var ppd = Math.round(28*(45/60));
+  var daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
+  var dayOfMonth = new Date().getDate();
+  var daysLeft = daysInMonth - dayOfMonth;
+
+  function pill(title, icon, content, open){
+    var d = document.createElement('div'); d.className = 'cpill' + (open ? ' open' : '');
+    d.innerHTML = '<div class="cpill-hdr" onclick="togPill(this.parentElement)"><div style="display:flex;align-items:center;"><span class="cpill-icon">'+icon+'</span><div class="cpill-title">'+title+'</div></div><div class="cpill-arrow">\u25BC</div></div><div class="cpill-body">'+content+'</div>';
+    return d;
+  }
+
+  // Reading Pace
+  var paceHtml = '<div style="margin-bottom:10px;"><div class="sec-small" style="margin-bottom:5px;">Daily reading target</div><input type="range" min="10" max="120" value="45" step="5" id="pace-sl" oninput="updatePaceDisplay(this.value)" style="width:100%;accent-color:var(--orange);"><div style="display:flex;justify-content:space-between;margin-top:3px;"><span style="font-size:10px;color:var(--dim);">10 min</span><span style="font-family:Cormorant Garamond,Georgia,serif;font-size:16px;font-weight:700;color:var(--orange);" id="pace-val">45 min</span><span style="font-size:10px;color:var(--dim);">2 hrs</span></div></div><div id="pace-detail"></div>';
+  sc.appendChild(pill('Reading Pace','\uD83D\uDCD6', paceHtml, true));
+
+  function renderPaceDetail(mins){
+    var ppd2 = Math.round(28*(mins/60));
+    var pd = document.getElementById('pace-detail'); if(!pd) return;
+    pd.innerHTML = '<div style="font-size:11px;color:var(--muted);margin-bottom:10px;font-style:italic;">~'+ppd2+' pages/day at this pace</div>';
+    reading.forEach(function(b){
+      var rem = b.pages - b.currentPage;
+      var days = ppd2 > 0 ? Math.ceil(rem/ppd2) : 999;
+      var finish = new Date(); finish.setDate(finish.getDate() + days);
+      pd.innerHTML += '<div style="margin-bottom:9px;"><div style="font-size:13px;font-family:Cormorant Garamond,Georgia,serif;font-weight:700;font-style:italic;color:var(--text);">'+b.title+'</div><div style="font-size:11px;color:var(--muted);">'+rem+' pages \u00B7 ~'+days+' days \u00B7 '+finish.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div><div class="pbar"><div class="pfill" style="width:'+Math.round((b.currentPage/b.pages)*100)+'%;background:var(--gold);"></div></div></div>';
+    });
+    if(!reading.length) pd.innerHTML += '<div style="font-size:12px;color:var(--dim);font-style:italic;">No books currently reading.</div>';
+  }
+  window.updatePaceDisplay = function(v){document.getElementById('pace-val').textContent = v + ' min'; renderPaceDetail(parseInt(v));};
+  setTimeout(function(){renderPaceDetail(45);}, 50);
+
+  // Monthly Forecast
+  var doneCount = books.filter(function(b){return b.status === 'done';}).length;
+  var pagesAvail = ppd * daysLeft;
+  var booksFinishable = 0; var pl = pagesAvail;
+  reading.forEach(function(b){var rem = b.pages - b.currentPage; if(pl >= rem){booksFinishable++; pl -= rem;}});
+  var forecastHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"><div style="background:var(--inner);border-radius:10px;padding:10px;"><div style="font-size:9px;color:var(--dim);">Done this month</div><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:26px;font-weight:700;color:var(--gold);">'+doneCount+'</div></div><div style="background:var(--inner);border-radius:10px;padding:10px;"><div style="font-size:9px;color:var(--dim);">Forecasted total</div><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:26px;font-weight:700;color:var(--green);">'+(doneCount+booksFinishable)+'</div></div></div><div style="font-size:11px;color:var(--muted);font-style:italic;">'+daysLeft+' days left \u00B7 ~'+pagesAvail.toLocaleString()+' pages available</div>';
+  reading.forEach(function(b){var rem = b.pages - b.currentPage; var days = Math.ceil(rem/ppd); forecastHtml += '<div style="margin-top:8px;padding:8px 10px;background:var(--inner);border-radius:8px;"><div style="font-size:12px;font-family:Cormorant Garamond,Georgia,serif;font-weight:700;font-style:italic;">'+b.title+'</div><div style="font-size:11px;color:'+(days <= daysLeft ? 'var(--green)' : 'var(--rose)')+';">'+(days <= daysLeft ? 'Finishable this month' : 'Needs '+days+' days, carries over')+'</div></div>';});
+  sc.appendChild(pill('Monthly Forecast','\uD83D\uDCC5', forecastHtml, false));
+
+  // Timeline
+  var tlHtml = '';
+  reading.forEach(function(b, i){
+    var rem = b.pages - b.currentPage; var days = Math.ceil(rem/ppd);
+    var finish = new Date(); finish.setDate(finish.getDate() + days);
+    var overdue = b.deadline && finish > new Date(b.deadline);
+    tlHtml += '<div style="display:flex;gap:10px;margin-bottom:10px;"><div style="display:flex;flex-direction:column;align-items:center;"><div style="width:10px;height:10px;border-radius:50%;background:'+(overdue ? 'var(--rose)' : 'var(--gold)')+';margin-top:3px;"></div>'+(i < reading.length-1 ? '<div style="width:2px;flex:1;background:var(--divider);margin-top:2px;"></div>' : '')+'</div><div><div style="font-size:13px;font-family:Cormorant Garamond,Georgia,serif;font-weight:700;font-style:italic;color:var(--text);">'+b.title+'</div><div style="font-size:11px;color:'+(overdue ? 'var(--rose)' : 'var(--muted)')+';">Est. finish: '+finish.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(overdue ? ' \u00B7 behind deadline' : '')+'</div></div></div>';
+  });
+  if(!tlHtml) tlHtml = '<div style="font-size:12px;color:var(--dim);font-style:italic;">No books currently reading.</div>';
+  sc.appendChild(pill('Reading Timeline','\uD83D\uDDD3', tlHtml, false));
+
+  // Queue
+  var qHtml = '';
+  if(!tbr.length){qHtml = '<div style="font-size:12px;color:var(--dim);font-style:italic;">Your TBR pile is empty.</div>';}
+  tbr.forEach(function(b, i){
+    qHtml += '<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--divider);"><div style="font-family:Cormorant Garamond,Georgia,serif;font-size:18px;font-weight:700;color:var(--cardborder);">'+(i+1)+'</div><div style="width:36px;height:50px;border-radius:2px 4px 4px 2px;overflow:hidden;flex-shrink:0;background:'+spineColor(b)+';border:1px solid var(--cardborder);"><img src="'+coverUrlS(b)+'" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.opacity=0"></div><div><div style="font-size:13px;font-family:Cormorant Garamond,Georgia,serif;font-weight:700;font-style:italic;color:var(--text);">'+b.title+'</div><div style="font-size:11px;color:var(--muted);">'+b.pages+' pages \u00B7 ~'+Math.ceil(b.pages/ppd)+' days at current pace</div></div></div>';
+  });
+  sc.appendChild(pill('Up Next Queue','\u23ED', qHtml, false));
+}
+
+// ══════════ LIBRARY ══════════
+function renderLibrary() {
+  var cats = ['All'];
+  var catSet = {};
+  THINK_PIECES.forEach(function(t){catSet[t.cat] = true;});
+  Object.keys(catSet).forEach(function(c){cats.push(c);});
+
+  var fr = document.getElementById('tp-filters'); fr.innerHTML = '';
+  cats.forEach(function(c){
+    var p = document.createElement('div'); p.className = 'fp' + (c === currentTpFilter ? ' on' : '');
+    p.textContent = c; p.onclick = function(){currentTpFilter = c; renderLibrary();};
+    fr.appendChild(p);
+  });
+
+  var filtered = currentTpFilter === 'All' ? THINK_PIECES : THINK_PIECES.filter(function(t){return t.cat === currentTpFilter;});
+  var tpl = document.getElementById('think-pieces'); tpl.innerHTML = '';
+  filtered.forEach(function(tp){
+    var d = document.createElement('div'); d.className = 'tp-card';
+    d.innerHTML = '<div class="tp-cat">'+tp.cat+'</div><div class="tp-title">'+tp.title+'</div><div class="tp-preview">'+tp.preview+'</div><div style="display:flex;gap:6px;align-items:center;"><button class="tts-btn '+(ttsActive === tp.id ? 'playing' : '')+'" onclick="toggleTTS('+tp.id+')">'+(ttsActive === tp.id ? '\u23F9 Stop' : '\u25B6 Listen')+'</button><button class="tts-btn" onclick="var b=this.parentElement.nextElementSibling;b.style.display=b.style.display===\'none\'?\'block\':\'none\'">Read more</button></div><div class="tp-body-full">'+tp.body+'</div>';
+    tpl.appendChild(d);
+  });
+
+  var wrl = document.getElementById('writing-refs'); wrl.innerHTML = '';
+  WRITING_REFS.forEach(function(r){wrl.innerHTML += '<div class="wref"><div class="wref-title">'+r.title+'</div><div class="wref-body">'+r.body+'</div></div>';});
+
+  var wr = document.getElementById('writing-rules');
+  var wrHtml = '<div style="display:flex;flex-direction:column;">';
+  WRITING_RULES.forEach(function(r, i){wrHtml += '<div class="quick-rule"><span class="quick-num">'+(i+1)+'.</span>'+r+'</div>';});
+  wr.innerHTML = wrHtml + '</div>';
+}
+
+function toggleTTS(id) {
+  if(!('speechSynthesis' in window)){showToast('TTS not available'); return;}
+  var tp = THINK_PIECES.find(function(x){return x.id === id;});
+  if(ttsActive === id){window.speechSynthesis.cancel(); ttsActive = null;}
+  else {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(tp.title + '. ' + tp.body);
+    u.rate = 0.92;
+    // Pick natural voice
+    var voices = window.speechSynthesis.getVoices();
+    var natural = voices.find(function(v){return v.name.indexOf('Natural') > -1 && v.lang.indexOf('en') === 0;});
+    if(!natural) natural = voices.find(function(v){return v.lang.indexOf('en-US') === 0;});
+    if(natural) u.voice = natural;
+    u.onend = function(){ttsActive = null; renderLibrary();};
+    window.speechSynthesis.speak(u);
+    ttsActive = id;
+  }
+  renderLibrary();
+}
+
+// ══════════ TIMER ══════════
+function openTimerFor(id) {
+  var sel = document.getElementById('timer-sel');
+  sel.innerHTML = '<option value="">Select book...</option>';
+  books.filter(function(b){return b.status === 'reading';}).forEach(function(b){
+    sel.innerHTML += '<option value="'+b.id+'"'+(b.id === id ? ' selected' : '')+'>'+b.title+'</option>';
+  });
+  timerBookChanged();
+  openModal('modal-timer');
+}
+function timerBookChanged() {
+  var sel = document.getElementById('timer-sel');
+  var b = books.find(function(x){return x.id === parseInt(sel.value);});
+  document.querySelector('#modal-timer .modal-title').textContent = b ? b.title : 'Reading timer';
+}
+function tStart() {
+  if(timerRunning) return; timerRunning = true;
+  document.getElementById('t-start').textContent = 'Running...';
+  playSound('page');
+  timerInterval = setInterval(function(){
+    timerSecs++;
+    var m = Math.floor(timerSecs/60), s = timerSecs%60;
+    document.getElementById('t-disp').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    document.getElementById('t-est').textContent = '~' + Math.round((timerSecs/3600)*28) + ' pages estimated';
+  }, 1000);
+}
+function tPause() {
+  timerRunning = false; clearInterval(timerInterval);
+  document.getElementById('t-start').textContent = 'Resume';
+  document.getElementById('t-post').style.display = 'block';
+}
+function tReset() {
+  timerRunning = false; clearInterval(timerInterval); timerSecs = 0;
+  document.getElementById('t-disp').textContent = '00:00';
+  document.getElementById('t-est').textContent = '-- pages estimated';
+  document.getElementById('t-start').textContent = 'Start';
+  document.getElementById('t-post').style.display = 'none';
+}
+function logSession() {
+  var pages = parseInt(document.getElementById('t-pages').value) || 0;
+  var sel = document.getElementById('timer-sel');
+  var b = books.find(function(x){return x.id === parseInt(sel.value);});
+  if(!b) return;
+  sessions.unshift({book:b.title, secs:timerSecs, pages:pages, date:'Today'});
+  lss(LS.sessions, sessions);
+  if(pages > 0){
+    b.currentPage = Math.min(b.pages, b.currentPage + pages);
+    if(b.currentPage >= b.pages){b.status = 'done'; burst('\uD83C\uDF89'); playSound('done');}
+    lss(LS.books, books);
+  }
+  gainXP(10);
+  syncToCC('reading_session', {book:b.title, minutes:Math.round(timerSecs/60), pages:pages});
+  refreshSuiteSync();
+  showToast(Math.round(timerSecs/60) + ' min logged +10 XP');
+  tReset();
+  document.getElementById('t-pages').value = '';
+  closeModal('modal-timer');
+  renderShelf();
+}
+
+// ══════════ INIT ══════════
+function init() {
+  document.getElementById('j-datestr').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  updateXPDisplay();
+  refreshSuiteSync();
+  renderShelf();
+}
+
+// ── SPLASH ──
+(function(){
+  function hideSplash(){
+    setTimeout(function(){
+      var s = document.getElementById('splash');
+      if(s){s.classList.add('hiding'); setTimeout(function(){s.style.display='none';}, 500);}
+    }, 2200);
+  }
+  hideSplash();
+})();
+
+init();
+</script>
+</body>
+</html>

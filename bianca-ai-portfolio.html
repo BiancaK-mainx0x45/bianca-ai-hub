@@ -6,13 +6,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bianca — AI Portfolio">
-<meta name="theme-color" content="#0D0D1A">
+<meta name="theme-color" content="#0c1220">
 <title>Bianca Kugblenu — AI Portfolio</title>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{font-size:16px;scroll-behavior:smooth;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0D0D1A;color:#e0e0ff;line-height:1.6;min-height:100vh;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0c1220;color:#e0f0ff;line-height:1.6;min-height:100vh;}
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;}
 
@@ -20,50 +20,50 @@ button{font-family:inherit;cursor:pointer;}
 #state-request,#state-unlock,#state-portfolio{display:none;}
 
 /* ── SHARED INPUT STYLES ── */
-.field{width:100%;background:#0a0a1f;border:1px solid rgba(167,139,250,.25);border-radius:10px;padding:.72rem 1rem;color:#e0e0ff;font-size:.9rem;outline:none;transition:border-color .18s;margin-bottom:.6rem;}
-.field:focus{border-color:rgba(167,139,250,.6);}
-.field::placeholder{color:#3a3a60;}
-select.field option{background:#13132a;color:#e0e0ff;}
-.field-label{font-size:.72rem;font-weight:700;color:#5a5a8a;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
+.field{width:100%;background:#111a2e;border:1px solid rgba(56,189,248,.25);border-radius:10px;padding:.72rem 1rem;color:#e0f0ff;font-size:.9rem;outline:none;transition:border-color .18s;margin-bottom:.6rem;}
+.field:focus{border-color:rgba(56,189,248,.6);}
+.field::placeholder{color:#4a6a8a;}
+select.field option{background:#131d30;color:#e0f0ff;}
+.field-label{font-size:.72rem;font-weight:700;color:#6a8aaa;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;display:block;}
 
 /* ── FORM BUTTON ── */
-.btn-primary{width:100%;padding:.75rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;letter-spacing:.02em;transition:opacity .18s;}
+.btn-primary{width:100%;padding:.75rem;background:linear-gradient(135deg,#0ea5e9,#38bdf8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.95rem;cursor:pointer;letter-spacing:.02em;transition:opacity .18s;}
 .btn-primary:hover{opacity:.88;}
-.btn-secondary{width:100%;padding:.65rem;background:transparent;border:1px solid rgba(167,139,250,.25);border-radius:10px;color:#7070a8;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .18s;margin-top:.4rem;}
-.btn-secondary:hover{border-color:rgba(167,139,250,.5);color:#a78bfa;}
+.btn-secondary{width:100%;padding:.65rem;background:transparent;border:1px solid rgba(56,189,248,.25);border-radius:10px;color:#4a8ab0;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .18s;margin-top:.4rem;}
+.btn-secondary:hover{border-color:rgba(56,189,248,.5);color:#38bdf8;}
 
 /* ── WRAP ── */
 .wrap{max-width:680px;margin:0 auto;padding:0 1.1rem 4rem;}
 
 /* ── REQUEST STATE ── */
 .request-page{min-height:100vh;display:flex;flex-direction:column;}
-.request-hero{background:linear-gradient(160deg,#0D0D1A 0%,#12102a 60%,#0D0D1A 100%);padding:3.5rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
-.request-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(124,58,237,.15),transparent);pointer-events:none;}
+.request-hero{background:linear-gradient(160deg,#0c1220 0%,#1a2540 60%,#0c1220 100%);padding:3.5rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.request-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(14,165,233,.12),transparent);pointer-events:none;}
 
 /* Bridge SVG icon */
 .bridge-icon{display:flex;justify-content:center;margin-bottom:1.2rem;}
 
-.req-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6040c0;margin-bottom:.65rem;}
+.req-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0284c7;margin-bottom:.65rem;}
 .req-name{font-size:2.2rem;font-weight:900;color:#fff;line-height:1.1;margin-bottom:.3rem;}
-.req-role{font-size:.95rem;color:#a78bfa;font-weight:600;margin-bottom:.25rem;}
-.req-location{font-size:.78rem;color:#4a4a80;margin-bottom:1.5rem;}
+.req-role{font-size:.95rem;color:#38bdf8;font-weight:600;margin-bottom:.25rem;}
+.req-location{font-size:.78rem;color:#4a6a8a;margin-bottom:1.5rem;}
 .teaser-chips{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-bottom:1.6rem;}
 .teaser-chip{font-size:.72rem;font-weight:600;padding:.22rem .65rem;border-radius:99px;border:1px solid;}
 
-.req-card{background:#13132a;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.5rem;max-width:440px;margin:0 auto;}
+.req-card{background:#131d30;border:1px solid rgba(56,189,248,.1);border-radius:16px;padding:1.5rem;max-width:440px;margin:0 auto;}
 .req-card-title{font-weight:800;font-size:1rem;color:#fff;margin-bottom:.3rem;text-align:center;}
-.req-card-sub{font-size:.78rem;color:#5a5a90;text-align:center;margin-bottom:1.25rem;line-height:1.5;}
+.req-card-sub{font-size:.78rem;color:#6a8aaa;text-align:center;margin-bottom:1.25rem;line-height:1.5;}
 
-.divider-or{display:flex;align-items:center;gap:.75rem;margin:.85rem 0;color:#3a3a60;font-size:.75rem;font-weight:600;}
-.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+.divider-or{display:flex;align-items:center;gap:.75rem;margin:.85rem 0;color:#4a6a8a;font-size:.75rem;font-weight:600;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(56,189,248,.06);}
 
 /* ── ENTRY OPTIONS (two-path choice) ── */
 .entry-opts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1.35rem;}
 .entry-opt{padding:.85rem .6rem;border-radius:12px;border:1px solid;cursor:pointer;text-align:center;transition:all .18s;background:transparent;}
 .entry-opt-title{font-size:.82rem;font-weight:800;display:block;margin-bottom:.22rem;}
 .entry-opt-sub{font-size:.68rem;font-weight:500;display:block;line-height:1.35;}
-.entry-opt.opt-request{border-color:rgba(167,139,250,.3);color:#a78bfa;}
-.entry-opt.opt-request:hover,.entry-opt.opt-request.active{background:rgba(124,58,237,.15);border-color:rgba(167,139,250,.55);}
+.entry-opt.opt-request{border-color:rgba(56,189,248,.3);color:#38bdf8;}
+.entry-opt.opt-request:hover,.entry-opt.opt-request.active{background:rgba(14,165,233,.12);border-color:rgba(56,189,248,.55);}
 .entry-opt.opt-pw{border-color:rgba(251,191,36,.25);color:#fbbf24;}
 .entry-opt.opt-pw:hover{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.45);}
 .has-password-btn{display:none;}
@@ -76,29 +76,29 @@ select.field option{background:#13132a;color:#e0e0ff;}
 
 /* ── UNLOCK STATE ── */
 .unlock-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
-.unlock-box{background:#13132a;border:1px solid rgba(167,139,250,.3);border-radius:18px;padding:2rem 1.75rem;width:min(420px,100%);box-shadow:0 24px 64px rgba(0,0,0,.5);}
+.unlock-box{background:#131d30;border:1px solid rgba(56,189,248,.3);border-radius:18px;padding:2rem 1.75rem;width:min(420px,100%);box-shadow:0 24px 64px rgba(0,0,0,.5);}
 .unlock-header{text-align:center;margin-bottom:1.5rem;}
 .unlock-icon{font-size:2rem;margin-bottom:.4rem;}
-.unlock-title{font-weight:800;font-size:1.1rem;color:#a78bfa;margin-bottom:.2rem;}
-.unlock-sub{font-size:.78rem;color:#5a5a90;}
+.unlock-title{font-weight:800;font-size:1.1rem;color:#38bdf8;margin-bottom:.2rem;}
+.unlock-sub{font-size:.78rem;color:#6a8aaa;}
 .form-err{color:#f87171;font-size:.76rem;min-height:1rem;margin-bottom:.4rem;text-align:center;}
 
 /* ── PORTFOLIO STATE ── */
-.hero{background:linear-gradient(160deg,#0D0D1A 0%,#12102a 60%,#0D0D1A 100%);padding:3rem 1.1rem 2rem;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(124,58,237,.18),transparent);pointer-events:none;}
-.hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7c3aed;margin-bottom:.7rem;}
+.hero{background:linear-gradient(160deg,#0c1220 0%,#1a2540 60%,#0c1220 100%);padding:3rem 1.1rem 2rem;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(14,165,233,.15),transparent);pointer-events:none;}
+.hero-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0284c7;margin-bottom:.7rem;}
 .hero-name{font-size:2.1rem;font-weight:900;color:#fff;letter-spacing:-.01em;line-height:1.1;margin-bottom:.4rem;}
-.hero-role{font-size:.95rem;color:#a78bfa;font-weight:600;margin-bottom:.25rem;}
-.hero-sub{font-size:.78rem;color:#4a4a80;margin-bottom:1.5rem;}
+.hero-role{font-size:.95rem;color:#38bdf8;font-weight:600;margin-bottom:.25rem;}
+.hero-sub{font-size:.78rem;color:#4a6a8a;margin-bottom:1.5rem;}
 .hero-arc{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
 .arc-pill{font-size:.73rem;font-weight:700;padding:.26rem .78rem;border-radius:99px;border:1px solid;}
 .arc-pill.amber{color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);}
-.arc-pill.violet{color:#a78bfa;border-color:rgba(167,139,250,.3);background:rgba(124,58,237,.1);}
-.arc-div{color:#3a3a60;}
+.arc-pill.violet{color:#38bdf8;border-color:rgba(56,189,248,.3);background:rgba(14,165,233,.1);}
+.arc-div{color:#4a6a8a;}
 
 .share-row{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;}
 .share-btn{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:.78rem;padding:.5rem 1.1rem;border-radius:99px;border:none;cursor:pointer;letter-spacing:.02em;}
-.share-btn.purple{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;}
+.share-btn.purple{background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#fff;}
 .share-btn.teal{background:linear-gradient(135deg,#0891b2,#38bdf8);color:#fff;}
 .share-btn.green{background:linear-gradient(135deg,#059669,#34d399);color:#fff;}
 
@@ -141,7 +141,7 @@ select.field option{background:#13132a;color:#e0e0ff;}
 .tag-design{background:rgba(236,72,153,.1);color:#ec4899;border:1px solid rgba(236,72,153,.2);}
 .app-desc{font-size:.78rem;color:#6a6a90;line-height:1.55;margin-bottom:.85rem;}
 .app-actions{display:flex;gap:.4rem;flex-wrap:wrap;}
-.btn-open{flex:1;min-width:80px;padding:.48rem .7rem;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-weight:700;font-size:.76rem;border:none;border-radius:8px;text-align:center;white-space:nowrap;cursor:pointer;}
+.btn-open{flex:1;min-width:80px;padding:.48rem .7rem;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;font-weight:700;font-size:.76rem;border:none;border-radius:8px;text-align:center;white-space:nowrap;cursor:pointer;}
 .btn-copy{padding:.48rem .65rem;background:rgba(255,255,255,.05);color:#9090b8;font-size:.75rem;font-weight:600;border:1px solid rgba(255,255,255,.1);border-radius:8px;white-space:nowrap;}
 .btn-sms{padding:.48rem .65rem;background:rgba(52,211,153,.08);color:#34d399;font-size:.75rem;font-weight:600;border:1px solid rgba(52,211,153,.18);border-radius:8px;}
 .btn-email-sm{padding:.48rem .65rem;background:rgba(56,189,248,.08);color:#38bdf8;font-size:.75rem;font-weight:600;border:1px solid rgba(56,189,248,.18);border-radius:8px;}
@@ -159,17 +159,17 @@ select.field option{background:#13132a;color:#e0e0ff;}
 
 /* RECRUITER MATCH */
 .match-form textarea.field{resize:vertical;}
-.match-intro{font-size:.85rem;font-weight:700;color:#e0e0ff;margin-bottom:12px;line-height:1.55;padding:12px 14px;background:rgba(167,139,250,.06);border-radius:10px;border-left:3px solid #a78bfa;}
+.match-intro{font-size:.85rem;font-weight:700;color:#e0f0ff;margin-bottom:12px;line-height:1.55;padding:12px 14px;background:rgba(56,189,248,.06);border-radius:10px;border-left:3px solid #38bdf8;}
 .match-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
 .match-item:last-of-type{border-bottom:none;margin-bottom:4px;}
 .match-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .match-label{font-size:.78rem;font-weight:700;margin-bottom:2px;}
 .match-blurb{font-size:.75rem;color:#7070a8;line-height:1.55;}
 .match-no{font-size:.8rem;color:#5a5a8a;padding:8px 0;line-height:1.5;}
-.claude-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:.62rem 1rem;background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(56,189,248,.1));border:1px solid rgba(124,58,237,.35);border-radius:10px;color:#a78bfa;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;justify-content:center;}
+.claude-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:.62rem 1rem;background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(56,189,248,.1));border:1px solid rgba(56,189,248,.35);border-radius:10px;color:#38bdf8;font-size:.8rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;justify-content:center;}
 .claude-link:hover{opacity:.82;}
 .match-reset{background:none;border:none;color:#4a4a80;font-size:.72rem;cursor:pointer;margin-top:10px;display:block;width:100%;text-align:center;}
-.skill-chip{font-size:.73rem;font-weight:600;padding:.22rem .62rem;border-radius:99px;background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);}
+.skill-chip{font-size:.73rem;font-weight:600;padding:.22rem .62rem;border-radius:99px;background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);}
 
 /* FEEDBACK BUTTON */
 /* feedback is now inline — no floating button */
@@ -256,10 +256,10 @@ footer a{color:#4a4a80;}
         <defs>
           <linearGradient id="arcL" x1="0" y1="0" x2="45" y2="0" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stop-color="#fbbf24"/>
-            <stop offset="100%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#38bdf8"/>
           </linearGradient>
           <linearGradient id="arcR" x1="45" y1="0" x2="90" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#a78bfa"/>
+            <stop offset="0%" stop-color="#38bdf8"/>
             <stop offset="100%" stop-color="#38bdf8"/>
           </linearGradient>
         </defs>
@@ -277,8 +277,8 @@ footer a{color:#4a4a80;}
         <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcL)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>
         <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcR)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".4"/>
         <!-- Bridge pillars -->
-        <line x1="30" y1="42" x2="30" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
-        <line x1="60" y1="42" x2="60" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+        <line x1="30" y1="42" x2="30" y2="26" stroke="#38bdf8" stroke-width="1.5" opacity=".4"/>
+        <line x1="60" y1="42" x2="60" y2="26" stroke="#38bdf8" stroke-width="1.5" opacity=".4"/>
         <!-- Road -->
         <line x1="6" y1="42" x2="84" y2="42" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
       </svg>
@@ -295,12 +295,12 @@ footer a{color:#4a4a80;}
         LinkedIn
       </a>
       <a href="mailto:biancakugblenu@gmail.com"
-        style="display:inline-flex;align-items:center;gap:.4rem;padding:.42rem 1rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:99px;color:#a78bfa;font-size:.76rem;font-weight:700;text-decoration:none;letter-spacing:.03em;">
+        style="display:inline-flex;align-items:center;gap:.4rem;padding:.42rem 1rem;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);border-radius:99px;color:#38bdf8;font-size:.76rem;font-weight:700;text-decoration:none;letter-spacing:.03em;">
         ✉️ Email
       </a>
     </div>
     <div class="teaser-chips" style="margin-top:.85rem;">
-      <span class="teaser-chip" style="color:#a78bfa;border-color:rgba(167,139,250,.25);background:rgba(124,58,237,.1);">10 Demonstrated Skills</span>
+      <span class="teaser-chip" style="color:#38bdf8;border-color:rgba(56,189,248,.25);background:rgba(14,165,233,.1);">10 Demonstrated Skills</span>
       <span class="teaser-chip" style="color:#34d399;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.08);">6 Live Apps Built</span>
       <span class="teaser-chip" style="color:#fbbf24;border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.08);">AI Foundations · Active</span>
       <span class="teaser-chip" style="color:#38bdf8;border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.08);">Finance + AI Risk Background</span>
@@ -410,20 +410,20 @@ footer a{color:#4a4a80;}
           style="margin-bottom:0;padding-right:5.5rem;" />
         <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);display:flex;gap:.3rem;">
           <button type="button" onclick="pastePassword()" title="Paste from clipboard"
-            style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:6px;color:#a78bfa;font-size:.72rem;font-weight:700;padding:.25rem .45rem;cursor:pointer;line-height:1;">
+            style="background:rgba(56,189,248,.15);border:1px solid rgba(56,189,248,.3);border-radius:6px;color:#38bdf8;font-size:.72rem;font-weight:700;padding:.25rem .45rem;cursor:pointer;line-height:1;">
             📋 Paste
           </button>
           <button type="button" onclick="togglePwVisible()" id="pw-eye" title="Show/hide password"
-            style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:6px;color:#7070a8;font-size:.78rem;padding:.25rem .4rem;cursor:pointer;line-height:1;">
+            style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:6px;color:#4a8ab0;font-size:.78rem;padding:.25rem .4rem;cursor:pointer;line-height:1;">
             👁
           </button>
         </div>
       </div>
-      <div id="ul-paste-tip" style="font-size:.7rem;color:#5a5a90;margin-bottom:.5rem;min-height:.9rem;"></div>
+      <div id="ul-paste-tip" style="font-size:.7rem;color:#6a8aaa;margin-bottom:.5rem;min-height:.9rem;"></div>
 
       <div id="ul-err" class="form-err"></div>
       <button class="btn-primary" onclick="unlock()">Unlock Portfolio →</button>
-      <p style="text-align:center;margin-top:.75rem;font-size:.75rem;color:#5a5a90;">Don't have a password? <a href="#" onclick="showRequest();return false;" style="color:#a78bfa;text-decoration:none;">Request access instead →</a></p>
+      <p style="text-align:center;margin-top:.75rem;font-size:.75rem;color:#6a8aaa;">Don't have a password? <a href="#" onclick="showRequest();return false;" style="color:#38bdf8;text-decoration:none;">Request access instead →</a></p>
     </div>
   </div>
 </div>
@@ -440,7 +440,7 @@ footer a{color:#4a4a80;}
         <svg width="72" height="44" viewBox="0 0 90 54" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="arcL2" x1="0" y1="0" x2="45" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#a78bfa"/>
+              <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#38bdf8"/>
             </linearGradient>
           </defs>
           <circle cx="12" cy="12" r="4" fill="#fbbf24"/>
@@ -451,8 +451,8 @@ footer a{color:#4a4a80;}
           <line x1="78" y1="12" x2="86" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
           <line x1="78" y1="12" x2="70" y2="20" stroke="#38bdf8" stroke-width="1.2" opacity=".5"/>
           <path d="M18 42 Q30 8 45 6 Q60 8 72 42" stroke="url(#arcL2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <line x1="30" y1="42" x2="30" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
-          <line x1="60" y1="42" x2="60" y2="26" stroke="#a78bfa" stroke-width="1.5" opacity=".4"/>
+          <line x1="30" y1="42" x2="30" y2="26" stroke="#38bdf8" stroke-width="1.5" opacity=".4"/>
+          <line x1="60" y1="42" x2="60" y2="26" stroke="#38bdf8" stroke-width="1.5" opacity=".4"/>
           <line x1="6" y1="42" x2="84" y2="42" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
         </svg>
       </div>
@@ -470,7 +470,7 @@ footer a{color:#4a4a80;}
         <button class="share-btn teal" onclick="shareAll('email')">✉️ Email</button>
         <button class="share-btn green" onclick="shareAll('text')">💬 Text</button>
         <button class="share-btn" style="background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.25);" onclick="scheduleMeeting()">📅 Request a Call</button>
-        <button class="share-btn" style="background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.25);" onclick="shareOpportunity()">💼 I Have an Opportunity</button>
+        <button class="share-btn" style="background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.25);" onclick="shareOpportunity()">💼 I Have an Opportunity</button>
       </div>
     </div>
   </div>
@@ -479,10 +479,10 @@ footer a{color:#4a4a80;}
 
     <!-- LIVE APPS — first section, most visible -->
     <div class="section-head" style="margin-top:.5rem;">
-      <div class="section-head-label" style="font-size:.75rem;color:#a78bfa;font-weight:800;">What I've Built — 6 Live Apps</div>
+      <div class="section-head-label" style="font-size:.75rem;color:#38bdf8;font-weight:800;">What I've Built — 6 Live Apps</div>
       <div class="section-head-line"></div>
     </div>
-    <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:1rem;line-height:1.6;">Every app is live, installable on mobile, and works offline. Built during a self-directed AI curriculum — <strong style="color:#c4b5fd;">before the courses that teach these skills were on the schedule.</strong></p>
+    <p style="font-size:.78rem;color:#6a8aaa;margin-bottom:1rem;line-height:1.6;">Every app is live, installable on mobile, and works offline. Built during a self-directed AI curriculum — <strong style="color:#7cb9e8;">before the courses that teach these skills were on the schedule.</strong></p>
     <div class="app-grid" id="app-grid"></div>
 
     <!-- BUILT BEFORE FINISHING -->
@@ -490,7 +490,7 @@ footer a{color:#4a4a80;}
       <div class="section-head-label">Practiced Before Finishing</div>
       <div class="section-head-line"></div>
     </div>
-    <p style="font-size:.8rem;color:#5a5a8a;margin-bottom:1rem;line-height:1.6;">Most people wait to finish a course before they start. These are things Bianca built or demonstrated <strong style="color:#a78bfa;">before the course that teaches it was even on the schedule</strong>. Tap each one.</p>
+    <p style="font-size:.8rem;color:#6a8aaa;margin-bottom:1rem;line-height:1.6;">Most people wait to finish a course before they start. These are things Bianca built or demonstrated <strong style="color:#38bdf8;">before the course that teaches it was even on the schedule</strong>. Tap each one.</p>
 
     <div class="proof-grid" id="proof-grid"></div>
 
@@ -516,14 +516,14 @@ footer a{color:#4a4a80;}
       <div class="section-head-line"></div>
     </div>
     <div class="about-card match-form" style="margin-bottom:1rem;">
-      <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:14px;line-height:1.6;">Drop a job URL, paste a few lines from the listing, or just enter a role title. <strong style="color:#a78bfa;">Everything is optional — skip anything you don't have.</strong></p>
+      <p style="font-size:.78rem;color:#6a8aaa;margin-bottom:14px;line-height:1.6;">Drop a job URL, paste a few lines from the listing, or just enter a role title. <strong style="color:#38bdf8;">Everything is optional — skip anything you don't have.</strong></p>
       <div id="match-form-wrap">
-        <label class="field-label">Job listing URL <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <label class="field-label">Job listing URL <span style="color:#6a8aaa;font-weight:400;">(optional)</span></label>
         <input class="field" id="match-url" placeholder="https://company.com/jobs/..." maxlength="300"/>
-        <p style="font-size:.68rem;color:#5a5a8a;margin:-8px 0 12px;">⚠️ We can't access job sites directly — paste a few lines from the listing below, or skip it entirely.</p>
-        <label class="field-label">Company <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <p style="font-size:.68rem;color:#6a8aaa;margin:-8px 0 12px;">⚠️ We can't access job sites directly — paste a few lines from the listing below, or skip it entirely.</p>
+        <label class="field-label">Company <span style="color:#6a8aaa;font-weight:400;">(optional)</span></label>
         <input class="field" id="match-company" placeholder="e.g. Headspace, Khan Academy, NYPL — or leave blank" maxlength="120"/>
-        <label class="field-label">Role or job description <span style="color:#5a5a8a;font-weight:400;">(optional — a few words is fine)</span></label>
+        <label class="field-label">Role or job description <span style="color:#6a8aaa;font-weight:400;">(optional — a few words is fine)</span></label>
         <textarea class="field" id="match-role" rows="3" placeholder="Paste the job description, or just a few keywords (e.g. AI enablement, responsible AI, PM)... or skip and we'll assess broadly." maxlength="800"></textarea>
         <button class="btn-primary" onclick="runMatch()" style="margin-top:4px;">Show me the fit →</button>
       </div>
@@ -537,13 +537,13 @@ footer a{color:#4a4a80;}
       <div class="section-head-line"></div>
     </div>
     <div class="about-card match-form" style="margin-bottom:1rem;">
-      <p style="font-size:.78rem;color:#5a5a8a;margin-bottom:14px;line-height:1.6;">Enter the role you're hiring for. <strong style="color:#a78bfa;">Everything is optional</strong> — the more context you share, the more the resume weights relevant experience for your needs.</p>
+      <p style="font-size:.78rem;color:#6a8aaa;margin-bottom:14px;line-height:1.6;">Enter the role you're hiring for. <strong style="color:#38bdf8;">Everything is optional</strong> — the more context you share, the more the resume weights relevant experience for your needs.</p>
       <div id="rb-form-wrap">
-        <label class="field-label">Company <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <label class="field-label">Company <span style="color:#6a8aaa;font-weight:400;">(optional)</span></label>
         <input class="field" id="rb-company" placeholder="e.g. Headspace, NYPL, Khan Academy" maxlength="120"/>
-        <label class="field-label">Role title <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <label class="field-label">Role title <span style="color:#6a8aaa;font-weight:400;">(optional)</span></label>
         <input class="field" id="rb-role" placeholder="e.g. AI Product Manager, Responsible AI Analyst" maxlength="200"/>
-        <label class="field-label">Keywords or job description <span style="color:#5a5a8a;font-weight:400;">(optional)</span></label>
+        <label class="field-label">Keywords or job description <span style="color:#6a8aaa;font-weight:400;">(optional)</span></label>
         <textarea class="field" id="rb-jd" rows="3" placeholder="Paste the JD, a few keywords, or leave blank for Bianca's full resume." maxlength="800"></textarea>
         <button class="btn-primary" onclick="buildResume()" style="margin-top:4px;">Build Tailored Resume →</button>
       </div>
@@ -557,20 +557,20 @@ footer a{color:#4a4a80;}
     </div>
     <div class="about-card match-form" id="rp-card" style="margin-bottom:1rem;">
       <div id="rp-teaser" style="cursor:pointer;" onclick="togglePromptForm()">
-        <p style="font-size:.78rem;color:#5a5a8a;line-height:1.6;margin-bottom:.5rem;">Describe what you're building or trying to do. <strong style="color:#a78bfa;">Bianca will craft a prompt template</strong> tailored to your use case and send it directly to your inbox or phone — free.</p>
-        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:#a78bfa;font-weight:700;">
+        <p style="font-size:.78rem;color:#6a8aaa;line-height:1.6;margin-bottom:.5rem;">Describe what you're building or trying to do. <strong style="color:#38bdf8;">Bianca will craft a prompt template</strong> tailored to your use case and send it directly to your inbox or phone — free.</p>
+        <div style="display:flex;align-items:center;gap:6px;font-size:.75rem;color:#38bdf8;font-weight:700;">
           <span id="rp-toggle-label">▸ Open Request Form</span>
         </div>
       </div>
       <div id="rp-form-wrap" style="display:none;margin-top:1rem;">
         <label class="field-label">What are you building or trying to do?</label>
         <textarea class="field" id="rp-usecase" rows="3" placeholder="e.g. I'm building an onboarding flow for a wellness app and need a prompt that writes inclusive copy... or I want to summarise research papers with source verification..." maxlength="600"></textarea>
-        <label class="field-label">Your email or phone <span style="color:#5a5a8a;font-weight:400;">(to receive your prompt)</span></label>
+        <label class="field-label">Your email or phone <span style="color:#6a8aaa;font-weight:400;">(to receive your prompt)</span></label>
         <input class="field" id="rp-contact" placeholder="email@example.com or +1 555 000 0000" maxlength="200"/>
         <div id="rp-err" style="color:#f87171;font-size:.76rem;min-height:.9rem;margin-bottom:.3rem;"></div>
         <button class="btn-primary" onclick="submitPromptRequest()" style="margin-top:4px;">Send My Request →</button>
       </div>
-      <div id="rp-success" style="display:none;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:1rem;text-align:center;color:#a78bfa;font-weight:700;font-size:.88rem;margin-top:1rem;">✓ Request received — Bianca will send your custom prompt within 24 hours.</div>
+      <div id="rp-success" style="display:none;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:12px;padding:1rem;text-align:center;color:#38bdf8;font-weight:700;font-size:.88rem;margin-top:1rem;">✓ Request received — Bianca will send your custom prompt within 24 hours.</div>
     </div>
 
     <!-- ABOUT -->
@@ -590,7 +590,7 @@ footer a{color:#4a4a80;}
   <div id="feedback-section" style="max-width:480px;margin:2.5rem auto 0;padding:0 1rem 3rem;">
     <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:2rem;">
       <div style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:.25rem;">💬 Leave Feedback</div>
-      <div style="font-size:.78rem;color:#5a5a90;margin-bottom:1.25rem;">Bianca reads every message. Be honest — it's more useful.</div>
+      <div style="font-size:.78rem;color:#6a8aaa;margin-bottom:1.25rem;">Bianca reads every message. Be honest — it's more useful.</div>
       <div id="feedback-success" style="display:none;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.22);border-radius:12px;padding:1rem;text-align:center;color:#34d399;font-weight:700;font-size:.88rem;">✓ Feedback sent — thank you!</div>
       <div id="feedback-form-wrap">
         <label class="field-label">Rating</label>
@@ -619,7 +619,10 @@ footer a{color:#4a4a80;}
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 const HASH  = '5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87'; // GHACH1212 (guest)
 const OHASH = '98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c'; // WEBUILT90THISCITY@ (owner)
-const BASE_URL = 'https://flourishing-boba-840c92.netlify.app';
+const NETLIFY_BASE = 'https://flourishing-boba-840c92.netlify.app';
+// Always use relative paths for opening apps (works locally and on any host)
+// NETLIFY_BASE used only for share/copy links (public URL for recipients)
+const BASE_URL = '.';
 const NETLIFY_URL = './bianca-ai-portfolio.html'; // form submission target
 let _visitor = {name:'', relation:'', company:''};
 let _starRating = 0;
@@ -639,9 +642,12 @@ let _isOwner = false;
 
 // Seed initial history entry and defer rendering
 (function(){
-  history.replaceState({view:'portfolio'},'');
+  var stored = localStorage.getItem('_pub_auth') || sessionStorage.getItem('_pub_auth');
+  var isAuthed = (stored===HASH||stored===OHASH);
+  var startView = isAuthed ? 'portfolio' : 'unlock';
+  history.replaceState({view:startView},'');
   document.addEventListener('DOMContentLoaded', function(){
-    _applyState('portfolio');
+    _applyState(startView);
   });
 })();
 
@@ -957,7 +963,7 @@ function renderPortfolio(){
 
   // App cards with SVG icons
   document.getElementById('app-grid').innerHTML = APPS.map(app=>`
-    <div class="app-card" style="border-top:2px solid ${app.color}44;">
+    <div class="app-card" style="border-top:2px solid ${app.color}44;cursor:pointer;" onclick="window.open('${BASE_URL}/${app.file}','_blank')">
       <div class="app-card-top">
         <svg class="app-icon-svg" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -989,10 +995,10 @@ function renderPortfolio(){
       </div>
       <div class="app-desc">${app.desc}</div>
       <div class="app-actions">
-        <a href="${app.file}" target="_blank" class="btn-open">Open App ↗</a>
-        <button class="btn-copy" onclick="copyLink('${BASE_URL}/${app.file}','${app.name}')">📋</button>
-        <button class="btn-sms" onclick="shareText('${app.name}','${BASE_URL}/${app.file}')">💬</button>
-        <button class="btn-email-sm" onclick="shareEmail('${app.name}','${BASE_URL}/${app.file}')">✉️</button>
+        <a href="${BASE_URL}/${app.file}" target="_blank" class="btn-open">Open App ↗</a>
+        <button class="btn-copy" onclick="copyLink('${NETLIFY_BASE}/${app.file}','${app.name}')">📋</button>
+        <button class="btn-sms" onclick="shareText('${app.name}','${NETLIFY_BASE}/${app.file}')">💬</button>
+        <button class="btn-email-sm" onclick="shareEmail('${app.name}','${NETLIFY_BASE}/${app.file}')">✉️</button>
       </div>
     </div>
   `).join('');
@@ -1419,9 +1425,9 @@ function shareAll(method){
     'Bianca Kugblenu — AI Portfolio',
     'biancakugblenu@gmail.com | NYC | Finance → AI Enablement',
     '',
-    '🎮 AI Games Hub: '+BASE_URL+'/bianca-ai-games.html',
-    '🎓 Study Dashboard: '+BASE_URL+'/bianca-study-dashboard.html',
-    '☀️ Morning Brief: '+BASE_URL+'/morning_brief.html',
+    '🎮 AI Games Hub: '+NETLIFY_BASE+'/bianca-ai-games.html',
+    '🎓 Study Dashboard: '+NETLIFY_BASE+'/bianca-study-dashboard.html',
+    '☀️ Morning Brief: '+NETLIFY_BASE+'/morning_brief.html',
     '',
     'Password protected — ask Bianca for access.',
   ].join('\n');

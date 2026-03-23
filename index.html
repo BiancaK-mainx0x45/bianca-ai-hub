@@ -6,13 +6,21 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bianca AI">
-<meta name="theme-color" content="#0d0d1a">
+<meta name="theme-color" content="#0a0a14">
 <title>Bianca — AI Hub</title>
 <style>
   :root {
-    --bg: #0d0d1a;
+    --bg: #0a0a14;
+    --bg2: #111124;
+    --bg3: #1a1a3a;
     --card: #13132a;
-    --border: rgba(255,255,255,0.07);
+    --accent: #818cf8;
+    --accent2: #6366f1;
+    --accent3: #4f46e5;
+    --text: #e8e8ff;
+    --text2: #a0a0d0;
+    --text3: #6060a0;
+    --border: #22224a;
     --purple: #9b59b6;
     --purple-bright: #c084fc;
     --cyan: #00d4ff;
@@ -20,7 +28,6 @@
     --green: #2ecc71;
     --pink: #ff6b9d;
     --amber: #f39c12;
-    --text: #e0e8ff;
     --muted: #6666aa;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -51,7 +58,7 @@
   .header-title {
     font-size: 1.65rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--purple-bright) 60%, var(--cyan) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -80,12 +87,14 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: start;
   }
   .stats-row3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin-bottom: 24px;
+    align-items: start;
   }
   .stat-card {
     background: var(--card);
@@ -109,7 +118,7 @@
     height: 2px;
     border-radius: 2px 2px 0 0;
   }
-  .stat-card.purple::before { background: linear-gradient(90deg,#7c3aed,#c084fc); }
+  .stat-card.purple::before { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
   .stat-card.gold::before   { background: linear-gradient(90deg,#d97706,#fbbf24); }
   .stat-card.green::before  { background: linear-gradient(90deg,#059669,#34d399); }
   .stat-card.cyan::before   { background: linear-gradient(90deg,#0891b2,#38bdf8); }
@@ -149,7 +158,7 @@
   .cert-body { flex: 1; min-width: 0; }
   .cert-name-t { font-size: .8rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
   .cert-issuer { font-size: .66rem; color: var(--muted); margin-bottom: 5px; }
-  .cert-learned-label { font-size: .63rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
+  .cert-learned-label { font-size: .63rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 2px; }
   .cert-learned { font-size: .72rem; color: #9090b8; line-height: 1.55; }
 
   /* ── SKILLS EXPAND ── */
@@ -160,7 +169,7 @@
     border-top: 1px solid rgba(255,255,255,.06);
   }
   .skills-expand.open { display: block; }
-  .sk-group { font-size: .58rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #a78bfa; margin-bottom: .5rem; margin-top: .9rem; }
+  .sk-group { font-size: .58rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .5rem; margin-top: .9rem; }
   .sk-group:first-child { margin-top: 0; }
   .sk-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; margin-bottom: .5rem; }
   .sk-name { font-size: .7rem; color: #c0c0e0; grid-column: 1; }
@@ -169,7 +178,7 @@
   .sk-bar  { height: 100%; border-radius: 99px; width: 0; animation: skfill 1.2s ease-out forwards; }
   @keyframes skfill { to { width: var(--w); } }
   .sk-cta { margin-top: .9rem; padding-top: .8rem; border-top: 1px solid rgba(255,255,255,.05); display: flex; justify-content: flex-end; }
-  .sk-cta a { font-size: .68rem; font-weight: 700; color: #a78bfa; text-decoration: none; background: rgba(124,58,237,.1); border: 1px solid rgba(167,139,250,.22); border-radius: 99px; padding: .25rem .7rem; }
+  .sk-cta a { font-size: .68rem; font-weight: 700; color: var(--accent); text-decoration: none; background: rgba(129,140,248,.1); border: 1px solid rgba(129,140,248,.22); border-radius: 99px; padding: .25rem .7rem; }
 
   /* ── DETAIL EXPAND (apps / hours) ── */
   .detail-expand {
@@ -281,29 +290,29 @@
 <body>
 
 <!-- AUTH GATE -->
-<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
-  <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+<div id="auth-gate" style="position:fixed;inset:0;background:#0a0a14;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
+  <div style="background:#13132a;border:1px solid rgba(129,140,248,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
-    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
-    <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
+    <div style="color:var(--accent);font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#6060a0;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
     <div style="position:relative;">
       <input id="auth-input" type="password" placeholder="Password"
-        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.7rem 3.5rem .7rem 1rem;color:#e0e0ff;font-size:.95rem;outline:none;margin-bottom:.5rem;"
+        style="width:100%;box-sizing:border-box;background:#111124;border:1px solid rgba(129,140,248,.3);border-radius:8px;padding:.7rem 3.5rem .7rem 1rem;color:#e8e8ff;font-size:.95rem;outline:none;margin-bottom:.5rem;"
         onkeydown="if(event.key==='Enter')_checkAuth()"/>
       <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-60%);display:flex;gap:.3rem;">
         <button type="button" onclick="(async()=>{try{document.getElementById('auth-input').value=(await navigator.clipboard.readText()).trim();}catch(e){}})();"
-          style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:6px;color:#a78bfa;font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;">📋</button>
+          style="background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.3);border-radius:6px;color:var(--accent);font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;">📋</button>
         <button type="button" onclick="var f=document.getElementById('auth-input');f.type=f.type==='password'?'text':'password';"
-          style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:6px;color:#7070a8;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;">👁</button>
+          style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.2);border-radius:6px;color:#8080b0;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;">👁</button>
       </div>
     </div>
     <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
     <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
-      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
-      <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
+      <input type="checkbox" id="auth-rem" checked style="accent-color:var(--accent);"/>
+      <span style="color:#8080b0;font-size:.76rem;">Remember this device</span>
     </label>
     <button onclick="_checkAuth()"
-      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
+      style="width:100%;padding:.72rem;background:linear-gradient(135deg, var(--accent2), var(--accent));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
       Unlock →
     </button>
   </div>
@@ -384,7 +393,7 @@ function toggleSkills(){
 <!-- HEADER -->
 <div class="header">
   <div class="header-name">Bianca Kugblenu</div>
-  <div class="header-title">AI Hub</div>
+  <a href="./index.html" style="text-decoration:none;"><div class="header-title">B's OS</div></a>
   <div class="header-sub">Finance → AI · Building in Public</div>
 </div>
 
@@ -560,7 +569,7 @@ function toggleSkills(){
   <a href="bianca-ai-portfolio.html" class="app-card card-gold">
     <div class="app-icon">📁</div>
     <div class="app-name">Portfolio</div>
-    <div class="app-desc">All 6 apps — games, wellness, recruiter tools & resume builder</div>
+    <div class="app-desc">All 6 apps — games, wellness, recruiter tools &amp; resume builder</div>
     <span class="app-badge">All Apps</span>
   </a>
 </div>
@@ -574,6 +583,22 @@ function toggleSkills(){
 <div class="footer">Bianca AI Hub · biancakugblenu@gmail.com</div>
 
 <script>
+// ── SMART SUITE SYNC (hub reads from all apps) ──
+var SYNC_KEY = 'smart_suite_sync';
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { var d = readSync(); var h = d.hub || {}; Object.assign(h, data); d.hub = h; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({ app: 'hub', type: eventType, data: data, ts: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
+(function refreshHubSync() {
+  writeSync({ lastVisit: new Date().toISOString() });
+})();
+
 var _deferredPrompt;
 window.addEventListener('beforeinstallprompt',function(e){
   e.preventDefault(); _deferredPrompt=e;
@@ -589,14 +614,16 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 
-<button onclick="history.back()" id="back-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">← Back</button>
-<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">Sign out</button>
+<button onclick="if(document.referrer){window.location.href=document.referrer;}else{history.back();}" id="back-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(10,10,20,.85);border:1px solid rgba(129,140,248,.25);border-radius:99px;color:var(--accent);font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">← Back</button>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(10,10,20,.85);border:1px solid rgba(129,140,248,.25);border-radius:99px;color:var(--accent);font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;backdrop-filter:blur(10px);">Sign out</button>
 <script>
 (function(){
   // Show back button if there's history to go back to and referrer is within the suite
   var ref = document.referrer;
-  var suite = ['gainsmart.html','fitsmart.html','glowsmart.html','bianca-ai-games.html',
-               'morning_brief.html','bianca-study-dashboard.html','bianca-ai-portfolio.html'];
+  var suite = ['nourish.html','fitsmart.html','eclat.html','bianca-ai-games.html',
+               'morning_brief.html','bianca-study-dashboard.html','bianca-ai-portfolio.html',
+               'bianca-command-center.html','HQ.html','quill.html','reading-companion.html',
+               'focus-timer.html','cc-tasks-standalone.html','cc-prep-standalone.html'];
   var fromSuite = suite.some(function(f){ return ref.indexOf(f) !== -1; });
   if(fromSuite && history.length > 1){
     var bb = document.getElementById('back-btn');

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Focus Timer</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a18">
+<link rel="manifest" href="focus-manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0a0a18;--card:#141726;--border:rgba(255,255,255,.08);--text:#f1f5f9;--dim:rgba(255,255,255,.4);--red:#ef4444;--green:#22c55e;--gold:#f59e0b;--purple:#a78bfa;--orange:#f97316;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk','DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;-webkit-tap-highlight-color:rgba(249,115,22,.15);}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:rgba(249,115,22,.15);}
+input,select{font-family:inherit;font-size:16px;}
+
+.container{width:100%;max-width:420px;padding:1rem;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;}
+
+/* Header */
+.header{text-align:center;padding:1.2rem 0 .6rem;}
+.header-emoji{font-size:2.2rem;filter:drop-shadow(0 4px 12px rgba(239,68,68,.3));margin-bottom:.3rem;}
+.header-title{font-size:1.1rem;font-weight:900;color:#fff;}
+.header-sub{font-size:.6rem;color:var(--dim);margin-top:.2rem;}
+
+/* Timer Display */
+.timer-ring{position:relative;width:240px;height:240px;margin:1.5rem auto;}
+.timer-ring svg{transform:rotate(-90deg);width:100%;height:100%;}
+.timer-ring circle{fill:none;stroke-width:6;}
+.ring-bg{stroke:rgba(255,255,255,.06);}
+.ring-fill{stroke:var(--red);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
+.timer-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.timer-time{font-size:3.2rem;font-weight:900;font-variant-numeric:tabular-nums;color:#fff;line-height:1;}
+.timer-phase{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-top:.2rem;color:var(--dim);}
+
+/* Controls */
+.controls{display:flex;gap:.5rem;justify-content:center;margin:1rem 0;}
+.btn{border:none;border-radius:12px;padding:.6rem 1.4rem;font-size:.72rem;font-weight:700;transition:all .15s;min-height:44px;}
+.btn-start{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 4px 16px rgba(239,68,68,.25);}
+.btn-start:active{transform:scale(.96);}
+.btn-start.break-mode{background:linear-gradient(135deg,var(--green),#06b6d4);box-shadow:0 4px 16px rgba(34,197,94,.25);}
+.btn-sec{background:rgba(255,255,255,.06);border:1px solid var(--border);color:#fff;}
+.btn-sec:active{background:rgba(255,255,255,.1);}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.08);color:var(--dim);font-size:.6rem;}
+
+/* Stats */
+.stats-row{display:flex;gap:.4rem;justify-content:center;margin:.8rem 0;}
+.stat-pill{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:.3rem .7rem;text-align:center;}
+.stat-num{font-size:1rem;font-weight:900;}
+.stat-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;}
+
+/* Mode selector */
+.mode-bar{display:flex;gap:.3rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.25rem;margin-bottom:1rem;}
+.mode-btn{flex:1;padding:.4rem;font-size:.6rem;font-weight:700;border:none;border-radius:7px;background:transparent;color:var(--dim);transition:all .15s;}
+.mode-btn.active{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(249,115,22,.1));color:#fff;}
+
+/* Settings */
+.settings-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.8rem;margin-top:.6rem;}
+.settings-title{font-size:.6rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid var(--border);}
+.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:.62rem;color:var(--text);}
+.setting-input{width:52px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:#fff;border-radius:6px;padding:.25rem;font-size:.6rem;text-align:center;}
+.setting-toggle{position:relative;width:38px;height:22px;background:rgba(255,255,255,.1);border-radius:11px;border:none;cursor:pointer;transition:background .2s;}
+.setting-toggle.on{background:rgba(139,92,246,.4);}
+.setting-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;}
+.setting-toggle.on::after{transform:translateX(16px);}
+
+/* Rabbit hole banner */
+.rh-banner{background:linear-gradient(135deg,#1e1b4b,#312e81);border:1px solid rgba(139,92,246,.3);border-radius:14px;padding:.7rem .8rem;margin-top:.6rem;animation:slideUp .3s ease;}
+.rh-emoji{font-size:.85rem;}
+.rh-title{font-size:.62rem;font-weight:700;color:#c4b5fd;}
+.rh-text{font-size:.58rem;color:rgba(255,255,255,.7);line-height:1.5;margin:.3rem 0;}
+.rh-suggestion{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:.4rem .5rem;margin:.3rem 0;}
+.rh-actions{display:flex;gap:.3rem;justify-content:flex-end;margin-top:.3rem;}
+
+/* Presets */
+.presets{display:flex;gap:.3rem;flex-wrap:wrap;justify-content:center;margin:.6rem 0;}
+.preset-chip{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:.25rem .6rem;font-size:.52rem;color:var(--dim);font-weight:600;transition:all .15s;}
+.preset-chip:active,.preset-chip.active{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--red);}
+
+/* History */
+.history-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.6rem .8rem;margin-top:.6rem;}
+.history-row{display:flex;align-items:center;gap:.4rem;padding:.25rem 0;font-size:.55rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04);}
+.history-row:last-child{border-bottom:none;}
+.history-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.history-time{color:var(--dim);margin-left:auto;font-size:.48rem;}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.5rem .8rem;font-size:.6rem;font-weight:600;color:#fff;z-index:9999;animation:slideUp .3s;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+
+/* Animations */
+@keyframes slideUp{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.pulsing{animation:pulse 1.5s ease-in-out infinite;}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:.55rem;color:var(--dim);text-decoration:none;padding:.3rem 0;margin-bottom:.3rem;}
+.back-link:hover{color:#fff;}
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back-link" href="#" onclick="if(document.referrer && document.referrer.indexOf(location.origin)>-1){history.back();}else{location.href='./bianca-command-center.html';}return false;">← Back</a>
+
+  <div class="header">
+    <div class="header-emoji">🍅</div>
+    <a href="./index.html" style="text-decoration:none;color:inherit;"><div class="header-title">Focus Timer</div></a>
+    <div class="header-sub">Pomodoro + Rabbit Hole Check-ins</div>
+  </div>
+
+  <!-- Mode selector -->
+  <div class="mode-bar">
+    <button class="mode-btn active" id="modePomodoro" onclick="setMode('pomodoro')">🍅 Pomodoro</button>
+    <button class="mode-btn" id="modeStopwatch" onclick="setMode('stopwatch')">⏱ Stopwatch</button>
+    <button class="mode-btn" id="modeCustom" onclick="setMode('custom')">⚙ Custom</button>
+  </div>
+
+  <!-- Presets -->
+  <div class="presets" id="presetBar">
+    <button class="preset-chip active" onclick="setPreset(25,5,15,this)">25/5</button>
+    <button class="preset-chip" onclick="setPreset(30,5,15,this)">30/5</button>
+    <button class="preset-chip" onclick="setPreset(45,10,20,this)">45/10</button>
+    <button class="preset-chip" onclick="setPreset(50,10,25,this)">50/10</button>
+    <button class="preset-chip" onclick="setPreset(15,3,10,this)">15/3 (Reading)</button>
+  </div>
+
+  <!-- Timer Ring -->
+  <div class="timer-ring" id="timerRing">
+    <svg viewBox="0 0 240 240">
+      <circle class="ring-bg" cx="120" cy="120" r="108"></circle>
+      <circle class="ring-fill" id="ringFill" cx="120" cy="120" r="108" stroke-dasharray="678.58" stroke-dashoffset="0"></circle>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-time" id="timerTime">25:00</div>
+      <div class="timer-phase" id="timerPhase">Ready</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-start" id="btnStart" onclick="pomStart()">Start Focus</button>
+    <button class="btn btn-sec" id="btnPause" onclick="pomPause()" style="display:none;">Pause</button>
+    <button class="btn btn-ghost" id="btnReset" onclick="pomReset()" style="display:none;">Reset</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-pill"><div class="stat-num" id="statRounds" style="color:var(--red);">0</div><div class="stat-label">Rounds</div></div>
+    <div class="stat-pill"><div class="stat-num" id="statMinutes" style="color:var(--orange);">0</div><div class="stat-label">Focus Min</div></div>
+    <div class="stat-pill"><div class="stat-num" id="statStreak" style="color:var(--gold);">0</div><div class="stat-label">Day Streak</div></div>
+  </div>
+
+  <!-- Rabbit Hole banner (injected dynamically) -->
+  <div id="rhBannerSlot"></div>
+
+  <!-- Session History -->
+  <div class="history-card" id="historyCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
+      <div class="settings-title" style="margin-bottom:0;">Today's Sessions</div>
+      <button onclick="clearHistory()" style="background:none;border:none;color:var(--dim);font-size:.45rem;cursor:pointer;">Clear</button>
+    </div>
+    <div id="historyList"><div style="font-size:.52rem;color:var(--dim);padding:.3rem 0;">No sessions yet. Start your first focus round.</div></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings-card">
+    <div class="settings-title">Settings</div>
+    <div class="setting-row">
+      <span class="setting-label">Focus (min)</span>
+      <input class="setting-input" id="setFocus" type="number" min="1" max="90" value="25">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Short Break (min)</span>
+      <input class="setting-input" id="setBreak" type="number" min="1" max="30" value="5">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Long Break (min)</span>
+      <input class="setting-input" id="setLong" type="number" min="1" max="60" value="15">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Long break every</span>
+      <input class="setting-input" id="setLongEvery" type="number" min="2" max="10" value="4"> rounds
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">🐇 Rabbit Hole Check-ins</span>
+      <button class="setting-toggle on" id="rhToggle" onclick="toggleRh()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Check-in after (min)</span>
+      <input class="setting-input" id="setRhMin" type="number" min="5" max="120" value="20">
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Sound alerts</span>
+      <button class="setting-toggle on" id="soundToggle" onclick="toggleSound()"></button>
+    </div>
+    <div class="setting-row">
+      <span class="setting-label">Notifications</span>
+      <button class="setting-toggle" id="notifToggle" onclick="requestNotifPermission()"></button>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:1rem 0 2rem;">
+    <div style="font-size:.45rem;color:var(--dim);">Part of Bianca's AI Hub</div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+var _mode = 'pomodoro'; // pomodoro | stopwatch | custom
+var _state = 'idle'; // idle | focus | break | longbreak | stopwatch
+var _interval = null;
+var _secondsLeft = 0;
+var _totalSeconds = 0;
+var _stopwatchSeconds = 0;
+var _rounds = 0;
+var _focusMinutesTotal = 0;
+var _paused = false;
+var _soundOn = true;
+var _notifOn = false;
+
+// ── PERSISTENCE ──
+var _today = new Date().toISOString().split('T')[0];
+var _stored = JSON.parse(localStorage.getItem('ft_data') || '{}');
+if (_stored.date !== _today) _stored = {date: _today, rounds: 0, focusMin: 0, history: [], streak: 0};
+_rounds = _stored.rounds || 0;
+_focusMinutesTotal = _stored.focusMin || 0;
+
+// Streak calculation
+var _streakData = JSON.parse(localStorage.getItem('ft_streak') || '{"count":0,"lastDate":""}');
+(function calcStreak() {
+  var yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+  if (_streakData.lastDate === _today) return;
+  if (_streakData.lastDate === yesterday) return; // Will increment when first round completes
+  if (_streakData.lastDate && _streakData.lastDate !== yesterday) _streakData.count = 0;
+})();
+
+// ── RABBIT HOLE ──
+var _rhEnabled = localStorage.getItem('ft_rh') !== 'false';
+var _rhThreshold = parseInt(localStorage.getItem('ft_rh_min') || '20');
+var _rhStartTime = Date.now();
+var _rhDismissed = false;
+var RH_SUGGESTIONS = [
+  {emoji:"🚶", text:"Take a 5-minute walk. Your brain does its best processing away from screens."},
+  {emoji:"🎧", text:"Put on a podcast and stretch. Feed your mind a different way."},
+  {emoji:"📋", text:"Check your schedule. Is there something on your list that needs attention?"},
+  {emoji:"💧", text:"Hydrate. Step outside for fresh air. Come back when you are ready."},
+  {emoji:"📞", text:"Call someone you have been meaning to reach out to."},
+  {emoji:"🍳", text:"Make a snack. Prep something for later. Fuel the body, not just the mind."},
+  {emoji:"✍️", text:"Write down one thing you learned so far today. Then close the tab."},
+  {emoji:"🧘", text:"3 deep breaths. In for 4, hold for 4, out for 6. Then decide what is next."},
+  {emoji:"🤖", text:"You have been on screens for a while. Write down what you built or learned before switching contexts."},
+  {emoji:"🪞", text:"Step away and do one task with your own brain first. The tools will still be here."},
+  {emoji:"📵", text:"Screen break. Not switching to another screen. Actually away from all of them."},
+  {emoji:"📝", text:"Before your next question, write down what you think the answer is. Then compare."},
+  {emoji:"⏰", text:"Save your progress and come back fresh. Diminishing returns are real."},
+  {emoji:"📖", text:"You have been reading for a while. Close your eyes and recall what you just read. That is where memory forms."}
+];
+
+function save() {
+  _stored.date = _today;
+  _stored.rounds = _rounds;
+  _stored.focusMin = _focusMinutesTotal;
+  localStorage.setItem('ft_data', JSON.stringify(_stored));
+  localStorage.setItem('ft_streak', JSON.stringify(_streakData));
+  localStorage.setItem('ft_rh', _rhEnabled);
+  localStorage.setItem('ft_rh_min', document.getElementById('setRhMin').value);
+  refreshSuiteSync();
+}
+
+// ── DISPLAY ──
+var CIRC = 2 * Math.PI * 108; // 678.58
+
+function updateDisplay() {
+  var timeEl = document.getElementById('timerTime');
+  var phaseEl = document.getElementById('timerPhase');
+  var ringEl = document.getElementById('ringFill');
+  var sRounds = document.getElementById('statRounds');
+  var sMinutes = document.getElementById('statMinutes');
+  var sStreak = document.getElementById('statStreak');
+
+  if (_mode === 'stopwatch') {
+    var m = Math.floor(_stopwatchSeconds / 60);
+    var s = _stopwatchSeconds % 60;
+    var h = Math.floor(m / 60);
+    if (h > 0) timeEl.textContent = h + ':' + String(m % 60).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    else timeEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    phaseEl.textContent = _state === 'stopwatch' ? 'Counting' : 'Stopwatch';
+    ringEl.style.strokeDashoffset = '0';
+    ringEl.style.stroke = 'var(--orange)';
+  } else {
+    var m = Math.floor(_secondsLeft / 60);
+    var s = _secondsLeft % 60;
+    timeEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+
+    var pct = _totalSeconds > 0 ? (1 - _secondsLeft / _totalSeconds) : 0;
+    ringEl.style.strokeDashoffset = String(CIRC * (1 - pct));
+
+    if (_state === 'focus') { phaseEl.textContent = 'Focusing'; ringEl.style.stroke = 'var(--red)'; timeEl.style.color = '#fff'; }
+    else if (_state === 'break') { phaseEl.textContent = 'Short Break'; ringEl.style.stroke = 'var(--green)'; timeEl.style.color = 'var(--green)'; }
+    else if (_state === 'longbreak') { phaseEl.textContent = 'Long Break'; ringEl.style.stroke = 'var(--purple)'; timeEl.style.color = 'var(--purple)'; }
+    else { phaseEl.textContent = 'Ready'; ringEl.style.strokeDashoffset = '0'; timeEl.style.color = '#fff'; }
+  }
+
+  sRounds.textContent = _rounds;
+  sMinutes.textContent = _focusMinutesTotal;
+  sStreak.textContent = _streakData.count;
+}
+
+// ── TIMER LOGIC ──
+function getVal(id, fb) { var el = document.getElementById(id); return el ? (parseInt(el.value) || fb) : fb; }
+
+function pomStart() {
+  if (_mode === 'stopwatch') { startStopwatch(); return; }
+  if (_state === 'idle') {
+    _state = 'focus';
+    _secondsLeft = getVal('setFocus', 25) * 60;
+  }
+  _totalSeconds = _secondsLeft > _totalSeconds ? _secondsLeft : _totalSeconds;
+  if (_totalSeconds === 0) _totalSeconds = _secondsLeft;
+  _paused = false;
+  clearInterval(_interval);
+  _interval = setInterval(tick, 1000);
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('btnPause').style.display = '';
+  document.getElementById('btnPause').textContent = 'Pause';
+  document.getElementById('btnReset').style.display = '';
+  updateDisplay();
+}
+
+function pomPause() {
+  if (_paused) { pomStart(); return; }
+  _paused = true;
+  clearInterval(_interval);
+  _interval = null;
+  document.getElementById('btnPause').textContent = 'Resume';
+  document.getElementById('timerPhase').textContent = 'Paused';
+}
+
+function pomReset() {
+  clearInterval(_interval); _interval = null;
+  _state = 'idle'; _paused = false;
+  _secondsLeft = getVal('setFocus', 25) * 60;
+  _totalSeconds = _secondsLeft;
+  _stopwatchSeconds = 0;
+  document.getElementById('btnStart').style.display = '';
+  document.getElementById('btnStart').textContent = 'Start Focus';
+  document.getElementById('btnStart').className = 'btn btn-start';
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnReset').style.display = 'none';
+  updateDisplay();
+}
+
+function tick() {
+  _secondsLeft--;
+  if (_secondsLeft <= 0) { clearInterval(_interval); _interval = null; phaseComplete(); }
+  updateDisplay();
+  checkRabbitHole();
+}
+
+function phaseComplete() {
+  var longEvery = getVal('setLongEvery', 4);
+  if (_state === 'focus') {
+    var focusMin = getVal('setFocus', 25);
+    _rounds++;
+    _focusMinutesTotal += focusMin;
+    // Streak
+    if (_streakData.lastDate !== _today) { _streakData.count++; _streakData.lastDate = _today; }
+    syncToCC('focus_round', { round: _rounds, minutes: focusMin, totalMinToday: _focusMinutesTotal + focusMin });
+    // History
+    if (!_stored.history) _stored.history = [];
+    _stored.history.push({type:'focus', min:focusMin, time: new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})});
+    save();
+
+    if (_rounds % longEvery === 0) {
+      _state = 'longbreak';
+      _secondsLeft = getVal('setLong', 15) * 60;
+      notify('Long break time', _rounds + ' rounds done. Take ' + getVal('setLong',15) + ' minutes.');
+      showToast(_rounds + ' rounds complete. Take a longer break.');
+    } else {
+      _state = 'break';
+      _secondsLeft = getVal('setBreak', 5) * 60;
+      notify('Break time', 'Round ' + _rounds + ' done. ' + getVal('setBreak',5) + '-minute break.');
+      showToast('Round ' + _rounds + ' done. Time for a break.');
+    }
+    _totalSeconds = _secondsLeft;
+    playSound(_state === 'longbreak' ? 440 : 660);
+    document.getElementById('btnStart').style.display = '';
+    document.getElementById('btnStart').textContent = _state === 'longbreak' ? 'Start Long Break' : 'Start Break';
+    document.getElementById('btnStart').className = 'btn btn-start break-mode';
+    document.getElementById('btnPause').style.display = 'none';
+    updateDisplay();
+    renderHistory();
+  } else {
+    // Break done
+    _state = 'idle';
+    _secondsLeft = getVal('setFocus', 25) * 60;
+    _totalSeconds = _secondsLeft;
+    _stored.history.push({type:'break', min: _state === 'longbreak' ? getVal('setLong',15) : getVal('setBreak',5), time: new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})});
+    save();
+    playSound(880, 200, 1100);
+    notify('Break over', 'Ready for the next focus round?');
+    showToast('Break over. Ready for the next round?');
+    document.getElementById('btnStart').style.display = '';
+    document.getElementById('btnStart').textContent = 'Start Focus';
+    document.getElementById('btnStart').className = 'btn btn-start';
+    document.getElementById('btnPause').style.display = 'none';
+    document.getElementById('btnReset').style.display = 'none';
+    updateDisplay();
+    renderHistory();
+  }
+}
+
+// ── STOPWATCH ──
+function startStopwatch() {
+  _state = 'stopwatch';
+  _paused = false;
+  clearInterval(_interval);
+  _interval = setInterval(function() {
+    _stopwatchSeconds++;
+    updateDisplay();
+    checkRabbitHole();
+  }, 1000);
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('btnPause').style.display = '';
+  document.getElementById('btnPause').textContent = 'Pause';
+  document.getElementById('btnReset').style.display = '';
+  updateDisplay();
+}
+
+// ── MODES ──
+function setMode(mode) {
+  _mode = mode;
+  pomReset();
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+  var presetBar = document.getElementById('presetBar');
+  if (mode === 'stopwatch') {
+    presetBar.style.display = 'none';
+    document.getElementById('btnStart').textContent = 'Start';
+    _secondsLeft = 0; _totalSeconds = 0; _stopwatchSeconds = 0;
+  } else {
+    presetBar.style.display = 'flex';
+    document.getElementById('btnStart').textContent = 'Start Focus';
+  }
+  updateDisplay();
+}
+
+function setPreset(focus, brk, long, btn) {
+  document.getElementById('setFocus').value = focus;
+  document.getElementById('setBreak').value = brk;
+  document.getElementById('setLong').value = long;
+  document.querySelectorAll('.preset-chip').forEach(function(c) { c.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  pomReset();
+}
+
+// ── RABBIT HOLE ──
+function checkRabbitHole() {
+  if (!_rhEnabled) return;
+  var threshold = parseInt(document.getElementById('setRhMin').value) || 20;
+  var mins = (Date.now() - _rhStartTime) / 60000;
+  if (mins < threshold) return;
+  if (_rhDismissed && (Date.now() - _rhDismissed) / 60000 < 15) return;
+  showRhBanner(Math.round(mins));
+}
+
+function showRhBanner(mins) {
+  var slot = document.getElementById('rhBannerSlot');
+  if (slot.querySelector('.rh-banner')) return;
+  var s = RH_SUGGESTIONS[Math.floor(Math.random() * RH_SUGGESTIONS.length)];
+  var div = document.createElement('div');
+  div.className = 'rh-banner';
+  div.innerHTML =
+    '<div style="display:flex;align-items:center;gap:.3rem;"><span class="rh-emoji">🐇</span><span class="rh-title">Rabbit Hole Check</span><span style="margin-left:auto;font-size:.48rem;color:rgba(196,181,253,.5);">' + mins + ' min</span></div>' +
+    '<div class="rh-text">You have been at it for ' + mins + ' minutes. No judgment, just a check-in.</div>' +
+    '<div class="rh-suggestion"><div style="font-size:.65rem;margin-bottom:.1rem;">' + s.emoji + '</div><div style="font-size:.55rem;color:#e0e7ff;line-height:1.45;">' + s.text + '</div></div>' +
+    '<div class="rh-actions">' +
+    '<button onclick="dismissRh(false)" class="btn btn-ghost" style="font-size:.48rem;padding:.2rem .5rem;">Turn off</button>' +
+    '<button onclick="dismissRh(true)" class="btn btn-sec" style="font-size:.5rem;padding:.2rem .6rem;">Noted</button>' +
+    '<button onclick="dismissRh(true);pomPause()" class="btn btn-sec" style="font-size:.5rem;padding:.2rem .6rem;border-color:rgba(34,197,94,.3);color:var(--green);">Pause and break</button>' +
+    '</div>';
+  slot.appendChild(div);
+  playSound(440, 150);
+}
+
+function dismissRh(keepEnabled) {
+  var slot = document.getElementById('rhBannerSlot');
+  slot.innerHTML = '';
+  _rhDismissed = Date.now();
+  if (!keepEnabled) { _rhEnabled = false; save(); syncToggles(); showToast('Rabbit hole check-ins disabled.'); }
+}
+
+function toggleRh() {
+  _rhEnabled = !_rhEnabled;
+  save(); syncToggles();
+  showToast(_rhEnabled ? 'Check-ins enabled' : 'Check-ins disabled');
+  if (_rhEnabled) _rhStartTime = Date.now();
+}
+
+function syncToggles() {
+  var t = document.getElementById('rhToggle');
+  if (t) { if (_rhEnabled) t.classList.add('on'); else t.classList.remove('on'); }
+}
+
+// ── SOUND ──
+function playSound(freq, dur, freq2) {
+  if (!_soundOn) return;
+  try {
+    var ac = new (window.AudioContext || window.webkitAudioContext)();
+    var g = ac.createGain(); g.gain.value = 0.25; g.connect(ac.destination);
+    var o = ac.createOscillator(); o.frequency.value = freq; o.type = 'sine'; o.connect(g); o.start();
+    setTimeout(function() { o.stop(); }, dur || 300);
+    if (freq2) { setTimeout(function() { var o2 = ac.createOscillator(); o2.frequency.value = freq2; o2.type = 'sine'; o2.connect(g); o2.start(); setTimeout(function() { o2.stop(); }, 200); }, 300); }
+  } catch(e) {}
+}
+
+function toggleSound() {
+  _soundOn = !_soundOn;
+  var t = document.getElementById('soundToggle');
+  if (t) { if (_soundOn) t.classList.add('on'); else t.classList.remove('on'); }
+}
+
+// ── NOTIFICATIONS ──
+function requestNotifPermission() {
+  if (!('Notification' in window)) { showToast('Notifications not supported on this device.'); return; }
+  Notification.requestPermission().then(function(perm) {
+    _notifOn = perm === 'granted';
+    var t = document.getElementById('notifToggle');
+    if (t) { if (_notifOn) t.classList.add('on'); else t.classList.remove('on'); }
+    if (_notifOn) showToast('Notifications enabled. You will get alerts when timer completes.');
+    else showToast('Notifications not granted.');
+  });
+}
+
+function notify(title, body) {
+  if (!_notifOn || !('Notification' in window) || Notification.permission !== 'granted') return;
+  try { new Notification(title, {body: body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍅</text></svg>', tag: 'focus-timer'}); } catch(e) {}
+}
+
+// ── HISTORY ──
+function renderHistory() {
+  var list = document.getElementById('historyList');
+  var history = _stored.history || [];
+  if (history.length === 0) { list.innerHTML = '<div style="font-size:.52rem;color:var(--dim);padding:.3rem 0;">No sessions yet. Start your first focus round.</div>'; return; }
+  list.innerHTML = history.slice().reverse().slice(0, 12).map(function(h) {
+    var color = h.type === 'focus' ? 'var(--red)' : 'var(--green)';
+    var label = h.type === 'focus' ? 'Focus' : 'Break';
+    return '<div class="history-row"><div class="history-dot" style="background:' + color + ';"></div><span>' + label + ' - ' + h.min + ' min</span><span class="history-time">' + h.time + '</span></div>';
+  }).join('');
+}
+
+function clearHistory() {
+  _stored.history = [];
+  save();
+  renderHistory();
+  showToast('History cleared.');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  var existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
+}
+
+// ── SMART SUITE SYNC ──
+var SYNC_KEY = 'smart_suite_sync';
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { var d = readSync(); var ft = d.focus || {}; Object.assign(ft, data); d.focus = ft; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({ app: 'focus', type: eventType, data: data, ts: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
+
+function refreshSuiteSync() {
+  writeSync({
+    roundsToday: _rounds,
+    focusMinToday: _focusMinutesTotal,
+    streak: _streakData.count,
+    lastDate: _today,
+    mode: _mode,
+    state: _state
+  });
+  renderSyncPanel();
+}
+
+function renderSyncPanel() {
+  var sync = readSync();
+  var fs = sync.fitsmart || {};
+  var nr = sync.nourish || {};
+  var ec = sync.eclat || {};
+  // Cross-app insights used internally (no dedicated panel in this minimal app)
+  // But we can show a subtle insight in the history card header area
+  var insights = [];
+  if (fs.workoutToday && fs.workoutDate === _today) insights.push('🏋️ Worked out today');
+  if (nr.caloriesToday && nr.calorieGoal && (nr.caloriesToday / nr.calorieGoal) >= 0.5) insights.push('🍽️ Eating well');
+  if (ec.skinJournalToday) insights.push('✨ Skin journal logged');
+  if (insights.length > 0) {
+    var el = document.getElementById('syncInsight');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'syncInsight';
+      el.style.cssText = 'font-size:.48rem;color:var(--dim);text-align:center;padding:.2rem 0;';
+      var histCard = document.getElementById('historyCard');
+      if (histCard) histCard.parentNode.insertBefore(el, histCard);
+    }
+    el.textContent = insights.join('  ·  ');
+  }
+}
+
+// ── INIT ──
+if ('Notification' in window && Notification.permission === 'granted') {
+  _notifOn = true;
+  var nt = document.getElementById('notifToggle');
+  if (nt) nt.classList.add('on');
+}
+syncToggles();
+updateDisplay();
+renderHistory();
+
+// Auth check (shared with hub)
+(function() {
+  var stored = localStorage.getItem('_hub_auth');
+  if (!stored) {
+    // No auth needed for local file, but track for hub integration
+  }
+})();
+refreshSuiteSync();
+</script>
+</body>
+</html>

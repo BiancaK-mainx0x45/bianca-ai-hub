@@ -1,190 +1,497 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="AI Games"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="theme-color" content="#0f0f23"/>
-<title>🎮 Bianca's AI Learning Games</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AI Games">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#040610">
+<title>AI Learning Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{background:#0f0f23;color:#e0e0ff;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;}
-.screen{display:none;padding:16px;max-width:700px;margin:0 auto;}
+:root{
+  --bg:#06080F;
+  --card:#08090E;
+  --cardborder:#0F1830;
+  --inner:#0A0C18;
+  --divider:#0A0E20;
+  --hdr:#040610;
+  --hdrborder:#0F1E40;
+  --hdrfaint:#0A0E20;
+  --text:#D0DEFF;
+  --muted:#6A80B0;
+  --dim:#2A3A60;
+  --faint:#1A2A50;
+  --gold:#3D7FFF;
+  --goldlt:#60A0FF;
+  --orange:#3D7FFF;
+  --green:#40C080;
+  --blue:#3D7FFF;
+  --purple:#8060C0;
+  --rose:#C06090;
+  --teal:#40B8D0;
+  --correct:#0A2A1A;
+  --correctborder:#40C080;
+  --correcttext:#60D090;
+  --wrong:#1A0A10;
+  --wrongborder:#A04060;
+  --wrongtext:#E07090;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--hdr);}
+body{font-family:'Space Grotesk',sans-serif;color:var(--text);}
+.app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;position:relative;}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+.scroll{flex:1;overflow-y:auto;overflow-x:clip;padding:14px;}
+.scroll::-webkit-scrollbar{width:0;}
 
-/* XP BAR */
-#xp-bar-wrap{position:sticky;top:0;z-index:100;background:#0f0f23;padding:10px 16px 8px;border-bottom:1px solid #1e1e3f;}
-.xp-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.xp-label{font-size:13px;color:#a0a0c0;white-space:nowrap;}
-.xp-track{flex:1;min-width:100px;height:10px;background:#1e1e3f;border-radius:5px;overflow:hidden;}
-.xp-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:5px;transition:width .5s;}
-.xp-num{font-size:13px;color:#c084fc;font-weight:700;white-space:nowrap;}
-.streak-badge{background:#1e1e3f;border:1px solid #7c3aed;border-radius:20px;padding:3px 10px;font-size:12px;}
-.mode-toggle{display:flex;gap:6px;align-items:center;}
-.mode-btn{padding:4px 12px;border-radius:20px;border:1px solid #7c3aed;background:transparent;color:#a0a0c0;cursor:pointer;font-size:12px;transition:all .2s;}
-.mode-btn.active{background:#7c3aed;color:#fff;}
+/* HEADER */
+.hdr{background:var(--hdr);padding:16px 16px 12px;flex-shrink:0;border-bottom:1px solid var(--hdrborder);position:relative;}
+.hdr-row{display:flex;justify-content:space-between;align-items:baseline;}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#D0DEFF;letter-spacing:-1px;font-style:normal;line-height:1;}
+.logo span{color:#3D7FFF;}
+.logo-sub{font-size:10px;color:#2A3A60;margin-top:1px;font-family:'DM Sans',sans-serif;letter-spacing:0.3px;}
+.chips-row{display:flex;gap:6px;margin-top:10px;}
+.chip{flex:1;background:rgba(13,16,30,0.8);border:1px solid #0F1E40;border-radius:7px;padding:7px 6px;}
+.chip-l{font-size:9px;color:#2A3A60;margin-bottom:2px;font-family:'DM Sans',sans-serif;}
+.chip-v{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:#3D7FFF;line-height:1;}
 
-/* HUB */
-#screen-hub{display:block;}
-.hub-title{text-align:center;padding:24px 0 8px;}
-.hub-title h1{font-size:clamp(22px,5vw,32px);background:linear-gradient(135deg,#a855f7,#7c3aed,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hub-title p{color:#a0a0c0;font-size:14px;margin-top:4px;}
-.games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:16px;}
-.game-card{background:#13132b;border:1px solid #2a2a50;border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.game-card:hover,.game-card:active{transform:translateY(-3px);border-color:#7c3aed;box-shadow:0 8px 24px rgba(124,58,237,.3);}
-.game-icon{font-size:36px;margin-bottom:10px;}
-.game-title{font-size:18px;font-weight:700;color:#e0e0ff;}
-.game-desc{font-size:13px;color:#a0a0c0;margin-top:6px;line-height:1.5;}
-.game-badge{display:inline-block;background:#1e1e3f;border:1px solid #7c3aed;border-radius:20px;padding:3px 10px;font-size:11px;color:#c084fc;margin-top:8px;}
+/* BACK BUTTON */
+.back-btn{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#60A0FF;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;z-index:10;}
+
+/* SECTION TITLES */
+.sec{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);font-style:normal;margin-bottom:10px;margin-top:4px;}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;padding:13px 14px;border:1px solid var(--cardborder);margin-bottom:10px;}
+
+/* GAME CARDS (hub) */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.game-card{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--cardborder);cursor:pointer;transition:border-color 0.12s;}
+.game-card:hover{border-color:var(--orange);}
+.game-icon{font-size:26px;margin-bottom:8px;display:block;}
+.game-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--text);font-style:normal;margin-bottom:3px;}
+.game-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.game-xp{font-size:10px;color:var(--gold);font-weight:500;margin-top:6px;}
+
+/* LEVEL / XP */
+.xp-pill{font-size:10px;color:var(--purple);font-weight:500;background:rgba(106,72,152,0.12);padding:3px 9px;border-radius:99px;border:1px solid rgba(106,72,152,0.25);}
+.level-row{display:flex;align-items:center;gap:10px;}
+.level-num{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--gold);}
+.pbar{height:4px;background:var(--divider);border-radius:99px;overflow:hidden;margin:0;}
+.pfill{height:100%;border-radius:99px;transition:width 0.4s;background:var(--purple);}
 
 /* BUTTONS */
-.btn{display:inline-block;padding:12px 28px;border-radius:30px;border:none;cursor:pointer;font-size:15px;font-weight:700;transition:all .2s;text-decoration:none;}
-.btn-primary{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;}
-.btn-primary:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(168,85,247,.4);}
-.btn-secondary{background:#1e1e3f;border:1px solid #7c3aed;color:#c084fc;}
-.btn-secondary:hover{background:#2a1a4f;}
-.btn-danger{background:#3f1a1a;border:1px solid #ef4444;color:#f87171;}
-.btn-sm{padding:8px 18px;font-size:13px;}
-.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+.btn{background:var(--orange);color:#fff;border:none;border-radius:11px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-style:normal;transition:opacity 0.1s;}
+.btn:active{opacity:0.85;}
+.btn-outline{background:transparent;color:var(--orange);border:1.5px solid var(--orange);border-radius:11px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-sm{background:var(--inner);color:var(--muted);border:1px solid var(--cardborder);border-radius:7px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-sm.on{background:var(--orange);color:#fff;border-color:var(--orange);}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
 
-/* GAME SCREENS */
-.game-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-.game-header h2{font-size:20px;font-weight:700;flex:1;}
-.stat-pill{background:#1e1e3f;border:1px solid #2a2a50;border-radius:20px;padding:4px 14px;font-size:13px;}
-.timer-pill{background:#1e1e3f;border:1px solid #ef4444;border-radius:20px;padding:4px 14px;font-size:13px;color:#f87171;font-weight:700;}
-.timer-pill.warning{border-color:#f59e0b;color:#fbbf24;animation:pulse .6s infinite;}
+/* GAME HEADER (inside game screens) */
+.game-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.game-header h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;font-style:normal;color:var(--text);flex:1;}
+.stat-pill{background:var(--inner);border:1px solid var(--cardborder);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted);}
+.timer-pill{background:var(--inner);border:1px solid var(--rose);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--rose);font-weight:700;}
+.timer-pill.warning{border-color:var(--gold);color:var(--gold);animation:pulse .6s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
 
-/* HANGMAN */
-.hangman-display{text-align:center;padding:16px;background:#13132b;border-radius:16px;margin-bottom:16px;}
-.hangman-art{font-size:13px;line-height:1.4;font-family:monospace;color:#7c3aed;white-space:pre;min-height:120px;}
-.word-display{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0;}
-.letter-box{width:36px;height:44px;border-bottom:3px solid #7c3aed;display:flex;align-items:flex-end;justify-content:center;font-size:22px;font-weight:700;color:#e0e0ff;padding-bottom:4px;}
-.hint-text{color:#a0a0c0;font-size:13px;margin-bottom:16px;text-align:center;}
-.keyboard{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:420px;margin:0 auto;}
-.key-btn{width:42px;height:42px;border-radius:8px;border:1px solid #2a2a50;background:#13132b;color:#e0e0ff;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;}
-.key-btn:hover:not(:disabled){background:#2a1a4f;border-color:#7c3aed;}
-.key-btn.hit{background:#14532d;border-color:#22c55e;color:#4ade80;}
-.key-btn.miss{background:#3f1a1a;border-color:#ef4444;color:#f87171;}
-.key-btn:disabled{opacity:.5;cursor:default;}
-.lives-display{display:flex;gap:4px;justify-content:center;margin-bottom:12px;}
-
-/* QUIZ */
-.question-text{font-size:18px;line-height:1.5;margin-bottom:20px;padding:16px;background:#13132b;border-radius:12px;}
-.answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+/* QUESTION / QUIZ ELEMENTS */
+.question-text{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;font-style:normal;line-height:1.6;padding:14px;background:var(--card);border:1px solid var(--cardborder);border-radius:12px;margin-bottom:14px;color:var(--text);}
+.answers-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
 @media(max-width:480px){.answers-grid{grid-template-columns:1fr;}}
-.answer-btn{padding:14px;border-radius:12px;border:1px solid #2a2a50;background:#13132b;color:#e0e0ff;cursor:pointer;font-size:14px;text-align:left;transition:all .2s;line-height:1.4;}
-.answer-btn:hover:not(:disabled){border-color:#7c3aed;background:#1e1e3f;}
-.answer-btn.correct{background:#14532d;border-color:#22c55e;color:#4ade80;}
-.answer-btn.wrong{background:#3f1a1a;border-color:#ef4444;color:#f87171;}
-.answer-btn:disabled{cursor:default;}
-.explain-box{background:#13132b;border:1px solid #2a2a50;border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;color:#a0a0c0;line-height:1.6;}
-.q-progress{text-align:center;color:#a0a0c0;font-size:13px;margin-bottom:8px;}
-.q-bar{height:6px;background:#1e1e3f;border-radius:3px;margin-bottom:16px;overflow:hidden;}
-.q-fill{height:100%;background:linear-gradient(90deg,#7c3aed,#a855f7);border-radius:3px;transition:width .4s;}
+.answer-btn{padding:12px;border-radius:10px;border:1px solid var(--cardborder);background:var(--inner);color:var(--text);cursor:pointer;font-size:12px;text-align:left;transition:all .15s;line-height:1.4;font-family:'DM Sans',sans-serif;}
+.answer-btn:hover:not(:disabled){border-color:var(--orange);}
+.answer-btn.correct{background:var(--correct);border-color:var(--correctborder);color:var(--correcttext);}
+.answer-btn.wrong{background:var(--wrong);border-color:var(--wrongborder);color:var(--wrongtext);}
+.answer-btn:disabled{cursor:default;opacity:.85;}
+.explain-box{background:var(--card);border:1px solid var(--cardborder);border-left:3px solid var(--orange);border-radius:12px;padding:13px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.6;font-style:normal;font-family:'Space Grotesk',sans-serif;}
+.q-progress{text-align:center;color:var(--dim);font-size:11px;margin-bottom:6px;font-family:'DM Sans',sans-serif;}
+.q-bar{height:4px;background:var(--divider);border-radius:3px;margin-bottom:14px;overflow:hidden;}
+.q-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:3px;transition:width .4s;}
+
+/* HANGMAN */
+.hangman-display{text-align:center;padding:16px;background:var(--card);border:1px solid var(--cardborder);border-radius:12px;margin-bottom:14px;}
+.hangman-art{font-size:13px;line-height:1.4;font-family:monospace;color:var(--orange);white-space:pre;min-height:120px;}
+.word-display{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+.letter-box{width:34px;height:42px;border-bottom:3px solid var(--orange);display:flex;align-items:flex-end;justify-content:center;font-size:20px;font-weight:700;color:var(--text);padding-bottom:4px;font-family:'Space Grotesk',sans-serif;}
+.hint-text{color:var(--dim);font-size:12px;margin-bottom:14px;text-align:center;font-style:normal;font-family:'Space Grotesk',sans-serif;}
+.keyboard{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:380px;margin:0 auto;}
+.key-btn{width:36px;height:36px;border-radius:7px;border:1px solid var(--cardborder);background:var(--inner);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.key-btn:hover:not(:disabled){background:var(--card);border-color:var(--orange);}
+.key-btn.hit{background:var(--correct);border-color:var(--correctborder);color:var(--correcttext);}
+.key-btn.miss{background:var(--wrong);border-color:var(--wrongborder);color:var(--wrongtext);}
+.key-btn:disabled{opacity:.5;cursor:default;}
+.lives-display{display:flex;gap:4px;justify-content:center;margin-bottom:10px;}
 
 /* MEMORY MATCH */
-.memory-grid{display:grid;gap:10px;margin-bottom:16px;}
-.mem-card{background:#13132b;border:1px solid #2a2a50;border-radius:12px;padding:14px;cursor:pointer;transition:all .2s;font-size:14px;line-height:1.4;min-height:60px;display:flex;align-items:center;justify-content:center;text-align:center;}
-.mem-card:hover{border-color:#7c3aed;}
-.mem-card.selected{border-color:#a855f7;background:#1e1e3f;}
-.mem-card.matched{background:#14532d;border-color:#22c55e;color:#4ade80;cursor:default;}
-.mem-card.wrong{background:#3f1a1a;border-color:#ef4444;animation:shake .3s;}
+.memory-grid{display:grid;gap:8px;margin-bottom:14px;}
+.mem-card{background:var(--inner);border:1px solid var(--cardborder);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s;font-size:12px;line-height:1.4;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--text);font-family:'DM Sans',sans-serif;}
+.mem-card:hover{border-color:var(--orange);}
+.mem-card.selected{border-color:var(--orange);background:var(--card);}
+.mem-card.matched{background:var(--correct);border-color:var(--correctborder);color:var(--correcttext);cursor:default;}
+.mem-card.wrong{background:var(--wrong);border-color:var(--wrongborder);animation:shake .3s;}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
-.mem-set-select{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.mem-set-select{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
 
-/* DILEMMAS */
-.dilemma-scenario{background:#13132b;border:1px solid #7c3aed;border-radius:16px;padding:20px;margin-bottom:16px;}
-.dilemma-title{font-size:17px;font-weight:700;color:#c084fc;margin-bottom:10px;}
-.dilemma-text{font-size:15px;line-height:1.6;color:#e0e0ff;}
-.choice-btn{width:100%;padding:14px 18px;border-radius:12px;border:1px solid #2a2a50;background:#13132b;color:#e0e0ff;cursor:pointer;font-size:14px;text-align:left;margin-bottom:10px;transition:all .2s;line-height:1.4;}
-.choice-btn:hover:not(:disabled){border-color:#7c3aed;background:#1e1e3f;}
-.choice-btn.chosen{border-color:#a855f7;background:#2a1a4f;}
-.insight-box{background:#1e1e3f;border:1px solid #a855f7;border-radius:12px;padding:16px;margin:12px 0;font-size:14px;line-height:1.6;color:#c084fc;}
+/* DILEMMA */
+.dilemma-scenario{background:var(--card);border:1px solid var(--orange);border-radius:14px;padding:18px;margin-bottom:14px;}
+.dilemma-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--orange);margin-bottom:8px;font-style:normal;}
+.dilemma-text{font-size:13px;line-height:1.6;color:var(--text);}
+.choice-btn{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--cardborder);background:var(--inner);color:var(--text);cursor:pointer;font-size:12px;text-align:left;margin-bottom:8px;transition:all .15s;line-height:1.4;font-family:'DM Sans',sans-serif;}
+.choice-btn:hover:not(:disabled){border-color:var(--orange);}
+.choice-btn.chosen{border-color:var(--orange);background:rgba(224,112,32,0.12);color:var(--orange);}
+.insight-box{background:var(--card);border:1px solid var(--teal);border-left:3px solid var(--teal);border-radius:12px;padding:14px;margin:10px 0;font-size:12px;line-height:1.6;color:var(--teal);font-style:normal;font-family:'Space Grotesk',sans-serif;}
 
 /* READING RECALL */
-.recall-card-wrap{perspective:1000px;margin-bottom:20px;cursor:pointer;}
-.recall-card{width:100%;min-height:200px;position:relative;transform-style:preserve-3d;transition:transform .5s;border-radius:16px;}
+.recall-card-wrap{perspective:1000px;margin-bottom:18px;cursor:pointer;}
+.recall-card{width:100%;min-height:180px;position:relative;transform-style:preserve-3d;transition:transform .5s;border-radius:14px;}
 .recall-card.flipped{transform:rotateY(180deg);}
-.recall-face{position:absolute;width:100%;min-height:200px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
-.recall-front{background:linear-gradient(135deg,#13132b,#1e1e3f);border:2px solid #7c3aed;}
-.recall-back{background:linear-gradient(135deg,#0d2d0d,#1a3a1a);border:2px solid #22c55e;transform:rotateY(180deg);}
-.recall-source{font-size:11px;color:#a0a0c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
-.recall-q{font-size:17px;font-weight:700;color:#e0e0ff;line-height:1.5;}
-.recall-a{font-size:15px;color:#86efac;line-height:1.6;}
-.recall-tap{font-size:12px;color:#a0a0c0;margin-top:14px;}
-#rate-row{display:none;gap:14px;justify-content:center;margin-bottom:16px;}
-.rate-btn{padding:10px 24px;border-radius:30px;border:none;cursor:pointer;font-size:14px;font-weight:700;}
-.rate-got{background:#14532d;color:#4ade80;}
-.rate-review{background:#3f1a1a;color:#f87171;}
-.recall-nav{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px;}
-.recall-counter{font-size:14px;color:#a0a0c0;}
-.highlight-form{background:#13132b;border:1px solid #2a2a50;border-radius:16px;padding:16px;margin-top:20px;}
-.highlight-form h3{font-size:15px;color:#c084fc;margin-bottom:12px;}
-.form-row{margin-bottom:12px;}
-.form-row label{display:block;font-size:13px;color:#a0a0c0;margin-bottom:4px;}
-.form-row input,.form-row textarea,.form-row select{width:100%;background:#0f0f23;border:1px solid #2a2a50;border-radius:8px;padding:10px;color:#e0e0ff;font-size:14px;font-family:inherit;}
+.recall-face{position:absolute;width:100%;min-height:180px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.recall-front{background:var(--card);border:2px solid var(--orange);}
+.recall-back{background:var(--correct);border:2px solid var(--correctborder);transform:rotateY(180deg);}
+.recall-source{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-family:'DM Sans',sans-serif;}
+.recall-q{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);line-height:1.5;font-style:normal;}
+.recall-a{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--correcttext);line-height:1.6;font-style:normal;}
+.recall-tap{font-size:11px;color:var(--dim);margin-top:12px;}
+#rate-row{display:none;gap:12px;justify-content:center;margin-bottom:14px;}
+.rate-btn{padding:9px 22px;border-radius:99px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;}
+.rate-got{background:var(--correct);color:var(--correcttext);border:1px solid var(--correctborder);}
+.rate-review{background:var(--wrong);color:var(--wrongtext);border:1px solid var(--wrongborder);}
+.recall-nav{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:14px;}
+.recall-counter{font-size:13px;color:var(--dim);}
+.highlight-form{background:var(--card);border:1px solid var(--cardborder);border-radius:14px;padding:16px;margin-top:18px;}
+.highlight-form h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-style:normal;color:var(--orange);margin-bottom:12px;}
+.form-row{margin-bottom:10px;}
+.form-row label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px;font-family:'DM Sans',sans-serif;}
+.form-row input,.form-row textarea,.form-row select{width:100%;background:var(--inner);border:1px solid var(--cardborder);border-radius:8px;padding:9px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;}
 .form-row textarea{height:80px;resize:vertical;}
-.highlights-list{margin-top:16px;}
-.highlight-item{background:#1e1e3f;border:1px solid #2a2a50;border-radius:10px;padding:12px;margin-bottom:10px;}
-.highlight-meta{font-size:11px;color:#a0a0c0;margin-bottom:4px;}
-.highlight-text{font-size:14px;color:#e0e0ff;line-height:1.5;}
-.tab-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-.tab-btn{padding:8px 16px;border-radius:20px;border:1px solid #2a2a50;background:#13132b;color:#a0a0c0;cursor:pointer;font-size:13px;transition:all .2s;}
-.tab-btn.active{background:#7c3aed;border-color:#7c3aed;color:#fff;}
+.highlights-list{margin-top:14px;}
+.highlight-item{background:var(--card);border:1px solid var(--cardborder);border-left:3px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:8px;}
+.highlight-meta{font-size:10px;color:var(--dim);margin-bottom:4px;}
+.highlight-text{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text);line-height:1.5;font-style:normal;}
+.tab-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.tab-btn{padding:6px 14px;border-radius:99px;border:1px solid var(--cardborder);background:var(--inner);color:var(--muted);cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.tab-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+/* MODE TOGGLE */
+.mode-toggle{display:flex;gap:4px;margin-top:8px;}
+.mode-btn{padding:4px 10px;border-radius:99px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#60A0FF;cursor:pointer;font-size:10px;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.mode-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
 
 /* RESULTS */
-.results-wrap{text-align:center;padding:24px;}
-.results-title{font-size:28px;font-weight:900;margin-bottom:8px;}
-.results-xp{font-size:48px;margin:16px 0;}
-.results-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:300px;margin:16px auto;}
-.result-stat{background:#13132b;border:1px solid #2a2a50;border-radius:12px;padding:16px;}
-.result-stat-num{font-size:28px;font-weight:700;color:#c084fc;}
-.result-stat-label{font-size:12px;color:#a0a0c0;margin-top:4px;}
+.results-wrap{text-align:center;padding:24px 14px;}
+.results-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;font-style:normal;color:var(--text);margin-bottom:8px;}
+.results-xp{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--orange);margin:14px 0;}
+.results-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:14px auto;}
+.result-stat{background:var(--card);border:1px solid var(--cardborder);border-radius:12px;padding:14px;}
+.result-stat-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--orange);}
+.result-stat-label{font-size:10px;color:var(--dim);margin-top:4px;font-family:'DM Sans',sans-serif;}
 
 /* TOAST */
-#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(40px);background:#7c3aed;color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:700;opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--hdr);color:#60A0FF;padding:8px 18px;border-radius:99px;font-size:12px;font-family:'DM Sans',sans-serif;z-index:200;opacity:0;transition:opacity 0.3s;pointer-events:none;border:1px solid var(--hdrborder);}
+.toast.show{opacity:1;}
+
+/* BURST */
+@keyframes burst{0%{opacity:1;transform:scale(0.5);}60%{opacity:1;transform:scale(1.5);}100%{opacity:0;transform:scale(2);}}
+.burst-el{position:fixed;pointer-events:none;font-size:22px;animation:burst 0.75s ease forwards;z-index:999;}
+
+/* AUTH GATE */
+.auth-gate{position:fixed;inset:0;background:#040610;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;}
+.auth-box{background:var(--hdr);border:1px solid rgba(61,127,255,.3);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);}
+.auth-box input{width:100%;box-sizing:border-box;background:#0A0C18;border:1px solid rgba(61,127,255,.25);border-radius:8px;padding:.7rem 1rem;color:#D0DEFF;font-size:.95rem;outline:none;margin-bottom:.5rem;}
+.auth-box .auth-actions{position:absolute;right:.45rem;top:50%;transform:translateY(-50%);display:flex;gap:.3rem;}
+.auth-box .auth-actions button{background:rgba(224,112,32,.15);border:1px solid rgba(224,112,32,.3);border-radius:6px;color:var(--orange);font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;line-height:1;}
+select{background:var(--inner);color:var(--text);}
 </style>
 </head>
 <body>
-<a href="./bianca-ai-portfolio.html" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(13,13,26,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(167,139,250,.22);color:#a78bfa;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Portfolio</a>
-<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
-  <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
-    <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
-    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
-    <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
+<div class="app" id="app">
+
+<!-- AUTH GATE -->
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-box">
+    <div style="font-size:2.2rem;margin-bottom:.4rem;">&#x1F512;</div>
+    <div style="color:#D0DEFF;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#2A3A60;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
     <div style="position:relative;">
-      <input id="auth-input" type="password" placeholder="Password"
-      style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.7rem 1rem;color:#e0e0ff;font-size:.95rem;outline:none;margin-bottom:.5rem;"
-      onkeydown="if(event.key==='Enter')_checkAuth()"
-        style="padding-right:5.8rem;"/>
+      <input id="auth-input" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')_checkAuth()"/>
       <div style="position:absolute;right:.45rem;top:50%;transform:translateY(-50%);display:flex;gap:.3rem;">
-        <button type="button" onclick="(async()=>{try{document.getElementById('auth-input').value=(await navigator.clipboard.readText()).trim();document.getElementById('auth-err').textContent='✓ Pasted';setTimeout(()=>{document.getElementById('auth-err').textContent='';},2000);}catch(e){document.getElementById('auth-err').textContent='Use Ctrl+V / Cmd+V to paste';}})();"
-          style="background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:6px;color:#a78bfa;font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;line-height:1;">📋</button>
-        <button type="button" onclick="(function(){var f=document.getElementById('auth-input');f.type=f.type==='password'?'text':'password';this.textContent=f.type==='password'?'👁':'🙈';}).call(this)"
-          style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:6px;color:#7070a8;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;line-height:1;">👁</button>
+        <button type="button" onclick="(async()=>{try{document.getElementById('auth-input').value=(await navigator.clipboard.readText()).trim();document.getElementById('auth-err').textContent='Pasted';setTimeout(()=>{document.getElementById('auth-err').textContent='';},2000);}catch(e){document.getElementById('auth-err').textContent='Use Ctrl+V / Cmd+V to paste';}})();"
+          style="background:rgba(224,112,32,.15);border:1px solid rgba(224,112,32,.3);border-radius:6px;color:#3D7FFF;font-size:.7rem;font-weight:700;padding:.22rem .4rem;cursor:pointer;line-height:1;">&#x1F4CB;</button>
+        <button type="button" onclick="(function(){var f=document.getElementById('auth-input');f.type=f.type==='password'?'text':'password';this.textContent=f.type==='password'?'\u{1F441}':'\u{1F648}';}).call(this)"
+          style="background:rgba(224,112,32,.1);border:1px solid rgba(224,112,32,.2);border-radius:6px;color:#6A80B0;font-size:.75rem;padding:.22rem .38rem;cursor:pointer;line-height:1;">&#x1F441;</button>
       </div>
-      </div>
-    <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
-        <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:.45rem;cursor:pointer;">
-      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#a78bfa;"/>
-      <span style="color:#7070a8;font-size:.76rem;">👁 Show password as I type</span>
+    </div>
+    <div id="auth-err" style="color:#C86060;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
+    <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#3D7FFF;"/>
+      <span style="color:#6A80B0;font-size:.76rem;">Remember this device</span>
     </label>
-<label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
-      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
-      <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
-    </label>
-    <button onclick="_checkAuth()"
-      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
-      Unlock →
+    <button onclick="_checkAuth()" style="width:100%;padding:.72rem;background:var(--orange);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;">
+      Unlock
     </button>
   </div>
-
 </div>
+
+<!-- HUB -->
+<div id="screen-hub" class="screen active">
+<div class="hdr" style="position:relative;">
+  <button class="back-btn" onclick="goBack()" title="Back to portfolio">&#8592;</button>
+  <div class="hdr-row">
+    <a href="./index.html" style="text-decoration:none;"><div class="logo">games<span>.</span></div><div class="logo-sub">ai learning arcade</div></a>
+  </div>
+  <div class="chips-row">
+    <div class="chip"><div class="chip-l">Level</div><div class="chip-v" id="c-level" style="color:#60A0FF;">1</div></div>
+    <div class="chip"><div class="chip-l">XP</div><div class="chip-v" id="c-xp" style="color:#3D7FFF;">0</div></div>
+    <div class="chip"><div class="chip-l">Streak</div><div class="chip-v" id="c-streak" style="color:#3D7FFF;">0</div></div>
+    <div class="chip"><div class="chip-l">Sessions</div><div class="chip-v" id="c-sessions" style="color:#60A0FF;">0</div></div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btn-timed" onclick="setMode('timed')">&#9201; Timed</button>
+    <button class="mode-btn" id="btn-free" onclick="setMode('free')">&#8734; Practice</button>
+    <button class="mode-btn" id="btn-mute" onclick="toggleMute()">&#x1F50A; Sound</button>
+  </div>
+</div>
+<div class="scroll">
+  <div class="sec">Choose your game</div>
+  <div class="games-grid">
+    <div class="game-card" onclick="startHangman()"><span class="game-icon">&#x1F524;</span><div class="game-title">Hangman</div><div class="game-desc">Guess AI vocabulary letter by letter. 4 levels.</div><div class="game-xp">+10-40 XP</div></div>
+    <div class="game-card" onclick="startQuiz()"><span class="game-icon">&#x26A1;</span><div class="game-title">Quiz Blitz</div><div class="game-desc">25 questions on AI ethics, ML, career.</div><div class="game-xp">+15 XP each</div></div>
+    <div class="game-card" onclick="startMemory()"><span class="game-icon">&#x1F0CF;</span><div class="game-title">Term Match</div><div class="game-desc">Match AI terms to definitions. 3 sets.</div><div class="game-xp">+20 XP per match</div></div>
+    <div class="game-card" onclick="startDilemma()"><span class="game-icon">&#x1F9E0;</span><div class="game-title">AI Dilemmas</div><div class="game-desc">Real ethical scenarios. Make tough calls.</div><div class="game-xp">+25 XP each</div></div>
+    <div class="game-card" onclick="startRecall()"><span class="game-icon">&#x1F4DA;</span><div class="game-title">Reading Recall</div><div class="game-desc">Spaced repetition flashcards from books.</div><div class="game-xp">+10 XP per card</div></div>
+    <div class="game-card" onclick="startAiOrHuman()"><span class="game-icon">&#x1F916;</span><div class="game-title">AI or Human?</div><div class="game-desc">Guess who wrote it. Train your AI literacy.</div><div class="game-xp">+15 XP each</div></div>
+    <div class="game-card" onclick="startPromptCraft()"><span class="game-icon">&#x2728;</span><div class="game-title">Prompt Craft</div><div class="game-desc">Improve vague prompts into clear instructions.</div><div class="game-xp">+20 XP max</div></div>
+    <div class="game-card" onclick="startBiasSpotter()"><span class="game-icon">&#x1F50D;</span><div class="game-title">Bias Spotter</div><div class="game-desc">Identify hidden biases in AI systems.</div><div class="game-xp">+20 XP each</div></div>
+    <div class="game-card" onclick="startSpeedSort()"><span class="game-icon">&#x1F3F7;</span><div class="game-title">Speed Sort</div><div class="game-desc">Drag AI concepts into the right categories.</div><div class="game-xp">+15 XP</div></div>
+    <div class="game-card" onclick="startMythBuster()"><span class="game-icon">&#x1F4AC;</span><div class="game-title">Myth Buster</div><div class="game-desc">True or false? Separate AI fact from hype.</div><div class="game-xp">+20 XP</div></div>
+    <div class="game-card" onclick="startPromptBuilder()"><span class="game-icon">&#x270F;</span><div class="game-title">Prompt Builder</div><div class="game-desc">Assemble the perfect prompt piece by piece.</div><div class="game-xp">+25 XP</div></div>
+  </div>
+</div>
+</div>
+
+<!-- HANGMAN -->
+<div class="screen" id="screen-hangman">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="hm-score">Score: 0</span><span class="timer-pill" id="hm-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F524; Hangman</div>
+  <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+    <button class="btn-sm on" id="lvl-btn-0" onclick="setHmLevel(0)">Beginner</button>
+    <button class="btn-sm" id="lvl-btn-1" onclick="setHmLevel(1)">Intermediate</button>
+    <button class="btn-sm" id="lvl-btn-2" onclick="setHmLevel(2)">Advanced</button>
+    <button class="btn-sm" id="lvl-btn-3" onclick="setHmLevel(3)">Expert</button>
+  </div>
+  <div class="hangman-display"><div class="hangman-art" id="hm-art"></div><div class="lives-display" id="hm-lives"></div><div class="word-display" id="hm-word"></div><div class="hint-text" id="hm-hint"></div></div>
+  <div class="keyboard" id="hm-keyboard"></div>
+  <div class="btn-row"><button class="btn-outline" onclick="newHangmanWord()">New Word</button><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="screen-quiz">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="quiz-score">0/0</span><span class="timer-pill" id="quiz-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x26A1; Quiz Blitz</div>
+  <div class="q-progress" id="quiz-progress">Question 1 of 25</div>
+  <div class="q-bar"><div class="q-fill" id="q-fill" style="width:4%"></div></div>
+  <div class="question-text" id="quiz-q"></div>
+  <div class="answers-grid" id="quiz-answers"></div>
+  <div class="explain-box" id="quiz-explain" style="display:none;"></div>
+  <div class="btn-row" id="quiz-next-row" style="display:none;"><button class="btn" onclick="nextQuestion()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- MEMORY MATCH -->
+<div class="screen" id="screen-memory">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="mem-score">Matched: 0</span><span class="timer-pill" id="mem-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F0CF; Term Match</div>
+  <div class="mem-set-select" id="mem-set-select">
+    <button class="btn-sm on" onclick="loadMemSet(0)">AI Basics</button>
+    <button class="btn-sm" onclick="loadMemSet(1)">Prompting</button>
+    <button class="btn-sm" onclick="loadMemSet(2)">AI Ethics</button>
+  </div>
+  <div class="memory-grid" id="mem-grid" style="grid-template-columns:1fr 1fr;"></div>
+  <div class="btn-row"><button class="btn-outline" onclick="shuffleMemSet()">Shuffle</button><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- DILEMMAS -->
+<div class="screen" id="screen-dilemma">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="dil-score">0/8</span><span class="timer-pill" id="dil-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F9E0; AI Dilemmas</div>
+  <div id="dil-content"></div>
+  <div class="btn-row" id="dil-next-row" style="display:none;"><button class="btn" onclick="nextDilemma()">Next Scenario</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- READING RECALL -->
+<div class="screen" id="screen-recall">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><span class="stat-pill" id="recall-score">Card 1/23</span></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F4DA; Reading Recall</div>
+  <div class="tab-row">
+    <button class="tab-btn active" id="recall-tab-cards" onclick="setRecallTab('cards')">Flashcards</button>
+    <button class="tab-btn" id="recall-tab-add" onclick="setRecallTab('add')">Add Highlight</button>
+    <button class="tab-btn" id="recall-tab-mine" onclick="setRecallTab('mine')">My Highlights</button>
+  </div>
+  <div id="recall-view-cards">
+    <div class="recall-card-wrap" onclick="flipRecallCard()">
+      <div class="recall-card" id="recall-card">
+        <div class="recall-face recall-front"><div class="recall-source" id="recall-source"></div><div class="recall-q" id="recall-q"></div><div class="recall-tap">Tap to reveal</div></div>
+        <div class="recall-face recall-back"><div class="recall-source" id="recall-source-b"></div><div class="recall-a" id="recall-a"></div></div>
+      </div>
+    </div>
+    <div id="rate-row"><button class="rate-btn rate-got" onclick="rateCard(true)">Got it</button><button class="rate-btn rate-review" onclick="rateCard(false)">Review again</button></div>
+    <div class="recall-nav"><button class="btn-sm" onclick="prevRecallCard()">Prev</button><span class="recall-counter" id="recall-counter">1 / 23</span><button class="btn-sm" onclick="nextRecallCard()">Next</button></div>
+    <div style="text-align:center;margin-bottom:14px;"><button class="btn-sm" onclick="shuffleRecallCards()">Shuffle Deck</button></div>
+  </div>
+  <div id="recall-view-add" style="display:none;">
+    <div class="highlight-form">
+      <h3>Add a Highlight</h3>
+      <div class="form-row"><label>Source (book, article, course)</label><input type="text" id="hl-source" placeholder="e.g. Co-Intelligence by Ethan Mollick"/></div>
+      <div class="form-row"><label>Your highlight or key insight</label><textarea id="hl-text" placeholder="Paste or type the passage..."></textarea></div>
+      <div class="form-row"><label>Your takeaway (optional)</label><input type="text" id="hl-takeaway" placeholder="What does this mean for your career?"/></div>
+      <button class="btn" onclick="saveHighlight()" style="width:100%;">Save Highlight</button>
+    </div>
+  </div>
+  <div id="recall-view-mine" style="display:none;">
+    <div id="highlights-list-wrap"><p style="color:var(--dim);text-align:center;padding:20px;" id="no-highlights-msg">No highlights yet.</p></div>
+  </div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- AI OR HUMAN -->
+<div class="screen" id="screen-aiorhuman">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="aoh-score">0/15</span><span class="timer-pill" id="aoh-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F916; AI or Human?</div>
+  <div class="q-progress" id="aoh-progress">Round 1 of 15</div>
+  <div class="q-bar"><div class="q-fill" id="aoh-fill" style="width:6.7%"></div></div>
+  <div class="question-text" id="aoh-text"></div>
+  <div class="answers-grid" style="grid-template-columns:1fr 1fr;">
+    <button class="answer-btn" onclick="submitAohAnswer('human')" id="aoh-human-btn">HUMAN</button>
+    <button class="answer-btn" onclick="submitAohAnswer('ai')" id="aoh-ai-btn">AI</button>
+  </div>
+  <div class="explain-box" id="aoh-explain" style="display:none;"></div>
+  <div class="btn-row" id="aoh-next-row" style="display:none;"><button class="btn" onclick="nextAohRound()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- PROMPT CRAFT -->
+<div class="screen" id="screen-promptcraft">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="pc-score">0/10</span><span class="timer-pill" id="pc-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x2728; Prompt Craft</div>
+  <div class="q-progress" id="pc-progress">Challenge 1 of 10</div>
+  <div class="q-bar"><div class="q-fill" id="pc-fill" style="width:10%"></div></div>
+  <div class="card"><div style="font-size:11px;color:var(--dim);margin-bottom:6px;font-family:'DM Sans',sans-serif;">VAGUE PROMPT:</div><div class="question-text" id="pc-vague" style="margin:0;border:none;padding:0;background:none;"></div></div>
+  <div class="card"><div style="font-size:11px;color:var(--dim);margin-bottom:6px;font-family:'DM Sans',sans-serif;">TARGET OUTPUT:</div><div id="pc-target" style="font-size:13px;color:var(--text);line-height:1.5;"></div></div>
+  <div style="font-size:11px;color:var(--dim);margin-bottom:10px;">Choose the BEST rewritten prompt:</div>
+  <div id="pc-options"></div>
+  <div class="explain-box" id="pc-explain" style="display:none;"></div>
+  <div class="btn-row" id="pc-next-row" style="display:none;"><button class="btn" onclick="nextPromptChallenge()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- BIAS SPOTTER -->
+<div class="screen" id="screen-biasspotter">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="bs-score">0/12</span><span class="timer-pill" id="bs-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F50D; Bias Spotter</div>
+  <div class="q-progress" id="bs-progress">Scenario 1 of 12</div>
+  <div class="q-bar"><div class="q-fill" id="bs-fill" style="width:8.33%"></div></div>
+  <div class="question-text" id="bs-scenario"></div>
+  <div id="bs-options"></div>
+  <div class="explain-box" id="bs-explain" style="display:none;"></div>
+  <div class="btn-row" id="bs-next-row" style="display:none;"><button class="btn" onclick="nextBiasScenario()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- SPEED SORT -->
+<div class="screen" id="screen-speedsort">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="ss-score">0/15</span><span class="timer-pill" id="ss-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F3F7; Speed Sort</div>
+  <div style="font-size:11px;color:var(--dim);margin-bottom:10px;text-align:center;" id="ss-category"></div>
+  <div class="card" style="text-align:center;">
+    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;font-weight:700;font-style:italic;color:var(--text);margin-bottom:12px;" id="ss-item">Item</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="ss-buckets"></div>
+  </div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- MYTH BUSTER -->
+<div class="screen" id="screen-mythbuster">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="mb-score">0/15</span><span class="timer-pill" id="mb-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x1F4AC; Myth Buster</div>
+  <div class="q-progress" id="mb-progress">Statement 1 of 15</div>
+  <div class="q-bar"><div class="q-fill" id="mb-fill" style="width:6.7%"></div></div>
+  <div class="question-text" id="mb-statement"></div>
+  <div class="answers-grid" style="grid-template-columns:1fr 1fr;">
+    <button class="answer-btn" onclick="submitMythAnswer(true)" id="mb-true-btn">TRUE</button>
+    <button class="answer-btn" onclick="submitMythAnswer(false)" id="mb-false-btn">FALSE</button>
+  </div>
+  <div class="explain-box" id="mb-explain" style="display:none;"></div>
+  <div class="btn-row" id="mb-next-row" style="display:none;"><button class="btn" onclick="nextMythStatement()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- PROMPT BUILDER -->
+<div class="screen" id="screen-promptbuilder">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div><div style="display:flex;gap:6px;align-items:center;"><span class="stat-pill" id="pb-score">0/3</span><span class="timer-pill" id="pb-timer">5:00</span></div></div></div>
+<div class="scroll">
+  <div class="sec">&#x270F; Prompt Builder</div>
+  <div class="q-progress" id="pb-progress">Round 1 of 3</div>
+  <div class="q-bar"><div class="q-fill" id="pb-fill" style="width:33.3%"></div></div>
+  <div class="card"><div style="font-size:11px;color:var(--dim);margin-bottom:6px;font-family:'DM Sans',sans-serif;">TASK:</div><div class="question-text" id="pb-task" style="margin:0;border:none;padding:0;background:none;"></div></div>
+  <div style="font-size:11px;color:var(--dim);margin-bottom:10px;">Build your prompt by choosing the best elements:</div>
+  <div id="pb-options"></div>
+  <div class="explain-box" id="pb-explain" style="display:none;"></div>
+  <div class="btn-row" id="pb-next-row" style="display:none;"><button class="btn" onclick="nextPromptRound()">Next</button></div>
+  <div class="btn-row"><button class="btn-outline" onclick="showScreen('hub')">Back</button></div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="screen-results">
+<div class="hdr"><div class="hdr-row"><div class="logo">games<span>.</span></div></div></div>
+<div class="scroll">
+  <div class="results-wrap">
+    <div class="results-title" id="res-title">Game Over!</div>
+    <div id="res-xp" class="results-xp">+0 XP</div>
+    <div class="results-stats" id="res-stats"></div>
+    <div class="btn-row">
+      <button class="btn" id="res-replay" onclick="showScreen('hub')">Play Again</button>
+      <button class="btn-outline" onclick="showScreen('hub')">Hub</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end .app -->
+
+<div class="toast" id="toast"></div>
+
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(26,12,4,.85);border:1px solid rgba(208,168,120,.25);border-radius:99px;color:#F0D898;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
+
 <script>
+// ─── AUTH ────────────────────────────────────────────────────────────────────
 (function(){
   var stored = localStorage.getItem('_hub_auth') || sessionStorage.getItem('_hub_auth');
   var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
@@ -198,7 +505,7 @@ async function _checkAuth(){
   var val=document.getElementById('auth-input').value;
   if(!val)return;
   var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
-  var hash=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  var hash=[...new Uint8Array(buf)].map(function(b){return b.toString(16).padStart(2,'0')}).join('');
   var H='98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c',G='5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
   if(hash===H||hash===G){
     var rem=document.getElementById('auth-rem');
@@ -208,294 +515,74 @@ async function _checkAuth(){
     document.getElementById('auth-gate').style.display='none';
     var so=document.getElementById('signout-btn');if(so)so.style.display='block';
   } else {
-    document.getElementById('auth-err').textContent='Incorrect password — try again.';
+    document.getElementById('auth-err').textContent='Incorrect password';
     document.getElementById('auth-input').value='';
     document.getElementById('auth-input').focus();
   }
 }
-
 function _hubLogout(){
   if(!confirm('Sign out of all apps on this device?')) return;
-  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(k=>localStorage.removeItem(k));
-  ['_hub_auth','_guest_mode'].forEach(k=>sessionStorage.removeItem(k));
+  ['_hub_auth','_hub_guest','_pub_auth','_pub_visitor'].forEach(function(k){localStorage.removeItem(k)});
+  ['_hub_auth','_guest_mode'].forEach(function(k){sessionStorage.removeItem(k)});
   location.reload();
 }
-</script>
+function goBack(){
+  if(document.referrer && document.referrer.indexOf(location.origin)>-1){history.back();}
+  else{location.href='./bianca-ai-portfolio.html';}
+}
 
-<div id="xp-bar-wrap">
-  <div class="xp-row">
-    <span class="xp-label" id="level-label">🌱 Lv.1</span>
-    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
-    <span class="xp-num" id="xp-num">0 XP</span>
-    <span class="streak-badge" id="streak-badge">🔥 0</span>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="btn-timed" onclick="setMode('timed')">⏱ Timed</button>
-      <button class="mode-btn" id="btn-free" onclick="setMode('free')">∞ Practice</button>
-    </div>
-  </div>
-</div>
-
-<!-- HUB -->
-<div class="screen" id="screen-hub">
-  <div class="hub-title">
-    <h1>🎮 AI Learning Games</h1>
-    <p>Level up your AI knowledge — 5 min sessions, real XP</p>
-  </div>
-  <div class="games-grid">
-    <div class="game-card" onclick="startHangman()">
-      <div class="game-icon">🔤</div>
-      <div class="game-title">Hangman</div>
-      <div class="game-desc">Guess AI & tech vocabulary letter by letter. 4 difficulty levels from beginner to expert.</div>
-      <span class="game-badge">+10–40 XP</span>
-    </div>
-    <div class="game-card" onclick="startQuiz()">
-      <div class="game-icon">⚡</div>
-      <div class="game-title">Quiz Blitz</div>
-      <div class="game-desc">25 multiple-choice questions covering AI ethics, ML basics, career transition, and tech culture.</div>
-      <span class="game-badge">+15 XP each</span>
-    </div>
-    <div class="game-card" onclick="startMemory()">
-      <div class="game-icon">🃏</div>
-      <div class="game-title">Term Match</div>
-      <div class="game-desc">Match AI terms to their definitions. 3 themed sets — from prompt engineering to bias & fairness.</div>
-      <span class="game-badge">+20 XP per match</span>
-    </div>
-    <div class="game-card" onclick="startDilemma()">
-      <div class="game-icon">🧠</div>
-      <div class="game-title">AI Dilemmas</div>
-      <div class="game-desc">Real-world ethical scenarios. Make tough calls about AI bias, privacy, and accountability.</div>
-      <span class="game-badge">+25 XP each</span>
-    </div>
-    <div class="game-card" onclick="startRecall()">
-      <div class="game-icon">📚</div>
-      <div class="game-title">Reading Recall</div>
-      <div class="game-desc">Spaced repetition flashcards for your books, articles, and course material. Add your own highlights.</div>
-      <span class="game-badge">+10 XP per card</span>
-    </div>
-  </div>
-  <div style="text-align:center;margin-top:24px;color:#a0a0c0;font-size:13px;">
-    <p>Total sessions: <strong id="hub-sessions">0</strong> &nbsp;|&nbsp; All-time XP: <strong id="hub-xp">0</strong></p>
-  </div>
-</div>
-
-<!-- HANGMAN -->
-<div class="screen" id="screen-hangman">
-  <div class="game-header">
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('hub')">← Hub</button>
-    <h2>🔤 Hangman</h2>
-    <span class="stat-pill" id="hm-score">Score: 0</span>
-    <span class="timer-pill" id="hm-timer">5:00</span>
-  </div>
-  <div style="text-align:center;margin-bottom:12px;">
-    <span id="hm-level-btns" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn btn-sm" id="lvl-btn-0" onclick="setHmLevel(0)">🌱 Beginner</button>
-      <button class="btn btn-sm" id="lvl-btn-1" onclick="setHmLevel(1)">📘 Intermediate</button>
-      <button class="btn btn-sm" id="lvl-btn-2" onclick="setHmLevel(2)">🔥 Advanced</button>
-      <button class="btn btn-sm" id="lvl-btn-3" onclick="setHmLevel(3)">💎 Expert</button>
-    </span>
-  </div>
-  <div class="hangman-display">
-    <div class="hangman-art" id="hm-art"></div>
-    <div class="lives-display" id="hm-lives"></div>
-    <div class="word-display" id="hm-word"></div>
-    <div class="hint-text" id="hm-hint"></div>
-  </div>
-  <div class="keyboard" id="hm-keyboard"></div>
-  <div class="btn-row" style="margin-top:16px;">
-    <button class="btn btn-secondary" onclick="newHangmanWord()">New Word</button>
-  </div>
-</div>
-
-<!-- QUIZ -->
-<div class="screen" id="screen-quiz">
-  <div class="game-header">
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('hub')">← Hub</button>
-    <h2>⚡ Quiz Blitz</h2>
-    <span class="stat-pill" id="quiz-score">0/0</span>
-    <span class="timer-pill" id="quiz-timer">5:00</span>
-  </div>
-  <div class="q-progress" id="quiz-progress">Question 1 of 25</div>
-  <div class="q-bar"><div class="q-fill" id="q-fill" style="width:4%"></div></div>
-  <div class="question-text" id="quiz-q"></div>
-  <div class="answers-grid" id="quiz-answers"></div>
-  <div class="explain-box" id="quiz-explain" style="display:none;"></div>
-  <div class="btn-row" id="quiz-next-row" style="display:none;">
-    <button class="btn btn-primary" onclick="nextQuestion()">Next →</button>
-  </div>
-</div>
-
-<!-- MEMORY MATCH -->
-<div class="screen" id="screen-memory">
-  <div class="game-header">
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('hub')">← Hub</button>
-    <h2>🃏 Term Match</h2>
-    <span class="stat-pill" id="mem-score">Matched: 0</span>
-    <span class="timer-pill" id="mem-timer">5:00</span>
-  </div>
-  <div class="mem-set-select" id="mem-set-select">
-    <button class="btn btn-sm btn-secondary" onclick="loadMemSet(0)">🤖 AI Basics</button>
-    <button class="btn btn-sm btn-secondary" onclick="loadMemSet(1)">✍️ Prompting</button>
-    <button class="btn btn-sm btn-secondary" onclick="loadMemSet(2)">⚖️ AI Ethics</button>
-  </div>
-  <div class="memory-grid" id="mem-grid" style="grid-template-columns:1fr 1fr;"></div>
-  <div class="btn-row">
-    <button class="btn btn-secondary" onclick="shuffleMemSet()">🔀 Shuffle</button>
-  </div>
-</div>
-
-<!-- DILEMMAS -->
-<div class="screen" id="screen-dilemma">
-  <div class="game-header">
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('hub')">← Hub</button>
-    <h2>🧠 AI Dilemmas</h2>
-    <span class="stat-pill" id="dil-score">0/8</span>
-    <span class="timer-pill" id="dil-timer">5:00</span>
-  </div>
-  <div id="dil-content"></div>
-  <div class="btn-row" id="dil-next-row" style="display:none;">
-    <button class="btn btn-primary" onclick="nextDilemma()">Next Scenario →</button>
-  </div>
-</div>
-
-<!-- READING RECALL -->
-<div class="screen" id="screen-recall">
-  <div class="game-header">
-    <button class="btn btn-secondary btn-sm" onclick="showScreen('hub')">← Hub</button>
-    <h2>📚 Reading Recall</h2>
-    <span class="stat-pill" id="recall-score">Card 1/23</span>
-  </div>
-  <div class="tab-row">
-    <button class="tab-btn active" id="recall-tab-cards" onclick="setRecallTab('cards')">📇 Flashcards</button>
-    <button class="tab-btn" id="recall-tab-add" onclick="setRecallTab('add')">✏️ Add Highlight</button>
-    <button class="tab-btn" id="recall-tab-mine" onclick="setRecallTab('mine')">📝 My Highlights</button>
-  </div>
-
-  <!-- CARDS VIEW -->
-  <div id="recall-view-cards">
-    <div class="recall-card-wrap" onclick="flipRecallCard()">
-      <div class="recall-card" id="recall-card">
-        <div class="recall-face recall-front">
-          <div class="recall-source" id="recall-source"></div>
-          <div class="recall-q" id="recall-q"></div>
-          <div class="recall-tap">👆 Tap to reveal answer</div>
-        </div>
-        <div class="recall-face recall-back">
-          <div class="recall-source" id="recall-source-b"></div>
-          <div class="recall-a" id="recall-a"></div>
-        </div>
-      </div>
-    </div>
-    <div id="rate-row">
-      <button class="rate-btn rate-got" onclick="rateCard(true)">💚 Got it!</button>
-      <button class="rate-btn rate-review" onclick="rateCard(false)">🔄 Review again</button>
-    </div>
-    <div class="recall-nav">
-      <button class="btn btn-secondary btn-sm" onclick="prevRecallCard()">← Prev</button>
-      <span class="recall-counter" id="recall-counter">1 / 23</span>
-      <button class="btn btn-secondary btn-sm" onclick="nextRecallCard()">Next →</button>
-    </div>
-    <div style="text-align:center;margin-bottom:16px;">
-      <button class="btn btn-sm" style="background:#1e1e3f;border:1px solid #7c3aed;color:#c084fc;" onclick="shuffleRecallCards()">🔀 Shuffle Deck</button>
-    </div>
-  </div>
-
-  <!-- ADD HIGHLIGHT -->
-  <div id="recall-view-add" style="display:none;">
-    <div class="highlight-form">
-      <h3>✏️ Add a Highlight or Key Idea</h3>
-      <div class="form-row">
-        <label>Source (book, article, course)</label>
-        <input type="text" id="hl-source" placeholder="e.g. Co-Intelligence by Ethan Mollick"/>
-      </div>
-      <div class="form-row">
-        <label>Your highlight or key insight</label>
-        <textarea id="hl-text" placeholder="Paste or type the passage..."></textarea>
-      </div>
-      <div class="form-row">
-        <label>Your takeaway (optional)</label>
-        <input type="text" id="hl-takeaway" placeholder="What does this mean for your career?"/>
-      </div>
-      <button class="btn btn-primary" onclick="saveHighlight()" style="width:100%;">Save Highlight</button>
-    </div>
-  </div>
-
-  <!-- MY HIGHLIGHTS -->
-  <div id="recall-view-mine" style="display:none;">
-    <div id="highlights-list-wrap">
-      <p style="color:#a0a0c0;text-align:center;padding:20px;" id="no-highlights-msg">No highlights yet — add some from your reading!</p>
-    </div>
-  </div>
-</div>
-
-<!-- RESULTS -->
-<div class="screen" id="screen-results">
-  <div class="results-wrap">
-    <div class="results-title" id="res-title">🎉 Game Over!</div>
-    <div id="res-xp" class="results-xp">+0 XP</div>
-    <div class="results-stats" id="res-stats"></div>
-    <div class="btn-row">
-      <button class="btn btn-primary" id="res-replay" onclick="showScreen('hub')">Play Again</button>
-      <button class="btn btn-secondary" onclick="showScreen('hub')">← Hub</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<script>
-// ─── STORAGE ─────────────────────────────────────────────────────────────────
-function lsGet(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d;}catch(e){return d;}}
+// ─── STORAGE ────────────────────────────────────────────────────────────────
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v!=null?JSON.parse(v):d;}catch(e){return d;}}
 function lsSave(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let totalXP = lsGet('games_xp', 0);
-let gamesPlayed = lsGet('games_played', 0);
-let streak = lsGet('games_streak', 0);
-let timedMode = lsGet('games_timed', true);
-let activeTimer = null;
+// ─── STATE ──────────────────────────────────────────────────────────────────
+var totalXP = lsGet('games_xp', 0);
+var gamesPlayed = lsGet('games_played', 0);
+var streak = lsGet('games_streak', 0);
+var timedMode = lsGet('games_timed', true);
+var activeTimer = null;
 
-// ─── LEVELS ──────────────────────────────────────────────────────────────────
-const LEVELS = [
-  {min:0,    label:'🌱 Lv.1', next:200},
-  {min:200,  label:'⭐ Lv.2', next:500},
-  {min:500,  label:'🔥 Lv.3', next:1000},
-  {min:1000, label:'💎 Lv.4', next:2000},
-  {min:2000, label:'🏆 Lv.5', next:9999}
+// ─── LEVELS ─────────────────────────────────────────────────────────────────
+var LEVELS = [
+  {min:0,    label:'Lv.1', next:200},
+  {min:200,  label:'Lv.2', next:500},
+  {min:500,  label:'Lv.3', next:1000},
+  {min:1000, label:'Lv.4', next:2000},
+  {min:2000, label:'Lv.5', next:9999}
 ];
 
 function getLevel(){
-  for(let i=LEVELS.length-1;i>=0;i--){if(totalXP>=LEVELS[i].min)return LEVELS[i];}
+  for(var i=LEVELS.length-1;i>=0;i--){if(totalXP>=LEVELS[i].min)return LEVELS[i];}
   return LEVELS[0];
 }
 
 function updateXPBar(){
-  const lv=getLevel();
-  document.getElementById('level-label').textContent=lv.label;
-  const pct=Math.min(100,Math.round((totalXP-lv.min)/(lv.next-lv.min)*100));
-  document.getElementById('xp-fill').style.width=pct+'%';
-  document.getElementById('xp-num').textContent=totalXP+' XP';
-  document.getElementById('streak-badge').textContent='🔥 '+streak;
-  document.getElementById('hub-sessions').textContent=gamesPlayed;
-  document.getElementById('hub-xp').textContent=totalXP;
+  var lv=getLevel();
+  var el=document.getElementById('c-level');if(el)el.textContent=lv.label;
+  var el2=document.getElementById('c-xp');if(el2)el2.textContent=totalXP;
+  var el3=document.getElementById('c-streak');if(el3)el3.textContent=streak;
+  var el4=document.getElementById('c-sessions');if(el4)el4.textContent=gamesPlayed;
 }
 
 function addXP(n){
-  const old=getLevel();
+  syncToCC("xp_earned", {amount: n});
+  var old=getLevel();
   totalXP+=n;
   lsSave('games_xp',totalXP);
   updateXPBar();
-  const nw=getLevel();
-  if(nw.min>old.min) showToast('🎉 Level Up! '+nw.label);
+  refreshSuiteSync();
+  var nw=getLevel();
+  if(nw.min>old.min) showToast('Level Up! '+nw.label);
 }
 
 function showToast(msg){
-  const t=document.getElementById('toast');
+  var t=document.getElementById('toast');
   t.textContent=msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  setTimeout(function(){t.classList.remove('show')},2500);
 }
 
-// ─── MODE ─────────────────────────────────────────────────────────────────────
+// ─── MODE ───────────────────────────────────────────────────────────────────
 function setMode(m){
   timedMode=m==='timed';
   lsSave('games_timed',timedMode);
@@ -503,27 +590,29 @@ function setMode(m){
   document.getElementById('btn-free').classList.toggle('active',!timedMode);
 }
 
-// ─── SCREEN ───────────────────────────────────────────────────────────────────
+// ─── SCREEN ─────────────────────────────────────────────────────────────────
 function showScreen(id){
   clearInterval(activeTimer);
-  ['hub','hangman','quiz','memory','dilemma','results','recall'].forEach(s=>{
-    const el=document.getElementById('screen-'+s);
-    if(el) el.style.display=(s===id)?'block':'none';
+  ['hub','hangman','quiz','memory','dilemma','aiorhuman','promptcraft','biasspotter','speedsort','mythbuster','promptbuilder','results','recall'].forEach(function(s){
+    var el=document.getElementById('screen-'+s);
+    if(el){el.classList.remove('active');el.style.display='';}
+    if(s===id&&el){el.classList.add('active');}
   });
-  window.scrollTo(0,0);
+  var scroll=document.querySelector('.screen.active .scroll');
+  if(scroll)scroll.scrollTop=0;
 }
 
-// ─── TIMER ────────────────────────────────────────────────────────────────────
+// ─── TIMER ──────────────────────────────────────────────────────────────────
 function startTimer(elId, seconds, onEnd){
   clearInterval(activeTimer);
   if(!timedMode){
-    document.getElementById(elId).textContent='∞';
+    document.getElementById(elId).textContent='\u221E';
     return;
   }
-  let t=seconds;
-  const el=document.getElementById(elId);
+  var t=seconds;
+  var el=document.getElementById(elId);
   function tick(){
-    const m=Math.floor(t/60), s=t%60;
+    var m=Math.floor(t/60), s=t%60;
     el.textContent=m+':'+(s<10?'0':'')+s;
     el.classList.toggle('warning',t<=30);
     if(t<=0){clearInterval(activeTimer);onEnd();}
@@ -533,59 +622,80 @@ function startTimer(elId, seconds, onEnd){
   activeTimer=setInterval(tick,1000);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── CC SYNC ────────────────────────────────────────────────────────────────
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.unshift({ app: 'games', type: eventType, data: data, ts: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(0, 50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
+
+// ─── SMART SUITE SYNC ────────────────────────────────────────────────────────
+var SYNC_KEY = 'smart_suite_sync';
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { var d = readSync(); var g = d.games || {}; Object.assign(g, data); d.games = g; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+
+function refreshSuiteSync() {
+  var todayStr = new Date().toISOString().split('T')[0];
+  writeSync({
+    totalXP: totalXP,
+    streak: streak,
+    gamesPlayedToday: Object.keys(gamesPlayed).length,
+    lastPlayDate: todayStr
+  });
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // HANGMAN
-// ─────────────────────────────────────────────────────────────────────────────
-const HM_WORDS = [
-  // Level 0: Beginner
+// ═════════════════════════════════════════════════════════════════════════════
+var HM_WORDS = [
   {w:'BIAS',hint:'When AI unfairly favors certain outcomes',lvl:0},
   {w:'MODEL',hint:'A trained system that makes predictions',lvl:0},
   {w:'DATA',hint:'Information used to train AI',lvl:0},
   {w:'PROMPT',hint:'Instructions you give to an AI',lvl:0},
   {w:'ETHICS',hint:'Moral principles guiding AI development',lvl:0},
   {w:'ROBOT',hint:'Automated machine, often AI-powered',lvl:0},
-  // Level 1: Intermediate
   {w:'NEURAL',hint:'Type of network inspired by the brain',lvl:1},
   {w:'CHATBOT',hint:'AI program that holds conversations',lvl:1},
   {w:'DATASET',hint:'Collection of structured data for training',lvl:1},
   {w:'FAIRNESS',hint:'Equal treatment regardless of group',lvl:1},
   {w:'DEEPFAKE',hint:'AI-generated fake video or image',lvl:1},
   {w:'ALGORITHM',hint:'Set of rules a computer follows',lvl:1},
-  // Level 2: Advanced
   {w:'HALLUCINATE',hint:'When AI confidently states false info',lvl:2},
   {w:'TOKENIZER',hint:'Breaks text into pieces for AI processing',lvl:2},
   {w:'FINETUNING',hint:'Further training a model on specific data',lvl:2},
   {w:'MULTIMODAL',hint:'AI that handles text, images, and audio',lvl:2},
   {w:'EMBEDDINGS',hint:'Numerical representation of meaning',lvl:2},
   {w:'REINFORCEMENT',hint:'Learning through rewards and penalties',lvl:2},
-  // Level 3: Expert
   {w:'TRANSFORMER',hint:'Architecture behind GPT and BERT',lvl:3},
   {w:'TEMPERATURE',hint:'Controls randomness in AI output',lvl:3},
   {w:'EXPLAINABILITY',hint:'How well humans can understand AI decisions',lvl:3},
   {w:'SUPERINTELLIGENCE',hint:'Hypothetical AI surpassing human intellect',lvl:3},
   {w:'QUANTIZATION',hint:'Reducing model size for faster inference',lvl:3},
-  {w:'ANTHROPOMORPHISM',hint:'Attributing human traits to AI systems',lvl:3},
+  {w:'ANTHROPOMORPHISM',hint:'Attributing human traits to AI systems',lvl:3}
 ];
 
-const HM_ART = [
-  `\n\n\n\n\n\n  =========`,
-  `\n  |\n  |\n  |\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |\n  |\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |   |\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |  /|\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |  /|\\\n  |\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |  /|\\\n  |  /\n  |\n  =========`,
-  `  +---+\n  |   |\n  |   O\n  |  /|\\\n  |  / \\\n  |\n  =========`,
+var HM_ART = [
+  "\n\n\n\n\n\n  =========",
+  "\n  |\n  |\n  |\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |\n  |\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |   |\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |  /|\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |  /|\\\n  |\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |  /|\\\n  |  /\n  |\n  =========",
+  "  +---+\n  |   |\n  |   O\n  |  /|\\\n  |  / \\\n  |\n  ========="
 ];
 
-let hmWord='', hmGuessed=[], hmWrong=0, hmScore=0, hmLevel=0;
+var hmWord='', hmGuessed=[], hmWrong=0, hmScore=0, hmLevel=0;
 
 function setHmLevel(lvl){
   hmLevel=lvl;
-  [0,1,2,3].forEach(i=>{
-    const b=document.getElementById('lvl-btn-'+i);
-    b.className='btn btn-sm '+(i===lvl?'btn-primary':'btn-secondary');
+  [0,1,2,3].forEach(function(i){
+    var b=document.getElementById('lvl-btn-'+i);
+    if(b){b.className='btn-sm'+(i===lvl?' on':'');}
   });
   newHangmanWord();
 }
@@ -594,12 +704,12 @@ function startHangman(){
   hmScore=0;
   showScreen('hangman');
   setHmLevel(0);
-  startTimer('hm-timer',300,()=>{endGame('hangman',hmScore,'Hangman')});
+  startTimer('hm-timer',300,function(){endGame('hangman',hmScore,'Hangman')});
 }
 
 function newHangmanWord(){
-  const pool=HM_WORDS.filter(x=>x.lvl===hmLevel);
-  const w=pool[Math.floor(Math.random()*pool.length)];
+  var pool=HM_WORDS.filter(function(x){return x.lvl===hmLevel});
+  var w=pool[Math.floor(Math.random()*pool.length)];
   hmWord=w.w;
   hmGuessed=[];
   hmWrong=0;
@@ -611,14 +721,14 @@ function newHangmanWord(){
 
 function renderHangman(){
   document.getElementById('hm-art').textContent=HM_ART[Math.min(hmWrong,8)];
-  const lives=document.getElementById('hm-lives');
+  var lives=document.getElementById('hm-lives');
   lives.innerHTML='';
-  for(let i=0;i<(8-hmWrong);i++) lives.innerHTML+='<span style="font-size:18px;">❤️</span>';
-  for(let i=0;i<hmWrong;i++) lives.innerHTML+='<span style="font-size:18px;">🖤</span>';
-  const wd=document.getElementById('hm-word');
+  for(var i=0;i<(8-hmWrong);i++) lives.innerHTML+='<span style="font-size:16px;">\u2764\uFE0F</span>';
+  for(var i=0;i<hmWrong;i++) lives.innerHTML+='<span style="font-size:16px;">\u{1F5A4}</span>';
+  var wd=document.getElementById('hm-word');
   wd.innerHTML='';
-  hmWord.split('').forEach(c=>{
-    const b=document.createElement('div');
+  hmWord.split('').forEach(function(c){
+    var b=document.createElement('div');
     b.className='letter-box';
     b.textContent=hmGuessed.includes(c)?c:'';
     wd.appendChild(b);
@@ -626,13 +736,13 @@ function renderHangman(){
 }
 
 function buildKeyboard(){
-  const kb=document.getElementById('hm-keyboard');
+  var kb=document.getElementById('hm-keyboard');
   kb.innerHTML='';
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(c=>{
-    const b=document.createElement('button');
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(c){
+    var b=document.createElement('button');
     b.className='key-btn';
     b.textContent=c;
-    b.onclick=()=>guessLetter(c,b);
+    b.onclick=function(){guessLetter(c,b)};
     if(hmGuessed.includes(c)){
       b.disabled=true;
       b.className='key-btn '+(hmWord.includes(c)?'hit':'miss');
@@ -647,81 +757,82 @@ function guessLetter(c,btn){
   btn.disabled=true;
   if(hmWord.includes(c)){
     btn.className='key-btn hit';
-    if(hmWord.split('').every(l=>hmGuessed.includes(l))){
-      const xp=[10,20,30,40][hmLevel];
+    if(hmWord.split('').every(function(l){return hmGuessed.includes(l)})){
+      var xp=[10,20,30,40][hmLevel];
       hmScore+=xp;
       addXP(xp);
       document.getElementById('hm-score').textContent='Score: '+hmScore;
-      showToast('✅ Correct! +'+xp+' XP');
+      showToast('Correct! +'+xp+' XP');
       setTimeout(newHangmanWord,1000);
     }
   } else {
     btn.className='key-btn miss';
     hmWrong++;
     if(hmWrong>=8){
-      showToast('💀 The word was: '+hmWord);
+      showToast('The word was: '+hmWord);
       setTimeout(newHangmanWord,1500);
     }
   }
   renderHangman();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
 // QUIZ BLITZ
-// ─────────────────────────────────────────────────────────────────────────────
-const QUIZ = [
-  {q:"What does 'AI hallucination' mean?",a:0,opts:["AI confidently states false information","AI creates artistic images","AI has emotional responses","AI stops responding"],e:"Hallucination is when AI generates plausible-sounding but factually incorrect content."},
+// ═════════════════════════════════════════════════════════════════════════════
+var QUIZ = [
+  {q:"What does \u2018AI hallucination\u2019 mean?",a:0,opts:["AI confidently states false information","AI creates artistic images","AI has emotional responses","AI stops responding"],e:"Hallucination is when AI generates plausible-sounding but factually incorrect content."},
   {q:"Which company created ChatGPT?",a:1,opts:["Google","OpenAI","Meta","Anthropic"],e:"OpenAI created ChatGPT. Anthropic created Claude, Google created Gemini."},
-  {q:"What is 'prompt engineering'?",a:2,opts:["Writing code for AI","Building AI hardware","Crafting inputs to get better AI outputs","Training machine learning models"],e:"Prompt engineering is the skill of designing inputs (prompts) that guide AI to produce better, more accurate outputs."},
+  {q:"What is \u2018prompt engineering\u2019?",a:2,opts:["Writing code for AI","Building AI hardware","Crafting inputs to get better AI outputs","Training machine learning models"],e:"Prompt engineering is the skill of designing inputs (prompts) that guide AI to produce better, more accurate outputs."},
   {q:"What does LLM stand for?",a:3,opts:["Large Logic Machine","Learning Language Module","Linked Language Model","Large Language Model"],e:"LLM = Large Language Model. These are AI systems trained on massive amounts of text data."},
-  {q:"What is 'algorithmic bias'?",a:0,opts:["When AI systems produce unfair outcomes for certain groups","When algorithms run too slowly","When code has errors","When AI uses too much memory"],e:"Algorithmic bias occurs when AI systems reflect and perpetuate human prejudices present in training data."},
-  {q:"What is a 'token' in AI context?",a:1,opts:["A digital currency","A unit of text processed by AI (word or word-piece)","A type of neural network","An AI training reward"],e:"Tokens are the basic units AI processes — roughly a word or piece of a word. GPT-4 can process ~128,000 tokens at once."},
-  {q:"What is 'fine-tuning' an AI model?",a:2,opts:["Making AI faster","Adjusting AI's visual interface","Training an existing model on specific new data","Reducing model size"],e:"Fine-tuning takes a pre-trained model and continues training it on a smaller, specialized dataset for a specific task."},
-  {q:"Which book argues algorithms can destroy lives? (Cathy O'Neil)",a:3,opts:["The Alignment Problem","AI Superpowers","Human Compatible","Weapons of Math Destruction"],e:"Cathy O'Neil's 'Weapons of Math Destruction' (2016) shows how algorithms in finance, education, and justice harm vulnerable people."},
-  {q:"What is 'explainability' in AI?",a:0,opts:["How well humans can understand why an AI made a decision","How fast AI can explain itself","How many languages AI speaks","How accurate AI predictions are"],e:"Explainable AI (XAI) focuses on making AI decisions transparent and understandable to humans — critical for high-stakes uses."},
-  {q:"What does Claude (Anthropic's AI) prioritize?",a:1,opts:["Speed above accuracy","Safety and harmlessness","Entertainment value","Maximum autonomy"],e:"Anthropic built Claude with a focus on safety, harmlessness, and honesty — part of their Constitutional AI approach."},
-  {q:"What is a 'neural network'?",a:2,opts:["A brain-computer interface","Internet infrastructure for AI","A computing system loosely modeled on the human brain","A type of robot"],e:"Neural networks are layered mathematical systems inspired by biological neurons — the foundation of modern deep learning."},
-  {q:"What is 'transfer learning'?",a:3,opts:["Moving AI between computers","Teaching AI to drive","Copying AI training data","Using a model trained on one task as a starting point for another"],e:"Transfer learning lets developers reuse pre-trained models (like GPT) and adapt them for specific applications, saving massive resources."},
-  {q:"What term describes AI systems that can handle text, images, and audio?",a:0,opts:["Multimodal","Polyglot","Universal","Omni-AI"],e:"Multimodal AI can process multiple types of data inputs (text, images, audio, video) — like GPT-4V or Gemini Ultra."},
-  {q:"What is 'reinforcement learning'?",a:1,opts:["AI learning from textbooks","AI learning through rewards and penalties from trial and error","AI learning from human feedback only","AI learning by copying other AIs"],e:"Reinforcement learning trains AI agents through feedback — rewarding good actions and penalizing bad ones, like training a pet."},
-  {q:"What is the 'alignment problem' in AI?",a:2,opts:["Getting AI to run on different devices","Making AI faster","Ensuring AI goals align with human values","Connecting AI to the internet"],e:"The alignment problem asks: how do we build AI systems that reliably pursue goals we actually want, not just what we specified?"},
-  {q:"What did Ruha Benjamin coin in 'Race After Technology'?",a:3,opts:["Digital discrimination","Code inequality","Algorithmic racism","The New Jim Code"],e:"Ruha Benjamin's 'New Jim Code' describes how technology can encode and reproduce racial discrimination behind a neutral-seeming facade."},
-  {q:"What is 'natural language processing' (NLP)?",a:0,opts:["AI's ability to understand and generate human language","Teaching computers to speak verbally","Translating code into plain text","Processing handwriting"],e:"NLP is the AI field focused on understanding, interpreting, and generating human language — it powers chatbots, translation, and search."},
-  {q:"What is 'temperature' in AI text generation?",a:1,opts:["How fast the model runs","A setting controlling randomness/creativity in outputs","The physical heat of GPU servers","How emotional the AI seems"],e:"Temperature controls output randomness: low temperature (0.1) = predictable/factual, high temperature (1.0+) = creative/random."},
-  {q:"What career field focuses on AI fairness and accountability?",a:2,opts:["AI engineering","Data science","Responsible AI / AI ethics","Machine learning ops"],e:"Responsible AI and AI ethics roles focus on bias auditing, fairness analysis, policy, and ensuring AI systems don't harm people."},
-  {q:"Ethan Mollick's 'Co-Intelligence' argues AI should be treated as a...",a:3,opts:["Tool only","Threat primarily","Employee","Collaborative partner requiring active engagement"],e:"Mollick argues we should treat AI as a co-pilot: actively engage with it, experiment constantly, and figure out how it augments YOUR work."},
-  {q:"What is 'data poisoning'?",a:0,opts:["Deliberately corrupting training data to manipulate AI behavior","Deleting old datasets","Encrypting AI models","Overloading AI with data"],e:"Data poisoning is an attack where bad actors inject malicious data into training sets to make AI models behave in harmful ways."},
-  {q:"What is a 'foundation model'?",a:1,opts:["The first AI ever created","A large pre-trained model adapted for many tasks","A basic AI with limited capability","The model used to evaluate other AIs"],e:"Foundation models (like GPT-4, Claude, Gemini) are massive models trained on broad data that can be adapted via fine-tuning or prompting."},
-  {q:"What does 'RLHF' stand for?",a:2,opts:["Rapid Learning for Human Feedback","Reinforced Language and Human Fine-tuning","Reinforcement Learning from Human Feedback","Recursive Learning of Human Features"],e:"RLHF is a training technique where human raters evaluate AI outputs, and those ratings are used to improve the model's behavior."},
-  {q:"What is the main risk of 'black box' AI?",a:3,opts:["It uses too much energy","It costs too much","It is less creative","Decisions can't be explained or audited"],e:"Black box AI makes decisions humans can't interpret or audit — a major problem for accountability in hiring, lending, and criminal justice."},
-  {q:"Which finance-to-tech skill transfers most directly to AI roles?",a:0,opts:["Quantitative analysis and data interpretation","Bookkeeping","Client entertainment","Office management"],e:"Finance skills like quantitative analysis, pattern recognition, risk assessment, and stakeholder communication transfer directly to AI product and ethics roles."},
+  {q:"What is \u2018algorithmic bias\u2019?",a:0,opts:["When AI systems produce unfair outcomes for certain groups","When algorithms run too slowly","When code has errors","When AI uses too much memory"],e:"Algorithmic bias occurs when AI systems reflect and perpetuate human prejudices present in training data."},
+  {q:"What is a \u2018token\u2019 in AI context?",a:1,opts:["A digital currency","A unit of text processed by AI (word or word-piece)","A type of neural network","An AI training reward"],e:"Tokens are the basic units AI processes. GPT-4 can process ~128,000 tokens at once."},
+  {q:"What is \u2018fine-tuning\u2019 an AI model?",a:2,opts:["Making AI faster","Adjusting AI visual interface","Training an existing model on specific new data","Reducing model size"],e:"Fine-tuning takes a pre-trained model and continues training it on a smaller, specialized dataset for a specific task."},
+  {q:"Which book argues algorithms can destroy lives? (Cathy O\u2019Neil)",a:3,opts:["The Alignment Problem","AI Superpowers","Human Compatible","Weapons of Math Destruction"],e:"Cathy O\u2019Neil\u2019s Weapons of Math Destruction (2016) shows how algorithms in finance, education, and justice harm vulnerable people."},
+  {q:"What is \u2018explainability\u2019 in AI?",a:0,opts:["How well humans can understand why an AI made a decision","How fast AI can explain itself","How many languages AI speaks","How accurate AI predictions are"],e:"Explainable AI (XAI) focuses on making AI decisions transparent and understandable to humans."},
+  {q:"What does Claude (Anthropic\u2019s AI) prioritize?",a:1,opts:["Speed above accuracy","Safety and harmlessness","Entertainment value","Maximum autonomy"],e:"Anthropic built Claude with a focus on safety, harmlessness, and honesty via Constitutional AI."},
+  {q:"What is a \u2018neural network\u2019?",a:2,opts:["A brain-computer interface","Internet infrastructure for AI","A computing system loosely modeled on the human brain","A type of robot"],e:"Neural networks are layered mathematical systems inspired by biological neurons."},
+  {q:"What is \u2018transfer learning\u2019?",a:3,opts:["Moving AI between computers","Teaching AI to drive","Copying AI training data","Using a model trained on one task as a starting point for another"],e:"Transfer learning lets developers reuse pre-trained models and adapt them for specific applications."},
+  {q:"What term describes AI that can handle text, images, and audio?",a:0,opts:["Multimodal","Polyglot","Universal","Omni-AI"],e:"Multimodal AI can process multiple types of data inputs (text, images, audio, video)."},
+  {q:"What is \u2018reinforcement learning\u2019?",a:1,opts:["AI learning from textbooks","AI learning through rewards and penalties from trial and error","AI learning from human feedback only","AI learning by copying other AIs"],e:"Reinforcement learning trains AI agents through feedback, like training a pet."},
+  {q:"What is the \u2018alignment problem\u2019 in AI?",a:2,opts:["Getting AI to run on different devices","Making AI faster","Ensuring AI goals align with human values","Connecting AI to the internet"],e:"The alignment problem: how do we build AI that reliably pursues goals we actually want?"},
+  {q:"What did Ruha Benjamin coin in Race After Technology?",a:3,opts:["Digital discrimination","Code inequality","Algorithmic racism","The New Jim Code"],e:"Ruha Benjamin\u2019s New Jim Code describes how technology can encode and reproduce racial discrimination."},
+  {q:"What is \u2018natural language processing\u2019 (NLP)?",a:0,opts:["AI\u2019s ability to understand and generate human language","Teaching computers to speak verbally","Translating code into plain text","Processing handwriting"],e:"NLP is the AI field focused on understanding, interpreting, and generating human language."},
+  {q:"What is \u2018temperature\u2019 in AI text generation?",a:1,opts:["How fast the model runs","A setting controlling randomness/creativity in outputs","The physical heat of GPU servers","How emotional the AI seems"],e:"Temperature controls output randomness: low (0.1) = predictable, high (1.0+) = creative."},
+  {q:"What career field focuses on AI fairness and accountability?",a:2,opts:["AI engineering","Data science","Responsible AI / AI ethics","Machine learning ops"],e:"Responsible AI and AI ethics roles focus on bias auditing, fairness analysis, policy."},
+  {q:"Ethan Mollick\u2019s Co-Intelligence argues AI should be treated as a...",a:3,opts:["Tool only","Threat primarily","Employee","Collaborative partner requiring active engagement"],e:"Mollick argues we should treat AI as a co-pilot: actively engage with it and figure out how it augments YOUR work."},
+  {q:"What is \u2018data poisoning\u2019?",a:0,opts:["Deliberately corrupting training data to manipulate AI behavior","Deleting old datasets","Encrypting AI models","Overloading AI with data"],e:"Data poisoning is an attack where bad actors inject malicious data into training sets."},
+  {q:"What is a \u2018foundation model\u2019?",a:1,opts:["The first AI ever created","A large pre-trained model adapted for many tasks","A basic AI with limited capability","The model used to evaluate other AIs"],e:"Foundation models (like GPT-4, Claude, Gemini) are massive models trained on broad data."},
+  {q:"What does \u2018RLHF\u2019 stand for?",a:2,opts:["Rapid Learning for Human Feedback","Reinforced Language and Human Fine-tuning","Reinforcement Learning from Human Feedback","Recursive Learning of Human Features"],e:"RLHF is a training technique where human raters evaluate AI outputs to improve the model."},
+  {q:"What is the main risk of \u2018black box\u2019 AI?",a:3,opts:["It uses too much energy","It costs too much","It is less creative","Decisions cannot be explained or audited"],e:"Black box AI makes decisions humans cannot interpret or audit."},
+  {q:"Which finance-to-tech skill transfers most directly to AI roles?",a:0,opts:["Quantitative analysis and data interpretation","Bookkeeping","Client entertainment","Office management"],e:"Finance skills like quantitative analysis, pattern recognition, and risk assessment transfer directly to AI product and ethics roles."}
 ];
 
-let quizIdx=0, quizScore=0, quizTotal=0, quizOrder=[];
+var quizIdx=0, quizScore=0, quizTotal=0, quizOrder=[];
 
 function startQuiz(){
   quizIdx=0; quizScore=0; quizTotal=0;
-  quizOrder=[...Array(QUIZ.length).keys()].sort(()=>Math.random()-.5);
+  quizOrder=[];for(var i=0;i<QUIZ.length;i++)quizOrder.push(i);
+  quizOrder.sort(function(){return Math.random()-.5});
   showScreen('quiz');
   loadQuestion();
-  startTimer('quiz-timer',300,()=>endGame('quiz',quizScore*15,'Quiz Blitz'));
+  startTimer('quiz-timer',300,function(){endGame('quiz',quizScore*15,'Quiz Blitz')});
 }
 
 function loadQuestion(){
   if(quizIdx>=QUIZ.length){endGame('quiz',quizScore*15,'Quiz Blitz');return;}
-  const q=QUIZ[quizOrder[quizIdx]];
+  var q=QUIZ[quizOrder[quizIdx]];
   document.getElementById('quiz-progress').textContent='Question '+(quizIdx+1)+' of '+QUIZ.length;
   document.getElementById('q-fill').style.width=((quizIdx+1)/QUIZ.length*100)+'%';
   document.getElementById('quiz-q').textContent=q.q;
   document.getElementById('quiz-explain').style.display='none';
   document.getElementById('quiz-next-row').style.display='none';
-  const ag=document.getElementById('quiz-answers');
+  var ag=document.getElementById('quiz-answers');
   ag.innerHTML='';
-  q.opts.forEach((opt,i)=>{
-    const b=document.createElement('button');
+  q.opts.forEach(function(opt,i){
+    var b=document.createElement('button');
     b.className='answer-btn';
     b.textContent=opt;
-    b.onclick=()=>answerQuiz(i,q.a,q.e);
+    b.onclick=function(){answerQuiz(i,q.a,q.e)};
     ag.appendChild(b);
   });
   document.getElementById('quiz-score').textContent=quizScore+'/'+quizTotal;
@@ -729,31 +840,33 @@ function loadQuestion(){
 
 function answerQuiz(chosen,correct,explain){
   quizTotal++;
-  const btns=document.querySelectorAll('.answer-btn');
-  btns.forEach((b,i)=>{
+  var btns=document.querySelectorAll('#screen-quiz .answer-btn');
+  btns.forEach(function(b,i){
     b.disabled=true;
     if(i===correct) b.classList.add('correct');
     if(i===chosen && chosen!==correct) b.classList.add('wrong');
   });
   if(chosen===correct){
+    sfxCorrect();
     quizScore++;
     addXP(15);
-    showToast('✅ Correct! +15 XP');
+    showToast('Correct! +15 XP');
   } else {
-    showToast('❌ Not quite');
+    sfxWrong();
+    showToast('Not quite');
   }
   document.getElementById('quiz-score').textContent=quizScore+'/'+quizTotal;
-  document.getElementById('quiz-explain').textContent='💡 '+explain;
+  document.getElementById('quiz-explain').textContent=explain;
   document.getElementById('quiz-explain').style.display='block';
   document.getElementById('quiz-next-row').style.display='flex';
 }
 
 function nextQuestion(){quizIdx++;loadQuestion();}
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
 // MEMORY MATCH
-// ─────────────────────────────────────────────────────────────────────────────
-const MEM_SETS = [
+// ═════════════════════════════════════════════════════════════════════════════
+var MEM_SETS = [
   {name:'AI Basics', pairs:[
     ['Machine Learning','Algorithms that improve automatically through experience'],
     ['Neural Network','Computing layers loosely modeled on brain neurons'],
@@ -762,17 +875,17 @@ const MEM_SETS = [
     ['Overfitting','Model memorizes training data but fails on new data'],
     ['Supervised Learning','Training with labeled input-output examples'],
     ['Unsupervised Learning','Finding patterns in data without labels'],
-    ['Feature','An individual measurable property used as AI input'],
+    ['Feature','An individual measurable property used as AI input']
   ]},
   {name:'Prompting', pairs:[
     ['Zero-shot','Asking AI without any examples in the prompt'],
-    ['Few-shot','Giving 2–5 examples before asking your question'],
+    ['Few-shot','Giving 2-5 examples before asking your question'],
     ['Chain of Thought','Asking AI to reason step-by-step'],
     ['System Prompt','Instructions that set AI behavior and context'],
     ['Context Window','Maximum text an AI can consider at once'],
     ['Temperature','Controls how random or creative AI outputs are'],
     ['RAG','Retrieval-Augmented Generation: AI + live data lookup'],
-    ['Persona prompting','Asking AI to take on a specific role or character'],
+    ['Persona prompting','Asking AI to take on a specific role or character']
   ]},
   {name:'AI Ethics', pairs:[
     ['Algorithmic Bias','Systematic unfairness in AI outputs toward groups'],
@@ -782,44 +895,45 @@ const MEM_SETS = [
     ['Data Privacy','Protecting personal info used in AI training'],
     ['Surveillance Capitalism','Profiting from harvesting personal behavioral data'],
     ['Digital Redlining','Using tech to discriminate by race or class'],
-    ['Accountability','Responsibility for AI decisions and their impacts'],
-  ]},
+    ['Accountability','Responsibility for AI decisions and their impacts']
+  ]}
 ];
 
-let memSet=0, memSelected=null, memMatched=[], memScore=0, memCards=[];
+var memSet=0, memSelected=null, memMatched=[], memScore=0, memCards=[];
 
 function startMemory(){
   memScore=0;
   showScreen('memory');
   loadMemSet(0);
-  startTimer('mem-timer',300,()=>endGame('memory',memScore,'Term Match'));
+  startTimer('mem-timer',300,function(){endGame('memory',memScore,'Term Match')});
 }
 
 function loadMemSet(idx){
   memSet=idx; memSelected=null; memMatched=[]; memScore=0;
-  const pairs=MEM_SETS[idx].pairs;
+  var pairs=MEM_SETS[idx].pairs;
   memCards=[];
-  pairs.forEach((p,i)=>{
+  pairs.forEach(function(p,i){
     memCards.push({id:'t'+i,text:p[0],group:i,type:'term'});
     memCards.push({id:'d'+i,text:p[1],group:i,type:'def'});
   });
   shuffleArr(memCards);
   renderMemGrid();
+  var btns=document.querySelectorAll('#mem-set-select .btn-sm');
+  btns.forEach(function(b,i){b.className='btn-sm'+(i===idx?' on':'')});
 }
 
 function shuffleMemSet(){loadMemSet(memSet);}
-
-function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function shuffleArr(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}}
 
 function renderMemGrid(){
-  const g=document.getElementById('mem-grid');
+  var g=document.getElementById('mem-grid');
   g.innerHTML='';
-  memCards.forEach(c=>{
-    const d=document.createElement('div');
+  memCards.forEach(function(c){
+    var d=document.createElement('div');
     d.className='mem-card'+(memMatched.includes(c.group)?' matched':'');
     d.id='mc-'+c.id;
     d.textContent=c.text;
-    d.onclick=()=>selectMemCard(c,d);
+    d.onclick=function(){selectMemCard(c,d)};
     if(memMatched.includes(c.group)) d.onclick=null;
     g.appendChild(d);
   });
@@ -833,22 +947,23 @@ function selectMemCard(c,el){
   if(!memSelected){
     memSelected=c;
   } else {
-    const prev=document.getElementById('mc-'+memSelected.id);
+    var prev=document.getElementById('mc-'+memSelected.id);
     if(memSelected.group===c.group && memSelected.type!==c.type){
+      sfxCorrect();
       memMatched.push(c.group);
       memScore+=20;
       addXP(20);
-      showToast('✅ Match! +20 XP');
+      showToast('Match! +20 XP');
       memSelected=null;
       setTimeout(renderMemGrid,400);
       if(memMatched.length===MEM_SETS[memSet].pairs.length){
-        setTimeout(()=>endGame('memory',memScore,'Term Match'),600);
+        setTimeout(function(){endGame('memory',memScore,'Term Match')},600);
       }
     } else {
       el.classList.add('wrong');
       if(prev) prev.classList.add('wrong');
       memSelected=null;
-      setTimeout(()=>{
+      setTimeout(function(){
         el.classList.remove('selected','wrong');
         if(prev) prev.classList.remove('selected','wrong');
       },700);
@@ -856,55 +971,54 @@ function selectMemCard(c,el){
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
 // AI DILEMMAS
-// ─────────────────────────────────────────────────────────────────────────────
-const DILEMMAS = [
-  {title:"The Hiring Algorithm",text:"A Fortune 500 company uses an AI system to screen resumes. You discover it consistently downranks women's applications — it learned from historical data where men dominated senior roles. The algorithm is saving the company millions. What do you do?",choices:["Report it to HR and legal, even if it costs your job","Tweak it quietly to reduce the bias","Document it but wait until you have more data","Ignore it — you're not responsible for the algorithm"],insight:"Algorithmic bias in hiring is illegal under disparate impact law. Responsible AI professionals are obligated to raise these issues. The bias in the algorithm reflects and amplifies historical discrimination, not neutral 'data.'"},
-  {title:"The Predictive Policing Dilemma",text:"Your city wants to use AI to predict where crimes will happen and deploy more police there. The model is accurate on historical data — but that data reflects decades of over-policing Black neighborhoods. Communities of color say this will increase harassment. The city says it will save resources.",choices:["Support it — accuracy is accuracy","Oppose it — the feedback loop worsens inequality","Demand an independent bias audit before deployment","Suggest a pilot in lower-risk areas first"],insight:"Predictive policing creates dangerous feedback loops: more patrols → more arrests → more 'crime data' → more patrols. It doesn't predict crime; it predicts where police have been. Many cities including Los Angeles have shut these programs down after community pushback."},
-  {title:"The Medical AI Black Box",text:"A hospital uses an AI system to prioritize patients for kidney care. You discover it's using healthcare cost as a proxy for health need — which means white patients are prioritized over equally sick Black patients. The AI vendor says the model is proprietary and won't share how it works.",choices:["Accept it — the vendor knows best","Demand explainability before using it on patients","Use it only for non-critical decisions","Report it to the Office for Civil Rights immediately"],insight:"This is based on a real 2019 study (Obermeyer et al., Science). The algorithm used healthcare cost as a proxy for need — but Black patients at a given cost level are sicker on average because they receive less care. Explainability and accountability in medical AI is critical."},
-  {title:"The Deepfake Journalist",text:"You're a journalist. You receive a convincing deepfake video that appears to show a local politician accepting a bribe. You can't verify if it's real or AI-generated. Publishing could affect an upcoming election. Not publishing might let corruption go unreported.",choices:["Publish immediately — the public has a right to know","Don't publish — can't verify","Publish with a prominent disclaimer about verification uncertainty","Contact the politician for comment and hire a forensic AI expert"],insight:"This is a core media literacy challenge of the AI era. The responsible answer involves verification before publication. Several outlets have published guidance: deepfake detection tools, forensic video analysis, and multi-source corroboration are all necessary steps."},
-  {title:"The Surveillance Tool",text:"Your city offers your employer a facial recognition system to log employee attendance. It's cheap and accurate. But it would also create a database of when employees arrive, leave, and how often they're in certain areas. Employees haven't been told.",choices:["Implement it — efficiency wins","Decline it entirely — too invasive","Implement it with full employee disclosure and consent","Use it only for security, not attendance"],insight:"Facial recognition for workplace surveillance raises major consent and privacy issues. The EU's GDPR requires explicit consent for biometric data. In the US, Illinois' BIPA has led to billions in settlements. Covert collection almost always violates employee rights."},
-  {title:"The Recommendation Rabbit Hole",text:"You work at a social media company. Data shows your recommendation algorithm keeps users on the platform 40% longer when it suggests progressively more extreme content — even when that content spreads misinformation. Engagement = revenue.",choices:["Keep it — engagement is the business model","Change it — harm outweighs revenue","Add friction only for the most extreme content","Flag it to leadership and document your concerns"],insight:"This is based on real dynamics at Facebook and YouTube. Frances Haugen's whistleblowing revealed that engagement-optimized algorithms knowingly amplified division and misinformation. 'I raised it and was ignored' is not an ethical defense. Documenting and escalating is a professional responsibility."},
-  {title:"The AI Tutor Inequality",text:"A wealthy school district uses AI tutors that dramatically improve student outcomes. The tool costs $2,000 per student per year. You're advising a low-income district on their budget. Research shows AI tutoring works. They can afford it for only 20% of students.",choices:["Don't buy it — if not all can afford it, none should get it","Buy it for the highest-need students first","Partner with the vendor to negotiate lower pricing","Advocate for state/federal funding before purchasing"],insight:"This is a real equity dilemma in ed-tech. The 'access gap' for AI tools risks dramatically widening educational inequality. The right answer involves systemic advocacy (funding, policy) alongside tactical decisions — not accepting that wealthy students alone benefit from AI advances."},
-  {title:"The Autonomous Weapon",text:"A defense contractor offers your government an AI system that can identify and neutralize threats autonomously — without human approval for each strike. It would be faster and save soldiers' lives. But it removes human judgment from lethal decisions.",choices:["Approve it — speed and soldier safety matter","Reject it — humans must always approve lethal force","Allow it only for self-defense in active combat","Require meaningful human control with 1-second approval"],insight:"The question of Lethal Autonomous Weapons Systems (LAWS) is one of the most urgent in AI policy. The International Committee of the Red Cross and AI ethics researchers argue that removing meaningful human control from lethal decisions violates international humanitarian law and moral accountability."},
+// ═════════════════════════════════════════════════════════════════════════════
+var DILEMMAS = [
+  {title:"The Hiring Algorithm",text:"A Fortune 500 company uses an AI system to screen resumes. You discover it consistently downranks women\u2019s applications. The algorithm is saving the company millions. What do you do?",choices:["Report it to HR and legal, even if it costs your job","Tweak it quietly to reduce the bias","Document it but wait until you have more data","Ignore it"],insight:"Algorithmic bias in hiring is illegal under disparate impact law. Responsible AI professionals are obligated to raise these issues."},
+  {title:"The Predictive Policing Dilemma",text:"Your city wants to use AI to predict where crimes will happen. The model is accurate on historical data, but that data reflects decades of over-policing Black neighborhoods.",choices:["Support it","Oppose it, the feedback loop worsens inequality","Demand an independent bias audit before deployment","Suggest a pilot in lower-risk areas first"],insight:"Predictive policing creates dangerous feedback loops: more patrols = more arrests = more data = more patrols. Many cities have shut these programs down."},
+  {title:"The Medical AI Black Box",text:"A hospital uses an AI system to prioritize patients for kidney care. You discover it uses healthcare cost as a proxy for health need, meaning white patients are prioritized over equally sick Black patients.",choices:["Accept it","Demand explainability before using it on patients","Use it only for non-critical decisions","Report it to the Office for Civil Rights immediately"],insight:"Based on a real 2019 study (Obermeyer et al., Science). The algorithm used healthcare cost as a proxy for need, but Black patients at a given cost level are sicker on average."},
+  {title:"The Deepfake Journalist",text:"You receive a convincing deepfake video that appears to show a local politician accepting a bribe. You cannot verify if it is real or AI-generated. Publishing could affect an upcoming election.",choices:["Publish immediately","Do not publish","Publish with a prominent disclaimer","Contact the politician for comment and hire a forensic AI expert"],insight:"The responsible answer involves verification before publication. Deepfake detection tools, forensic video analysis, and multi-source corroboration are all necessary steps."},
+  {title:"The Surveillance Tool",text:"Your city offers your employer a facial recognition system to log employee attendance. Employees have not been told.",choices:["Implement it","Decline it entirely","Implement it with full employee disclosure and consent","Use it only for security, not attendance"],insight:"Facial recognition for workplace surveillance raises major consent and privacy issues. The EU GDPR requires explicit consent for biometric data."},
+  {title:"The Recommendation Rabbit Hole",text:"You work at a social media company. Data shows your recommendation algorithm keeps users on the platform 40% longer when it suggests progressively more extreme content.",choices:["Keep it, engagement is the business model","Change it, harm outweighs revenue","Add friction only for the most extreme content","Flag it to leadership and document your concerns"],insight:"Based on real dynamics at Facebook and YouTube. Engagement-optimized algorithms knowingly amplified division and misinformation."},
+  {title:"The AI Tutor Inequality",text:"A wealthy school district uses AI tutors that dramatically improve outcomes. The tool costs $2,000 per student per year. You are advising a low-income district. They can afford it for only 20% of students.",choices:["Do not buy it, if not all can afford it, none should get it","Buy it for the highest-need students first","Partner with the vendor to negotiate lower pricing","Advocate for state/federal funding before purchasing"],insight:"The access gap for AI tools risks dramatically widening educational inequality."},
+  {title:"The Autonomous Weapon",text:"A defense contractor offers your government an AI system that can identify and neutralize threats autonomously, without human approval for each strike.",choices:["Approve it, speed and soldier safety matter","Reject it, humans must always approve lethal force","Allow it only for self-defense in active combat","Require meaningful human control with 1-second approval"],insight:"Removing meaningful human control from lethal decisions violates international humanitarian law and moral accountability."}
 ];
 
-let dilIdx=0, dilScore=0, dilOrder=[];
+var dilIdx=0, dilScore=0, dilOrder=[];
 
 function startDilemma(){
   dilIdx=0; dilScore=0;
-  dilOrder=[...Array(DILEMMAS.length).keys()].sort(()=>Math.random()-.5);
+  dilOrder=[];for(var i=0;i<DILEMMAS.length;i++)dilOrder.push(i);
+  dilOrder.sort(function(){return Math.random()-.5});
   showScreen('dilemma');
   loadDilemma();
-  startTimer('dil-timer',300,()=>endGame('dilemma',dilScore*25,'AI Dilemmas'));
+  startTimer('dil-timer',300,function(){endGame('dilemma',dilScore*25,'AI Dilemmas')});
 }
 
 function loadDilemma(){
   if(dilIdx>=DILEMMAS.length){endGame('dilemma',dilScore*25,'AI Dilemmas');return;}
-  const d=DILEMMAS[dilOrder[dilIdx]];
+  var d=DILEMMAS[dilOrder[dilIdx]];
   document.getElementById('dil-score').textContent=dilIdx+'/'+DILEMMAS.length;
   document.getElementById('dil-next-row').style.display='none';
-  const c=document.getElementById('dil-content');
-  c.innerHTML=`
-    <div class="dilemma-scenario">
-      <div class="dilemma-title">Scenario ${dilIdx+1}: ${d.title}</div>
-      <div class="dilemma-text">${d.text}</div>
-    </div>
-    ${d.choices.map((ch,i)=>`<button class="choice-btn" id="dc-${i}" onclick="pickDilemma(${i})">${String.fromCharCode(65+i)}. ${ch}</button>`).join('')}
-    <div class="insight-box" id="dil-insight" style="display:none;"></div>
-  `;
+  var c=document.getElementById('dil-content');
+  var html='<div class="dilemma-scenario"><div class="dilemma-title">Scenario '+(dilIdx+1)+': '+d.title+'</div><div class="dilemma-text">'+d.text+'</div></div>';
+  d.choices.forEach(function(ch,i){
+    html+='<button class="choice-btn" id="dc-'+i+'" onclick="pickDilemma('+i+')">'+String.fromCharCode(65+i)+'. '+ch+'</button>';
+  });
+  html+='<div class="insight-box" id="dil-insight" style="display:none;"></div>';
+  c.innerHTML=html;
 }
 
 function pickDilemma(i){
-  const d=DILEMMAS[dilOrder[dilIdx]];
-  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  var d=DILEMMAS[dilOrder[dilIdx]];
+  document.querySelectorAll('#screen-dilemma .choice-btn').forEach(function(b){b.disabled=true});
   document.getElementById('dc-'+i).classList.add('chosen');
   dilScore++;
   addXP(25);
-  showToast('+25 XP — Thoughtful choice!');
-  const ins=document.getElementById('dil-insight');
-  ins.textContent='💡 '+d.insight;
+  showToast('+25 XP');
+  var ins=document.getElementById('dil-insight');
+  ins.textContent=d.insight;
   ins.style.display='block';
   document.getElementById('dil-next-row').style.display='flex';
   document.getElementById('dil-score').textContent=dilScore+'/'+DILEMMAS.length;
@@ -912,43 +1026,40 @@ function pickDilemma(i){
 
 function nextDilemma(){dilIdx++;loadDilemma();}
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
 // READING RECALL
-// ─────────────────────────────────────────────────────────────────────────────
-const RECALL_CARDS = [
-  // BOOKS
-  {source:'Co-Intelligence — Ethan Mollick',q:'What does Mollick mean by treating AI as a "co-intelligence"?',a:'Actively collaborating with AI as a thinking partner — not just a tool. Experiment constantly, stay curious, and figure out how it augments YOUR specific work.'},
-  {source:'Co-Intelligence — Ethan Mollick',q:'What is Mollick\'s "jagged frontier" concept?',a:'AI capabilities are uneven: it\'s superhuman at some tasks (coding, writing drafts) and surprisingly bad at others. You need to discover your own jagged frontier through experimentation.'},
-  {source:'Weapons of Math Destruction — Cathy O\'Neil',q:'What is a "Weapon of Math Destruction"?',a:'An opaque, large-scale algorithm that claims objectivity but encodes bias, harms vulnerable people, and is immune to feedback or correction.'},
-  {source:'Weapons of Math Destruction — Cathy O\'Neil',q:'What 3 characteristics define a WMD?',a:'Opacity (can\'t be examined), Scale (affects millions), Damage (harms the people it claims to help — often the most vulnerable).'},
-  {source:'The Psychology of Money — Morgan Housel',q:'What is Housel\'s key insight about behavior vs. knowledge in finance?',a:'Financial success is more about behavior than knowledge. Doing well with money has little to do with how smart you are — it\'s about how you behave under pressure.'},
-  {source:'Thick — Tressie McMillan Cottom',q:'What does McMillan Cottom mean by "thick" analysis?',a:'Analysis that doesn\'t strip context away from Black women\'s experiences — holding together race, gender, class, and institution simultaneously, refusing simple narratives.'},
-  {source:'The Fire Next Time — James Baldwin',q:'What is Baldwin\'s central argument about love and race in America?',a:'White Americans must accept the full humanity of Black Americans — not as charity, but because their own humanity depends on it. Love is not sentiment; it\'s the willingness to see truth.'},
-  {source:'The White Album — Joan Didion',q:'What does Didion mean by "we tell ourselves stories in order to live"?',a:'Narrative is a survival mechanism — we impose meaning on chaos to make experience bearable. But those stories can also trap us and prevent us from seeing clearly.'},
-  // ARTICLES & SOURCES
-  {source:'IBM SkillsBuild — AI Fundamentals',q:'What are the 3 main types of machine learning?',a:'Supervised learning (labeled data), Unsupervised learning (finding patterns without labels), Reinforcement learning (reward-based trial and error).'},
-  {source:'IBM SkillsBuild — AI Fundamentals',q:'What is the difference between AI, ML, and Deep Learning?',a:'AI is the broad goal (machines doing intelligent things). ML is a technique (learning from data). Deep Learning is a type of ML using neural networks with many layers.'},
-  {source:'Anthropic / Claude documentation',q:'What is "Constitutional AI"?',a:'Anthropic\'s approach to training Claude to be helpful, harmless, and honest by giving it a set of principles and having it critique its own responses against those principles.'},
-  {source:'AI Ethics research',q:'What is the "accountability gap" in AI?',a:'When AI systems make harmful decisions, it\'s unclear who is responsible — the developer, the deployer, or the user. This gap must be closed through law and professional standards.'},
-  {source:'Ruha Benjamin — Race After Technology',q:'What is the "New Jim Code"?',a:'Technology that encodes and enforces racial hierarchy behind a neutral, objective-seeming facade — from biased facial recognition to discriminatory risk scores.'},
-  {source:'Career transition research',q:'What finance skills transfer best to AI/tech roles?',a:'Quantitative analysis, pattern recognition in data, risk assessment frameworks, stakeholder communication, understanding incentive structures, and comfort with uncertainty.'},
-  {source:'AI product management',q:'What is a "product requirements document" (PRD) in tech?',a:'A document describing what a product feature should do, who it\'s for, why it matters, and how success is measured — a core PM deliverable.'},
-  // COURSE CONCEPTS
-  {source:'Prompt Engineering — Course',q:'What are the 4 key components of an effective prompt?',a:'Context (who you are, what situation), Instruction (what you want the AI to do), Input (the specific content to work with), Output format (how you want the response structured).'},
-  {source:'Prompt Engineering — Course',q:'What is "chain-of-thought" prompting?',a:'Asking AI to reason step-by-step before giving a final answer — e.g., "Think through this carefully before responding." It dramatically improves accuracy on complex tasks.'},
-  {source:'AI Career Transition',q:'What is a "T-shaped" professional?',a:'Someone with broad knowledge across many areas (the top of the T) and deep expertise in one domain (the stem). Ideal for AI roles that require both technical and domain knowledge.'},
-  {source:'AI Safety basics',q:'What is "Goodhart\'s Law" and why does it matter for AI?',a:'"When a measure becomes a target, it ceases to be a good measure." AI systems optimizing for proxy metrics (engagement, profit) can cause harm by gaming the metric instead of achieving the real goal.'},
-  {source:'Data literacy',q:'What is the difference between correlation and causation?',a:'Correlation means two things happen together. Causation means one thing causes the other. AI models find correlations — assuming causation leads to dangerous decisions.'},
-  {source:'AI in business',q:'What is "technical debt" in software?',a:'The future cost of shortcuts taken now. Cutting corners to ship faster creates hidden complexity that slows everything down later. A key concept for AI product decision-making.'},
-  {source:'AI career skills',q:'What is "stakeholder mapping" in tech projects?',a:'Identifying everyone affected by a product decision, their interests, and their influence — ensuring all voices are considered before building or deploying AI systems.'},
-  {source:'Responsible AI',q:'What is an "AI impact assessment"?',a:'A structured process to identify potential harms before deploying an AI system — who could be affected, how, and what safeguards are needed. Required in many industries.'},
+// ═════════════════════════════════════════════════════════════════════════════
+var RECALL_CARDS = [
+  {source:"Co-Intelligence \u2014 Ethan Mollick",q:"What does Mollick mean by treating AI as a co-intelligence?",a:"Actively collaborating with AI as a thinking partner. Experiment constantly, stay curious, figure out how it augments YOUR specific work."},
+  {source:"Co-Intelligence \u2014 Ethan Mollick",q:"What is Mollick\u2019s jagged frontier concept?",a:"AI capabilities are uneven: superhuman at some tasks, surprisingly bad at others. You need to discover your own jagged frontier through experimentation."},
+  {source:"Weapons of Math Destruction \u2014 Cathy O\u2019Neil",q:"What is a Weapon of Math Destruction?",a:"An opaque, large-scale algorithm that claims objectivity but encodes bias, harms vulnerable people, and is immune to feedback or correction."},
+  {source:"Weapons of Math Destruction \u2014 Cathy O\u2019Neil",q:"What 3 characteristics define a WMD?",a:"Opacity (cannot be examined), Scale (affects millions), Damage (harms the people it claims to help)."},
+  {source:"The Psychology of Money \u2014 Morgan Housel",q:"What is Housel\u2019s key insight about behavior vs. knowledge in finance?",a:"Financial success is more about behavior than knowledge. Doing well with money has little to do with how smart you are."},
+  {source:"Thick \u2014 Tressie McMillan Cottom",q:"What does McMillan Cottom mean by thick analysis?",a:"Analysis that holds together race, gender, class, and institution simultaneously, refusing simple narratives."},
+  {source:"The Fire Next Time \u2014 James Baldwin",q:"What is Baldwin\u2019s central argument about love and race in America?",a:"White Americans must accept the full humanity of Black Americans, not as charity, but because their own humanity depends on it."},
+  {source:"The White Album \u2014 Joan Didion",q:"What does Didion mean by we tell ourselves stories in order to live?",a:"Narrative is a survival mechanism. We impose meaning on chaos to make experience bearable. But those stories can also trap us."},
+  {source:"IBM SkillsBuild",q:"What are the 3 main types of machine learning?",a:"Supervised learning (labeled data), Unsupervised learning (finding patterns without labels), Reinforcement learning (reward-based trial and error)."},
+  {source:"IBM SkillsBuild",q:"What is the difference between AI, ML, and Deep Learning?",a:"AI is the broad goal. ML is a technique (learning from data). Deep Learning is a type of ML using neural networks with many layers."},
+  {source:"Anthropic / Claude documentation",q:"What is Constitutional AI?",a:"Anthropic\u2019s approach to training Claude to be helpful, harmless, and honest by giving it principles and having it critique its own responses."},
+  {source:"AI Ethics research",q:"What is the accountability gap in AI?",a:"When AI systems make harmful decisions, it is unclear who is responsible: the developer, the deployer, or the user."},
+  {source:"Ruha Benjamin \u2014 Race After Technology",q:"What is the New Jim Code?",a:"Technology that encodes and enforces racial hierarchy behind a neutral, objective-seeming facade."},
+  {source:"Career transition research",q:"What finance skills transfer best to AI/tech roles?",a:"Quantitative analysis, pattern recognition in data, risk assessment frameworks, stakeholder communication, and comfort with uncertainty."},
+  {source:"AI product management",q:"What is a product requirements document (PRD)?",a:"A document describing what a product feature should do, who it is for, why it matters, and how success is measured."},
+  {source:"Prompt Engineering",q:"What are the 4 key components of an effective prompt?",a:"Context (who you are, what situation), Instruction (what you want), Input (specific content), Output format (how you want the response structured)."},
+  {source:"Prompt Engineering",q:"What is chain-of-thought prompting?",a:"Asking AI to reason step-by-step before giving a final answer. It dramatically improves accuracy on complex tasks."},
+  {source:"AI Career Transition",q:"What is a T-shaped professional?",a:"Someone with broad knowledge across many areas (the top of the T) and deep expertise in one domain (the stem)."},
+  {source:"AI Safety basics",q:"What is Goodhart\u2019s Law and why does it matter for AI?",a:"When a measure becomes a target, it ceases to be a good measure. AI systems optimizing for proxy metrics can cause harm."},
+  {source:"Data literacy",q:"What is the difference between correlation and causation?",a:"Correlation means two things happen together. Causation means one thing causes the other. AI finds correlations; assuming causation leads to dangerous decisions."},
+  {source:"AI in business",q:"What is technical debt in software?",a:"The future cost of shortcuts taken now. Cutting corners to ship faster creates hidden complexity that slows everything down later."},
+  {source:"AI career skills",q:"What is stakeholder mapping in tech projects?",a:"Identifying everyone affected by a product decision, their interests, and their influence."},
+  {source:"Responsible AI",q:"What is an AI impact assessment?",a:"A structured process to identify potential harms before deploying an AI system: who could be affected, how, and what safeguards are needed."}
 ];
 
-let recallIdx=0, recallFlipped=false, recallDeck=[], recallDue=[];
+var recallIdx=0, recallFlipped=false, recallDeck=[], recallDue=[];
 
 function startRecall(){
-  recallDeck=[...RECALL_CARDS];
-  recallDue=[...RECALL_CARDS];
+  recallDeck=RECALL_CARDS.slice();
+  recallDue=RECALL_CARDS.slice();
   recallIdx=0;
   showScreen('recall');
   loadRecallCard();
@@ -956,10 +1067,10 @@ function startRecall(){
 
 function loadRecallCard(){
   recallFlipped=false;
-  const card=document.getElementById('recall-card');
+  var card=document.getElementById('recall-card');
   card.classList.remove('flipped');
   document.getElementById('rate-row').style.display='none';
-  const c=recallDeck[recallIdx];
+  var c=recallDeck[recallIdx];
   if(!c) return;
   document.getElementById('recall-source').textContent=c.source;
   document.getElementById('recall-source-b').textContent=c.source;
@@ -970,25 +1081,20 @@ function loadRecallCard(){
 }
 
 function flipRecallCard(){
-  const card=document.getElementById('recall-card');
+  var card=document.getElementById('recall-card');
   recallFlipped=!recallFlipped;
   card.classList.toggle('flipped',recallFlipped);
   document.getElementById('rate-row').style.display=recallFlipped?'flex':'none';
 }
 
 function rateCard(got){
-  if(got){
-    addXP(10);
-    showToast('💚 +10 XP!');
-  } else {
-    showToast('🔄 Added back to deck');
-    recallDeck.push(recallDeck[recallIdx]);
-  }
+  if(got){addXP(10);showToast('+10 XP!');}
+  else{showToast('Added back to deck');recallDeck.push(recallDeck[recallIdx]);}
   recallIdx++;
   if(recallIdx>=recallDeck.length){
-    showToast('🎉 Deck complete! Great work.');
+    showToast('Deck complete!');
     recallIdx=0;
-    recallDeck=[...RECALL_CARDS];
+    recallDeck=RECALL_CARDS.slice();
   }
   loadRecallCard();
 }
@@ -998,95 +1104,542 @@ function prevRecallCard(){recallIdx=(recallIdx-1+recallDeck.length)%recallDeck.l
 function shuffleRecallCards(){shuffleArr(recallDeck);recallIdx=0;loadRecallCard();}
 
 function setRecallTab(tab){
-  ['cards','add','mine'].forEach(t=>{
-    document.getElementById('recall-tab-'+t).classList.toggle('active',t===tab);
-    document.getElementById('recall-view-'+t).style.display=t===tab?'block':'none';
+  ['cards','add','mine'].forEach(function(t){
+    var tabEl=document.getElementById('recall-tab-'+t);if(tabEl)tabEl.classList.toggle('active',t===tab);
+    var viewEl=document.getElementById('recall-view-'+t);if(viewEl)viewEl.style.display=t===tab?'block':'none';
   });
   if(tab==='mine') renderHighlights();
 }
 
 function saveHighlight(){
-  const src=document.getElementById('hl-source').value.trim();
-  const txt=document.getElementById('hl-text').value.trim();
-  const take=document.getElementById('hl-takeaway').value.trim();
-  if(!src||!txt){showToast('⚠️ Source and highlight are required');return;}
-  const hl=lsGet('recall_highlights',[]);
-  hl.push({src,txt,take,date:new Date().toLocaleDateString()});
+  var src=document.getElementById('hl-source').value.trim();
+  var txt=document.getElementById('hl-text').value.trim();
+  var take=document.getElementById('hl-takeaway').value.trim();
+  if(!src||!txt){showToast('Source and highlight are required');return;}
+  var hl=lsGet('recall_highlights',[]);
+  hl.push({src:src,txt:txt,take:take,date:new Date().toLocaleDateString()});
   lsSave('recall_highlights',hl);
   document.getElementById('hl-source').value='';
   document.getElementById('hl-text').value='';
   document.getElementById('hl-takeaway').value='';
-  showToast('✅ Highlight saved!');
+  showToast('Highlight saved!');
   addXP(5);
 }
 
 function renderHighlights(){
-  const hl=lsGet('recall_highlights',[]);
-  const wrap=document.getElementById('highlights-list-wrap');
-  const msg=document.getElementById('no-highlights-msg');
-  if(!hl.length){
-    if(msg) msg.style.display='block';
-    return;
-  }
+  var hl=lsGet('recall_highlights',[]);
+  var wrap=document.getElementById('highlights-list-wrap');
+  var msg=document.getElementById('no-highlights-msg');
+  if(!hl.length){if(msg) msg.style.display='block';return;}
   if(msg) msg.style.display='none';
   wrap.innerHTML='';
-  hl.slice().reverse().forEach(h=>{
-    const d=document.createElement('div');
+  hl.slice().reverse().forEach(function(h){
+    var d=document.createElement('div');
     d.className='highlight-item';
-    d.innerHTML=`<div class="highlight-meta">📖 ${h.src} &nbsp;·&nbsp; ${h.date}</div>
-      <div class="highlight-text">"${h.txt}"</div>
-      ${h.take?`<div style="font-size:13px;color:#c084fc;margin-top:6px;">💡 ${h.take}</div>`:''}`;
+    d.innerHTML='<div class="highlight-meta">' + h.src + ' \u00B7 ' + h.date + '</div><div class="highlight-text">\u201C' + h.txt + '\u201D</div>' + (h.take ? '<div style="font-size:12px;color:var(--orange);margin-top:6px;">' + h.take + '</div>' : '');
     wrap.appendChild(d);
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
+// AI OR HUMAN? (data loaded dynamically in original — keeping stub for now)
+// ═════════════════════════════════════════════════════════════════════════════
+var AOH_DATA = [
+  {text:"The sunset painted the sky in shades of amber and violet, as if nature herself was an artist working in watercolors, each brushstroke a testament to the fleeting beauty of existence.",answer:"ai",explain:"AI tends to use elaborate metaphors and poetic language when describing simple scenes."},
+  {text:"I tried to make pasta last night and somehow set off the smoke alarm three times. My cat now hides whenever I walk toward the kitchen.",answer:"human",explain:"The specific, self-deprecating humor and concrete detail (cat hiding) are very human markers."},
+  {text:"In the rapidly evolving landscape of artificial intelligence, it is crucial that we maintain a balanced perspective, acknowledging both the transformative potential and the inherent risks of these powerful technologies.",answer:"ai",explain:"This reads like a generic AI-generated opinion piece. Notice the hedging, balance language, and lack of specific claims."},
+  {text:"My grandmother used to say that the best way to learn something is to teach it to someone else. She was a third-grade teacher for 40 years and never once raised her voice.",answer:"human",explain:"The specific personal detail (40 years, never raised her voice) and emotional warmth signal human writing."},
+  {text:"The integration of machine learning algorithms into healthcare systems presents unprecedented opportunities for diagnostic accuracy, while simultaneously raising important questions about patient privacy and algorithmic accountability.",answer:"ai",explain:"Classic AI: balanced framing, academic tone, uses 'unprecedented opportunities' and 'simultaneously raising questions.'"},
+  {text:"I have been staring at this blank document for 45 minutes. The cursor blinks like it is judging me. I think it might be winning.",answer:"human",explain:"The humor, self-awareness, and personification of a cursor are distinctly human touches."},
+  {text:"To effectively navigate the complexities of modern career transitions, professionals should focus on developing transferable skills, building strategic networks, and maintaining a growth mindset throughout the process.",answer:"ai",explain:"Generic advice, buzzwords (growth mindset, strategic networks), and list format are AI tells."},
+  {text:"Look, I know everyone says AI will take our jobs, but honestly the AI at my company cannot even format a spreadsheet without someone holding its hand. We are safe for now.",answer:"human",explain:"Colloquial tone, specific workplace frustration, and the 'honestly' qualifier are very human."},
+  {text:"The profound interconnectedness of global ecosystems necessitates a holistic approach to environmental conservation, one that transcends national boundaries and embraces the collective responsibility of all nations.",answer:"ai",explain:"Overly formal, uses 'profound interconnectedness' and 'necessitates' — classic AI academic-speak."},
+  {text:"My kid asked me why the sky is blue and I panicked and said something about paint. Now she tells everyone God uses blue paint. I need to fix this.",answer:"human",explain:"The specific embarrassing story, parental panic, and humor are unmistakably human."},
+  {text:"As we stand at the crossroads of technological innovation and ethical responsibility, it becomes increasingly important to foster dialogue between stakeholders and ensure that the benefits of AI are distributed equitably.",answer:"ai",explain:"'Crossroads of technological innovation,' 'foster dialogue,' and 'distributed equitably' are AI cliches."},
+  {text:"I deleted 4,000 emails today and honestly it felt better than therapy. Is that normal? Asking for a friend who is definitely me.",answer:"human",explain:"Self-aware humor, specific number, and the 'asking for a friend' joke are human writing patterns."},
+  {text:"Research indicates that diverse teams consistently outperform homogeneous ones, suggesting that organizations should prioritize inclusive hiring practices to maximize innovation and productivity.",answer:"ai",explain:"Generic research claim without citation, plus corporate-speak about 'inclusive hiring practices' and 'maximize innovation.'"},
+  {text:"The barista spelled my name wrong again. This time it said 'Bionca.' I have been going there every day for two years. I am not even mad anymore, just impressed by the creativity.",answer:"human",explain:"Specific personal anecdote with genuine emotion and humor. The resignation is very human."},
+  {text:"In conclusion, the transformative potential of artificial intelligence in education cannot be overstated, though careful implementation and ongoing evaluation will be essential to ensure positive outcomes for all learners.",answer:"ai",explain:"'Cannot be overstated,' 'careful implementation,' and 'positive outcomes for all learners' are all AI patterns."}
+];
+
+var aohIdx=0, aohScore=0, aohTotal=0;
+
+function startAiOrHuman(){
+  aohIdx=0; aohScore=0; aohTotal=0;
+  shuffleArr(AOH_DATA);
+  showScreen('aiorhuman');
+  loadAohRound();
+  startTimer('aoh-timer',300,function(){endGame('aiorhuman',aohScore*15,'AI or Human?')});
+}
+
+function loadAohRound(){
+  if(aohIdx>=AOH_DATA.length){endGame('aiorhuman',aohScore*15,'AI or Human?');return;}
+  var r=AOH_DATA[aohIdx];
+  document.getElementById('aoh-progress').textContent='Round '+(aohIdx+1)+' of '+AOH_DATA.length;
+  document.getElementById('aoh-fill').style.width=((aohIdx+1)/AOH_DATA.length*100)+'%';
+  document.getElementById('aoh-text').textContent=r.text;
+  document.getElementById('aoh-explain').style.display='none';
+  document.getElementById('aoh-next-row').style.display='none';
+  document.getElementById('aoh-human-btn').disabled=false;
+  document.getElementById('aoh-ai-btn').disabled=false;
+  document.getElementById('aoh-human-btn').classList.remove('correct','wrong');
+  document.getElementById('aoh-ai-btn').classList.remove('correct','wrong');
+}
+
+function submitAohAnswer(answer){
+  sfxClick();
+  aohTotal++;
+  var r=AOH_DATA[aohIdx];
+  document.getElementById('aoh-human-btn').disabled=true;
+  document.getElementById('aoh-ai-btn').disabled=true;
+  var correctBtn=r.answer==='human'?document.getElementById('aoh-human-btn'):document.getElementById('aoh-ai-btn');
+  correctBtn.classList.add('correct');
+  if(answer===r.answer){
+    sfxCorrect();aohScore++;addXP(15);showToast('Correct! +15 XP');
+  } else {
+    sfxWrong();
+    (answer==='human'?document.getElementById('aoh-human-btn'):document.getElementById('aoh-ai-btn')).classList.add('wrong');
+    showToast('Wrong!');
+  }
+  document.getElementById('aoh-score').textContent=aohScore+'/'+aohTotal;
+  document.getElementById('aoh-explain').textContent=r.explain;
+  document.getElementById('aoh-explain').style.display='block';
+  document.getElementById('aoh-next-row').style.display='flex';
+}
+
+function nextAohRound(){aohIdx++;loadAohRound();}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROMPT CRAFT
+// ═════════════════════════════════════════════════════════════════════════════
+var PC_DATA = [
+  {vague:"Write me something about AI",target:"A 500-word blog post for non-technical managers explaining 3 practical ways AI can improve team productivity",options:["Write a detailed article about artificial intelligence for business leaders","You are a tech writer. Write a 500-word blog post for non-technical managers. Cover 3 practical AI use cases. Tone: friendly, no jargon. Include real examples.","Write about AI and make it good and detailed"],correct:1,explain:"The best prompt specifies: role, audience, length, topic scope, tone, and format. Generic instructions produce generic results."},
+  {vague:"Help me with my resume",target:"A tailored resume bullet point showing quantified impact for a specific role",options:["Rewrite my resume bullet point to be better and more impactful","You are a resume expert. Rewrite this bullet point for a Senior AI Product Manager role. Quantify the impact. Use action verbs. Keep it under 25 words: [bullet point]","Help me make my resume stand out from other candidates"],correct:1,explain:"Effective prompts for resume help specify: role target, what to improve, constraints (word count), and provide the actual content to work with."},
+  {vague:"Explain machine learning",target:"A clear analogy that a 10-year-old could understand",options:["Explain machine learning in simple terms that anyone can understand","You are a science educator. Explain machine learning to a curious 10-year-old using an analogy about learning to ride a bike. Max 3 sentences. No technical terms.","What is machine learning and how does it work in detail?"],correct:1,explain:"The winning prompt constrains: audience (10-year-old), format (analogy), specific analogy seed (bike), length (3 sentences), and complexity level (no jargon)."},
+  {vague:"Write an email",target:"A warm but professional follow-up email after an informational interview",options:["Write a professional follow-up email that sounds warm and genuine","You are helping me write a follow-up email to [Name], who I met for an informational interview about AI product management. Reference: their advice about facilitation skills. Tone: warm, specific, not generic. Under 150 words. Sign off: With appreciation.","Write me a thank-you email for after a meeting"],correct:1,explain:"The best prompt includes: context (who, what meeting), specific detail to reference, tone, length constraint, and even the sign-off style."},
+  {vague:"Analyze this data",target:"A clear summary of trends with actionable recommendations",options:["Look at this data and tell me what you see","You are a data analyst. Analyze this sales data for Q1 2026. Identify: top 3 trends, any anomalies, and 2 actionable recommendations. Format: bullet points with supporting numbers. Audience: VP of Sales.","Analyze the data thoroughly and give me insights"],correct:1,explain:"Effective data analysis prompts specify: role, what to look for, how many findings, format, and who will read it."},
+  {vague:"Make a presentation",target:"A structured slide deck with clear messaging for executives",options:["Create a presentation about our AI strategy for leadership","You are a presentation designer. Create a 10-slide deck for our CEO on Q2 AI strategy. Structure: problem, solution, 3 initiatives with ROI estimates, timeline, risks, ask. Tone: confident but realistic. One key message per slide.","Make slides about AI and make them look professional"],correct:1,explain:"The best prompt specifies: audience, slide count, structure, content requirements per slide, tone, and formatting rules."},
+  {vague:"Fix my code",target:"A specific bug fix with explanation of what went wrong",options:["Debug this code and fix any issues you find","You are a senior JavaScript developer. This function should filter an array by date but returns empty. Debug it, explain what is wrong, fix it, and add a comment explaining the fix. Here is the code: [code]","My code is broken, can you help me fix it?"],correct:1,explain:"Good debugging prompts: specify language, expected behavior, actual behavior, and provide the code. Ask for explanation, not just a fix."},
+  {vague:"Write social media content",target:"A LinkedIn post that drives engagement and shows expertise",options:["Write a LinkedIn post about AI that will get lots of engagement","You are a LinkedIn content strategist. Write a post about AI hallucinations for my audience (HR and L&D professionals transitioning to AI roles). Hook in first line. Personal anecdote format. End with a question. Max 150 words. No hashtags in body.","Create some social media content about artificial intelligence"],correct:1,explain:"Winning prompt defines: platform, topic, audience, format (hook + anecdote + question), length, and style constraints."},
+  {vague:"Help me prepare for an interview",target:"Tailored STAR-format answers for behavioral questions at a specific company",options:["Help me prepare for a job interview with common questions","You are an interview coach. I am interviewing for AI Product Manager at Headspace. Generate 3 behavioral questions they would likely ask based on their values (mental health, accessibility, user empathy). For each, draft a STAR-format answer using my background: [background]. Include a tip for delivery.","Give me some interview tips and practice questions"],correct:1,explain:"The best prompt: specifies company, role, why those questions matter, response format (STAR), your background for personalization, and asks for delivery tips."},
+  {vague:"Summarize this article",target:"A concise summary with key takeaways relevant to a specific goal",options:["Summarize this article for me in a few paragraphs","You are a research assistant. Summarize this article in 3 bullet points. Focus on: implications for AI ethics roles. Include one direct quote. End with: how this connects to responsible AI governance. Max 100 words.","Read this article and tell me what it says"],correct:1,explain:"Effective summary prompts specify: format (bullets), length, lens/focus area, what to include (quote), and how to connect it to your goals."}
+];
+
+var pcIdx=0, pcScore=0;
+
+function startPromptCraft(){
+  pcIdx=0; pcScore=0;
+  shuffleArr(PC_DATA);
+  showScreen('promptcraft');
+  loadPromptChallenge();
+  startTimer('pc-timer',300,function(){endGame('promptcraft',pcScore,'Prompt Craft')});
+}
+
+function loadPromptChallenge(){
+  if(pcIdx>=PC_DATA.length){endGame('promptcraft',pcScore,'Prompt Craft');return;}
+  var p=PC_DATA[pcIdx];
+  document.getElementById('pc-progress').textContent='Challenge '+(pcIdx+1)+' of '+PC_DATA.length;
+  document.getElementById('pc-fill').style.width=((pcIdx+1)/PC_DATA.length*100)+'%';
+  document.getElementById('pc-vague').textContent=p.vague;
+  document.getElementById('pc-target').textContent=p.target;
+  document.getElementById('pc-explain').style.display='none';
+  document.getElementById('pc-next-row').style.display='none';
+  document.getElementById('pc-score').textContent=pcScore+'/'+pcIdx;
+  var opts=document.getElementById('pc-options');
+  opts.innerHTML='';
+  p.options.forEach(function(opt,i){
+    var b=document.createElement('button');
+    b.className='choice-btn';
+    b.textContent=opt;
+    b.onclick=function(){submitPromptChoice(i,p.correct,p.explain)};
+    opts.appendChild(b);
+  });
+}
+
+function submitPromptChoice(chosen,correct,explain){
+  sfxClick();
+  document.querySelectorAll('#screen-promptcraft .choice-btn').forEach(function(b,i){
+    b.disabled=true;
+    if(i===correct)b.classList.add('chosen');
+  });
+  if(chosen===correct){
+    sfxCorrect();pcScore+=20;addXP(20);showToast('Correct! +20 XP');
+  } else {
+    sfxWrong();showToast('Not quite');
+  }
+  document.getElementById('pc-explain').textContent=explain;
+  document.getElementById('pc-explain').style.display='block';
+  document.getElementById('pc-next-row').style.display='flex';
+  document.getElementById('pc-score').textContent=pcScore+'/'+(pcIdx+1)*20;
+}
+
+function nextPromptChallenge(){pcIdx++;loadPromptChallenge();}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// BIAS SPOTTER
+// ═════════════════════════════════════════════════════════════════════════════
+var BS_DATA = [
+  {scenario:"A bank uses an AI model to approve loans. The training data comes from 20 years of loan decisions made by human officers. What is the most likely bias risk?",options:["The AI will be too slow","Historical discrimination against minorities will be encoded in the model","The AI will approve too many loans","The model will run out of data"],correct:1,explain:"When training data reflects historical discrimination (redlining, racial bias in lending), the AI learns and perpetuates those patterns at scale."},
+  {scenario:"A hospital AI predicts patient no-shows using zip code as a feature. What bias could this introduce?",options:["No bias, zip codes are neutral data","Socioeconomic and racial bias since zip codes correlate with income and race","The AI might confuse zip codes with phone numbers","Geographic bias that helps rural patients"],correct:1,explain:"Zip codes are proxies for race and income due to residential segregation. Using them can discriminate against communities of color and low-income areas."},
+  {scenario:"An AI hiring tool was trained on resumes of successful employees at a tech company. The company is 80% male. What could happen?",options:["The AI will hire the best candidates regardless of gender","The AI will likely prefer male candidates because success was defined by a male-dominated sample","The AI cannot detect gender","The AI will overcorrect and hire only women"],correct:1,explain:"Amazon faced exactly this issue. Their AI resume screener learned to penalize words like 'women' because successful hires were predominantly male."},
+  {scenario:"A facial recognition system has 99% accuracy on light-skinned faces but only 65% on dark-skinned faces. A city wants to use it for law enforcement. What should they know?",options:["65% is good enough for most purposes","This disparity means the system will disproportionately misidentify people of color, leading to wrongful stops and arrests","Accuracy differences are normal and acceptable","They should use it only at night when lighting is even"],correct:1,explain:"Joy Buolamwini and Timnit Gebru documented these disparities (Gender Shades project). Misidentification leads to real harm for communities of color."},
+  {scenario:"A content recommendation AI notices that users who watch cooking videos also frequently watch weight loss content. It starts recommending diet content to all cooking viewers. What is the concern?",options:["Users will learn to cook healthier meals","The AI could push harmful diet culture content to vulnerable users, including those with eating disorders","More recommendations mean better engagement","The AI is just finding patterns in data"],correct:1,explain:"Recommendation systems can create harmful feedback loops, especially around body image and eating disorders. Internal research at Instagram showed this for teen girls."},
+  {scenario:"An AI customer service chatbot responds differently based on the name in the customer profile. Customers with traditionally Black names get shorter, less helpful responses. This is an example of...",options:["Efficient personalization","Name-based racial bias in the language model","Normal variation in responses","A feature, not a bug"],correct:1,explain:"Language models can encode racial biases from training data, including differential treatment based on names associated with different racial groups."},
+  {scenario:"A university uses AI to predict which students are at risk of dropping out. The model heavily weights financial aid status. What could go wrong?",options:["Nothing, financial aid is relevant","Low-income students could be stereotyped and receive less investment rather than more support","The model will be more accurate","Students will get better financial aid"],correct:1,explain:"If the model labels low-income students as likely dropouts, it could trigger reduced investment rather than increased support, creating a self-fulfilling prophecy."},
+  {scenario:"A news aggregator AI learns that articles about crime in certain neighborhoods get more clicks. It starts showing more crime stories about those areas. What is this called?",options:["Good journalism","A feedback loop that reinforces negative stereotypes about specific communities","Data-driven reporting","Audience optimization"],correct:1,explain:"This feedback loop mirrors how media coverage of crime creates fear: more coverage leads to more clicks, which leads to more coverage, distorting public perception of specific communities."},
+  {scenario:"An AI writing assistant suggests different vocabulary and tone when it detects the user is female vs. male. Female users get softer, more tentative language suggestions. This is...",options:["Helpful personalization","Reinforcing gender stereotypes in communication","Natural language variation","Better for workplace harmony"],correct:1,explain:"AI systems that suggest different communication styles by gender reinforce stereotypes. Women should not be automatically pushed toward tentative or softer language."},
+  {scenario:"A health insurance AI uses social media activity to assess risk. People who post about extreme sports, late nights, or fast food get higher premiums. What is the ethical issue?",options:["This is smart use of available data","Using social media for insurance discriminates based on lifestyle, class, and what people share vs. do","Premiums should reflect actual risk","People should not post about risky behavior"],correct:1,explain:"Social media is performative, not diagnostic. This approach discriminates by class (who has time for posts), culture, and creates a surveillance-based model of health."},
+  {scenario:"A language model trained primarily on English text performs poorly on African American Vernacular English (AAVE). When asked to correct AAVE text, it flags it as errors. This is...",options:["Just a language quality issue","Linguistic bias that treats one dialect as standard and others as incorrect","A minor accuracy problem","Something users should adapt to"],correct:1,explain:"AAVE is a legitimate, rule-governed dialect of English. Treating it as errors reflects linguistic racism embedded in training data that privileges Standard American English."},
+  {scenario:"An AI recruitment tool uses video interviews and analyzes facial expressions, tone, and word choice to score candidates. Candidates with disabilities that affect speech or facial movement score lower. This represents...",options:["Objective assessment","Ableist bias that confuses communication style with competence","Technology working as intended","A need for candidates to practice more"],correct:1,explain:"Using facial analysis and speech patterns for hiring discriminates against people with disabilities. This violates the ADA and conflates neurotypical presentation with capability."}
+];
+
+var bsIdx=0, bsScore=0;
+
+function startBiasSpotter(){
+  bsIdx=0; bsScore=0;
+  shuffleArr(BS_DATA);
+  showScreen('biasspotter');
+  loadBiasScenario();
+  startTimer('bs-timer',300,function(){endGame('biasspotter',bsScore*20,'Bias Spotter')});
+}
+
+function loadBiasScenario(){
+  if(bsIdx>=BS_DATA.length){endGame('biasspotter',bsScore*20,'Bias Spotter');return;}
+  var b=BS_DATA[bsIdx];
+  document.getElementById('bs-progress').textContent='Scenario '+(bsIdx+1)+' of '+BS_DATA.length;
+  document.getElementById('bs-fill').style.width=((bsIdx+1)/BS_DATA.length*100)+'%';
+  document.getElementById('bs-scenario').textContent=b.scenario;
+  document.getElementById('bs-explain').style.display='none';
+  document.getElementById('bs-next-row').style.display='none';
+  var opts=document.getElementById('bs-options');
+  opts.innerHTML='';
+  b.options.forEach(function(opt,i){
+    var btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.textContent=opt;
+    btn.onclick=function(){submitBias(i,b.correct,b.explain)};
+    opts.appendChild(btn);
+  });
+}
+
+function submitBias(chosen,correct,explain){
+  sfxClick();
+  document.querySelectorAll('#screen-biasspotter .choice-btn').forEach(function(b,i){
+    b.disabled=true;
+    if(i===correct)b.classList.add('chosen');
+  });
+  if(chosen===correct){sfxCorrect();bsScore++;addXP(20);showToast('Correct! +20 XP');}
+  else{sfxWrong();showToast('Not quite');}
+  document.getElementById('bs-score').textContent=bsScore+'/'+(bsIdx+1);
+  document.getElementById('bs-explain').textContent=explain;
+  document.getElementById('bs-explain').style.display='block';
+  document.getElementById('bs-next-row').style.display='flex';
+}
+
+function nextBiasScenario(){bsIdx++;loadBiasScenario();}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SPEED SORT
+// ═════════════════════════════════════════════════════════════════════════════
+var SPEED_SORT_DATA = [
+  {cat:'Supervised Learning',item:'Training with labeled examples',correct:0},
+  {cat:'Unsupervised Learning',item:'Finding patterns without labels',correct:1},
+  {cat:'Supervised Learning',item:'Email spam detection',correct:0},
+  {cat:'Unsupervised Learning',item:'Customer segmentation',correct:1},
+  {cat:'Supervised Learning',item:'Medical diagnosis from X-rays',correct:0},
+  {cat:'Unsupervised Learning',item:'Topic clustering in documents',correct:1},
+  {cat:'Supervised Learning',item:'Stock price prediction',correct:0},
+  {cat:'Unsupervised Learning',item:'Anomaly detection in data',correct:1},
+  {cat:'Supervised Learning',item:'Image classification with labels',correct:0},
+  {cat:'Unsupervised Learning',item:'Dimensionality reduction',correct:1},
+  {cat:'Ethical',item:'Building systems to help vulnerable people',correct:0},
+  {cat:'Unethical',item:'Training on scraped personal data without consent',correct:1},
+  {cat:'Ethical',item:'Documenting model limitations',correct:0},
+  {cat:'Unethical',item:'Deploying biased models knowing the harm',correct:1},
+  {cat:'Ethical',item:'Conducting AI impact assessments',correct:0}
+];
+
+var ssIdx=0, ssScore=0;
+
+function startSpeedSort(){
+  ssIdx=0; ssScore=0;
+  showScreen('speedsort');
+  loadSortItem();
+  startTimer('ss-timer',300,function(){endGame('speedsort',ssScore,'Speed Sort')});
+}
+
+function loadSortItem(){
+  if(ssIdx>=SPEED_SORT_DATA.length){endGame('speedsort',ssScore,'Speed Sort');return;}
+  var item=SPEED_SORT_DATA[ssIdx];
+  document.getElementById('ss-score').textContent=ssIdx+'/'+SPEED_SORT_DATA.length;
+  document.getElementById('ss-category').textContent=item.cat;
+  document.getElementById('ss-item').textContent=item.item;
+  var buckets=document.getElementById('ss-buckets');
+  buckets.innerHTML='';
+  var cats={};SPEED_SORT_DATA.forEach(function(d){cats[d.cat]=1});
+  var uniqueCats=Object.keys(cats);
+  uniqueCats.forEach(function(cat,i){
+    var btn=document.createElement('button');
+    btn.className='answer-btn';
+    btn.textContent=cat;
+    btn.onclick=function(){submitSort(i===item.correct)};
+    buckets.appendChild(btn);
+  });
+}
+
+function submitSort(correct){
+  sfxClick();
+  if(correct){sfxCorrect();ssScore++;addXP(1);showToast('Correct! +1 XP');}
+  else{sfxWrong();showToast('Wrong category');}
+  ssIdx++;
+  setTimeout(loadSortItem,400);
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// MYTH BUSTER
+// ═════════════════════════════════════════════════════════════════════════════
+var MYTH_DATA = [
+  {statement:"AI can think and understand the world like humans do",correct:false,explain:"AI language models are pattern matchers, not conscious thinkers."},
+  {statement:"Machine learning requires labeled data",correct:false,explain:"Unsupervised learning finds patterns without labels. Semi-supervised uses mostly unlabeled data."},
+  {statement:"A bigger model is always better",correct:false,explain:"Larger models can overfit. Sometimes smaller models generalize better for specific tasks."},
+  {statement:"AI will definitely take all the jobs",correct:false,explain:"AI changes jobs, not eliminates them. History shows tech creates new roles."},
+  {statement:"AI is completely objective and never biased",correct:false,explain:"AI inherits biases from training data and design choices."},
+  {statement:"Deep learning is just neural networks",correct:false,explain:"Deep learning is ONE type of ML. Many other techniques exist outside deep learning."},
+  {statement:"You need millions of data points to train an AI",correct:false,explain:"Transfer learning and few-shot learning work with small datasets."},
+  {statement:"AI is only for big tech companies",correct:false,explain:"Open-source models and APIs let anyone build AI."},
+  {statement:"Once trained, an AI model is permanent and unchanging",correct:false,explain:"Models drift over time. Retraining, fine-tuning, and continuous learning are standard."},
+  {statement:"Prompt engineering is the same as programming",correct:false,explain:"Prompting is writing for humans AND machines. Skills overlap but differ significantly."},
+  {statement:"AI hallucinations are a bug that will be fixed",correct:false,explain:"Hallucinations stem from how language models work. Mitigation is possible, but not elimination."},
+  {statement:"You need a PhD to work in AI",correct:false,explain:"Many AI roles need engineering, product, or domain expertise. Non-PhD paths are common."},
+  {statement:"All AI systems need to explain their decisions",correct:true,explain:"Legal, ethical, and practical reasons require explainability for high-stakes decisions."},
+  {statement:"Training data source matters for model quality",correct:true,explain:"Biased, low-quality training data produces poor models. Data curation is crucial."},
+  {statement:"AI can amplify existing social inequalities",correct:true,explain:"When AI learns from biased data, it can discriminate at scale. Documented in hiring, lending, criminal justice."}
+];
+
+var mbIdx=0, mbScore=0;
+
+function startMythBuster(){
+  mbIdx=0; mbScore=0;
+  showScreen('mythbuster');
+  loadMythStatement();
+  startTimer('mb-timer',300,function(){endGame('mythbuster',Math.round(mbScore*1.33),'AI Myth Buster')});
+}
+
+function loadMythStatement(){
+  if(mbIdx>=MYTH_DATA.length){endGame('mythbuster',Math.round(mbScore*1.33),'AI Myth Buster');return;}
+  var m=MYTH_DATA[mbIdx];
+  document.getElementById('mb-progress').textContent='Statement '+(mbIdx+1)+' of '+MYTH_DATA.length;
+  document.getElementById('mb-fill').style.width=((mbIdx+1)/MYTH_DATA.length*100)+'%';
+  document.getElementById('mb-statement').textContent=m.statement;
+  document.getElementById('mb-explain').style.display='none';
+  document.getElementById('mb-next-row').style.display='none';
+  document.getElementById('mb-true-btn').disabled=false;
+  document.getElementById('mb-false-btn').disabled=false;
+  document.getElementById('mb-true-btn').classList.remove('correct','wrong');
+  document.getElementById('mb-false-btn').classList.remove('correct','wrong');
+}
+
+function submitMythAnswer(answer){
+  sfxClick();
+  var m=MYTH_DATA[mbIdx];
+  document.getElementById('mb-true-btn').disabled=true;
+  document.getElementById('mb-false-btn').disabled=true;
+  var correctBtn=m.correct?document.getElementById('mb-true-btn'):document.getElementById('mb-false-btn');
+  correctBtn.classList.add('correct');
+  if(answer===m.correct){
+    sfxCorrect();mbScore++;addXP(1.33);showToast('Correct!');
+  } else {
+    sfxWrong();
+    (answer?document.getElementById('mb-true-btn'):document.getElementById('mb-false-btn')).classList.add('wrong');
+    showToast('Wrong!');
+  }
+  document.getElementById('mb-explain').textContent=m.explain;
+  document.getElementById('mb-explain').style.display='block';
+  document.getElementById('mb-next-row').style.display='flex';
+}
+
+function nextMythStatement(){mbIdx++;loadMythStatement();}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROMPT BUILDER
+// ═════════════════════════════════════════════════════════════════════════════
+var PROMPT_ROUNDS = [
+  {task:"Write a cover letter for an AI PM role",elements:{role:["You are a cover letter expert","You are a hiring manager","You are a job applicant"],context:["The role is at a nonprofit","The role is at a startup","The role is at a Fortune 500 company"],instruction:["Write formally","Write conversationally but professional","Write with personality and warmth"],constraint:["Keep it under 150 words","Make it 3-4 paragraphs","Include specific metrics"]},correct:[0,0,2,1]},
+  {task:"Summarize a research paper for a non-technical audience",elements:{role:["You are a research scientist","You are a science communicator","You are a journalist"],context:["Paper is on deep learning","Paper is on AI ethics","Paper is technical and complex"],instruction:["Use simple language","Use analogies","Avoid jargon completely"],constraint:["One paragraph max","Under 100 words","With a key takeaway"]},correct:[1,2,2,1]},
+  {task:"Get feedback on your AI project approach",elements:{role:["You are a project manager","You are seeking expert feedback","You are teaching someone"],context:["Building a recommendation system","Working on bias detection","Testing a new model"],instruction:["Ask critical questions","Suggest improvements","Identify risks"],constraint:["Format as a checklist","Use a structured template","Include trade-offs"]},correct:[1,0,1,2]}
+];
+
+var pbIdx=0, pbScore=0, pbChoices=[];
+
+function startPromptBuilder(){
+  pbIdx=0; pbScore=0; pbChoices=[];
+  showScreen('promptbuilder');
+  loadPromptRound();
+  startTimer('pb-timer',300,function(){endGame('promptbuilder',Math.round(pbScore*25/3),'Prompt Builder')});
+}
+
+function loadPromptRound(){
+  if(pbIdx>=PROMPT_ROUNDS.length){endGame('promptbuilder',Math.round(pbScore*25/3),'Prompt Builder');return;}
+  pbChoices=[];
+  var round=PROMPT_ROUNDS[pbIdx];
+  document.getElementById('pb-progress').textContent='Round '+(pbIdx+1)+' of '+PROMPT_ROUNDS.length;
+  document.getElementById('pb-fill').style.width=((pbIdx+1)/PROMPT_ROUNDS.length*100)+'%';
+  document.getElementById('pb-task').textContent=round.task;
+  var optsDiv=document.getElementById('pb-options');
+  optsDiv.innerHTML='';
+  var categories=['role','context','instruction','constraint'];
+  categories.forEach(function(cat,catIdx){
+    var sec=document.createElement('div');
+    sec.style.marginBottom='14px';
+    sec.innerHTML='<div style="font-size:11px;color:var(--orange);font-weight:700;margin-bottom:6px;font-family:DM Sans,sans-serif;">Choose '+cat.toUpperCase()+':</div>';
+    round.elements[cat].forEach(function(opt,optIdx){
+      var btn=document.createElement('button');
+      btn.className='choice-btn';
+      btn.textContent=opt;
+      btn.onclick=function(){selectPromptElement(catIdx,optIdx,btn)};
+      sec.appendChild(btn);
+    });
+    optsDiv.appendChild(sec);
+  });
+  document.getElementById('pb-explain').style.display='none';
+  document.getElementById('pb-next-row').style.display='none';
+}
+
+function selectPromptElement(catIdx,optIdx,btn){
+  sfxClick();
+  pbChoices[catIdx]=optIdx;
+  btn.parentNode.querySelectorAll('.choice-btn').forEach(function(b){b.classList.remove('chosen')});
+  btn.classList.add('chosen');
+  if(pbChoices.length===4 && pbChoices[0]!==undefined && pbChoices[1]!==undefined && pbChoices[2]!==undefined && pbChoices[3]!==undefined){
+    scorePromptRound();
+  }
+}
+
+function scorePromptRound(){
+  var round=PROMPT_ROUNDS[pbIdx];
+  var correct=0;
+  pbChoices.forEach(function(choice,idx){
+    if(choice===round.correct[idx]) correct++;
+  });
+  var score=Math.round(correct*25/4);
+  pbScore+=score;
+  addXP(score/25);
+  sfxComplete();
+  showToast('+'+score+' XP - '+correct+'/4 elements');
+  document.getElementById('pb-explain').textContent='Score: '+correct+'/4 elements correct.';
+  document.getElementById('pb-explain').style.display='block';
+  document.getElementById('pb-next-row').style.display='flex';
+}
+
+function nextPromptRound(){pbIdx++;loadPromptRound();}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // RESULTS
-// ─────────────────────────────────────────────────────────────────────────────
+// ═════════════════════════════════════════════════════════════════════════════
 function endGame(game, xpEarned, name){
+  syncToCC("game_completed", {game: game, name: name, xp: xpEarned, streak: streak});
+  sfxComplete();
   clearInterval(activeTimer);
   gamesPlayed++;
   streak++;
   lsSave('games_played',gamesPlayed);
   lsSave('games_streak',streak);
-  addXP(0); // refresh bar
-  document.getElementById('res-title').textContent='🎉 '+name+' Complete!';
+  addXP(0);
+  document.getElementById('res-title').textContent=name+' Complete!';
   document.getElementById('res-xp').textContent='+'+xpEarned+' XP';
-  document.getElementById('res-stats').innerHTML=`
-    <div class="result-stat"><div class="result-stat-num">${gamesPlayed}</div><div class="result-stat-label">Sessions</div></div>
-    <div class="result-stat"><div class="result-stat-num">${streak}</div><div class="result-stat-label">Streak 🔥</div></div>
-    <div class="result-stat"><div class="result-stat-num">${totalXP}</div><div class="result-stat-label">Total XP</div></div>
-    <div class="result-stat"><div class="result-stat-num">${getLevel().label}</div><div class="result-stat-label">Level</div></div>
-  `;
-  document.getElementById('res-replay').onclick=()=>{
+  document.getElementById('res-stats').innerHTML='<div class="result-stat"><div class="result-stat-num">'+gamesPlayed+'</div><div class="result-stat-label">Sessions</div></div><div class="result-stat"><div class="result-stat-num">'+streak+'</div><div class="result-stat-label">Streak</div></div><div class="result-stat"><div class="result-stat-num">'+totalXP+'</div><div class="result-stat-label">Total XP</div></div><div class="result-stat"><div class="result-stat-num">'+getLevel().label+'</div><div class="result-stat-label">Level</div></div>';
+  document.getElementById('res-replay').onclick=function(){
     if(game==='hangman') startHangman();
     else if(game==='quiz') startQuiz();
     else if(game==='memory') startMemory();
     else if(game==='dilemma') startDilemma();
+    else if(game==='aiorhuman') startAiOrHuman();
+    else if(game==='promptcraft') startPromptCraft();
+    else if(game==='biasspotter') startBiasSpotter();
+    else if(game==='speedsort') startSpeedSort();
+    else if(game==='mythbuster') startMythBuster();
+    else if(game==='promptbuilder') startPromptBuilder();
     else if(game==='recall') startRecall();
     else showScreen('hub');
   };
   showScreen('results');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
+// ═════════════════════════════════════════════════════════════════════════════
+// SOUND EFFECTS
+// ═════════════════════════════════════════════════════════════════════════════
+var soundEnabled = lsGet('games_sound', true);
+var audioContext = null;
+
+function initAudio(){
+  if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  return audioContext;
+}
+
+function sfxCorrect(){
+  if(!soundEnabled) return;
+  try{
+    var ctx=initAudio(),now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(523.25,now);osc.frequency.exponentialRampToValueAtTime(659.25,now+0.15);
+    gain.gain.setValueAtTime(0.3,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.15);
+    osc.start(now);osc.stop(now+0.15);
+  }catch(e){}
+}
+
+function sfxWrong(){
+  if(!soundEnabled) return;
+  try{
+    var ctx=initAudio(),now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(329.63,now);osc.frequency.exponentialRampToValueAtTime(164.81,now+0.2);
+    gain.gain.setValueAtTime(0.3,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.2);
+    osc.start(now);osc.stop(now+0.2);
+  }catch(e){}
+}
+
+function sfxComplete(){
+  if(!soundEnabled) return;
+  try{
+    var ctx=initAudio(),now=ctx.currentTime,freqs=[523.25,659.25,783.99];
+    freqs.forEach(function(freq,i){
+      var osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0.2,now+i*0.1);gain.gain.exponentialRampToValueAtTime(0.01,now+i*0.1+0.1);
+      osc.start(now+i*0.1);osc.stop(now+i*0.1+0.1);
+    });
+  }catch(e){}
+}
+
+function sfxClick(){
+  if(!soundEnabled) return;
+  try{
+    var ctx=initAudio(),now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=800;
+    gain.gain.setValueAtTime(0.1,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.05);
+    osc.start(now);osc.stop(now+0.05);
+  }catch(e){}
+}
+
+function toggleMute(){
+  soundEnabled=!soundEnabled;
+  lsSave('games_sound',soundEnabled);
+  var btn=document.getElementById('btn-mute');
+  if(btn) btn.textContent=soundEnabled?'\u{1F50A} Sound':'\u{1F507} Muted';
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
   showScreen('hub');
   updateXPBar();
+  refreshSuiteSync();
   setMode(timedMode?'timed':'free');
+  var muteBtn=document.getElementById('btn-mute');
+  if(muteBtn) muteBtn.textContent=soundEnabled?'\u{1F50A} Sound':'\u{1F507} Muted';
 });
 </script>
-<a href="bianca-ai-portfolio.html" id="portfolio-back-btn" style="display:block;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);text-decoration:none;">← Portfolio</a>
-<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
-<script>
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Enter') return;
-  var gate=document.getElementById('auth-gate');
-  if(gate && gate.style.display!=='none' && getComputedStyle(gate).display!=='none'){
-    e.preventDefault();
-    if(typeof _checkAuth==='function') _checkAuth();
-  }
-});
-</script>
+</div>
 </body>
 </html>

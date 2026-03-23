@@ -1,0 +1,2928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0a18">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Reading Companion">
+    <title>Reading Companion</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0f0d0a;
+            --card: #1a1714;
+            --card-raised: #221f1a;
+            --border: rgba(210,180,140,.12);
+            --border-warm: rgba(210,180,140,.25);
+            --text: #ede6db;
+            --dim: rgba(237,230,219,.45);
+            --accent: #d4a574;
+            --accent-bright: #e8c9a0;
+            --green: #6bcb77;
+            --gold: #f0c040;
+            --red: #e74c4c;
+            --teal: #4dd0b8;
+            --paper: #f5eed8;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+        .header {
+            padding: 1rem 1.2rem;
+            background: linear-gradient(135deg, #1a0f06 0%, #2a1a0e 40%, #0f1a1a 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-warm);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h40M20 0v40' stroke='rgba(210,180,140,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.02em;
+            color: var(--accent-bright);
+            position: relative;
+        }
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .btn-icon {
+            background: rgba(212,165,116,.1);
+            border: 1px solid var(--border-warm);
+            color: var(--accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            background: rgba(212,165,116,.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(212,165,116,.15);
+        }
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            background: radial-gradient(ellipse at 50% 0%, rgba(212,165,116,.03) 0%, transparent 70%);
+        }
+        .view {
+            display: none;
+            width: 100%;
+            padding: 0.8rem;
+            animation: fadeSlide 0.4s ease-out;
+        }
+        .view.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeSlide 0.4s ease-out;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-container {
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .nav {
+            display: flex;
+            gap: 0;
+            border-top: 2px solid var(--border-warm);
+            background: linear-gradient(180deg, var(--card) 0%, #0f0d0a 100%);
+            padding: 0;
+        }
+        .nav-item {
+            flex: 1;
+            padding: 0.45rem 0.1rem;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--dim);
+            font-size: 0.58rem;
+            font-family: -apple-system, sans-serif;
+            font-weight: 600;
+            transition: all 0.25s;
+            border-top: 3px solid transparent;
+            letter-spacing: 0.01em;
+            line-height: 1.3;
+        }
+        .nav-item.active {
+            color: var(--accent-bright);
+            border-top-color: var(--accent);
+            background: rgba(212,165,116,.05);
+        }
+        .nav-item:hover {
+            color: var(--accent);
+        }
+        /* BOOK CARDS */
+        .book-card {
+            background: linear-gradient(145deg, var(--card) 0%, var(--card-raised) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(.4,0,.2,1);
+            position: relative;
+            overflow: hidden;
+        }
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 50%, var(--teal) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .book-card:hover {
+            border-color: var(--border-warm);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,.3), 0 0 20px rgba(212,165,116,.06);
+        }
+        .book-card:hover::before { opacity: 1; }
+        .book-card-header {
+            display: flex;
+            gap: 0.9rem;
+            margin-bottom: 0.6rem;
+        }
+        .book-cover {
+            width: 56px;
+            height: 84px;
+            background: linear-gradient(145deg, #2a1a0e 0%, #1a0f06 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 3px 3px 8px rgba(0,0,0,.4), -1px -1px 3px rgba(212,165,116,.05);
+            border: 1px solid rgba(210,180,140,.15);
+        }
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .book-info { flex: 1; }
+        .book-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+            color: var(--text);
+            font-family: 'Georgia', serif;
+        }
+        .book-author {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 0.4rem;
+            font-style: italic;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 0.22rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: -apple-system, sans-serif;
+        }
+        .status-pill.reading {
+            background: rgba(107,203,119,.12);
+            color: var(--green);
+            border: 1px solid rgba(107,203,119,.25);
+        }
+        .status-pill.to-read {
+            background: rgba(212,165,116,.1);
+            color: var(--accent);
+            border: 1px solid rgba(212,165,116,.2);
+        }
+        .status-pill.done {
+            background: rgba(77,208,184,.1);
+            color: var(--teal);
+            border: 1px solid rgba(77,208,184,.2);
+        }
+        .status-pill.dnf {
+            background: rgba(231,76,76,.1);
+            color: var(--red);
+            border: 1px solid rgba(231,76,76,.2);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(212,165,116,.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.4rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 60%, var(--teal) 100%);
+            border-radius: 3px;
+            transition: width 0.5s cubic-bezier(.4,0,.2,1);
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.15) 50%, transparent 100%);
+            animation: shimmer 2.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        /* BUTTONS */
+        .btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #c4915e 100%);
+            color: var(--bg);
+            border: none;
+            border-radius: 10px;
+            padding: 0.65rem 1.2rem;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: -apple-system, sans-serif;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 8px rgba(212,165,116,.2);
+        }
+        .btn:hover {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 4px 16px rgba(212,165,116,.3);
+        }
+        .btn-secondary {
+            background: rgba(212,165,116,.08);
+            border: 1px solid var(--border-warm);
+            color: var(--accent);
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: rgba(212,165,116,.15);
+        }
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.78rem;
+        }
+        /* FORMS */
+        .form-group { margin-bottom: 1rem; }
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+            color: var(--accent);
+            font-family: -apple-system, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        input, textarea, select {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem;
+            color: var(--text);
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(212,165,116,.04);
+            box-shadow: 0 0 12px rgba(212,165,116,.08);
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin: 1.4rem 0 0.8rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-warm);
+            font-family: -apple-system, sans-serif;
+        }
+        /* STATS */
+        .stat-box {
+            background: linear-gradient(145deg, var(--card) 0%, var(--card-raised) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.6rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .stat-box:hover {
+            border-color: var(--border-warm);
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+            font-family: 'Georgia', serif;
+        }
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 0.3rem;
+            font-family: -apple-system, sans-serif;
+        }
+        /* JOURNAL */
+        .entry-card {
+            background: var(--card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 0.8rem;
+            margin-bottom: 0.7rem;
+            transition: all 0.2s;
+        }
+        .entry-card:hover {
+            background: var(--card-raised);
+            border-left-color: var(--gold);
+        }
+        .entry-meta {
+            font-size: 0.72rem;
+            color: var(--dim);
+            margin-bottom: 0.35rem;
+            font-family: -apple-system, sans-serif;
+        }
+        .entry-text {
+            font-size: 0.92rem;
+            line-height: 1.65;
+            font-family: 'Georgia', serif;
+        }
+        .quote-text {
+            font-style: italic;
+            color: var(--accent-bright);
+            margin: 0.4rem 0;
+            border-left: 2px solid var(--accent);
+            padding-left: 0.8rem;
+            font-family: 'Georgia', serif;
+        }
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,.75);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: linear-gradient(180deg, var(--card-raised) 0%, var(--card) 100%);
+            border: 1px solid var(--border-warm);
+            border-radius: 16px;
+            padding: 1.5rem;
+            max-width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.35s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 16px 40px rgba(0,0,0,.5);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px) scale(0.98); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .modal-close {
+            float: right;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--dim);
+            border: none;
+            background: none;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { color: var(--accent); transform: scale(1.1); }
+        /* GAMES */
+        .game-screen { display: flex; flex-direction: column; gap: 1rem; }
+        .question-box {
+            background: rgba(212,165,116,.06);
+            border: 1px solid var(--border-warm);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .question-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--gold), var(--teal));
+            border-radius: 12px 12px 0 0;
+        }
+        .question-text { font-size: 1.05rem; font-weight: 600; margin-bottom: 1rem; }
+        .options { display: flex; flex-direction: column; gap: 0.5rem; }
+        .option-btn {
+            background: rgba(212,165,116,.04);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s;
+            font-size: 0.9rem;
+            font-family: 'Georgia', serif;
+        }
+        .option-btn:hover {
+            border-color: var(--accent);
+            background: rgba(212,165,116,.1);
+            transform: translateX(4px);
+        }
+        .option-btn.correct {
+            background: rgba(107,203,119,.12);
+            border-color: var(--green);
+            color: var(--green);
+        }
+        .option-btn.incorrect {
+            background: rgba(231,76,76,.12);
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .xp-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold) 0%, #d4a020 100%);
+            color: var(--bg);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            margin-left: 0.4rem;
+            font-family: -apple-system, sans-serif;
+            box-shadow: 0 2px 6px rgba(240,192,64,.25);
+        }
+        .back-button {
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 0.4rem;
+            transition: all 0.2s;
+            font-family: -apple-system, sans-serif;
+        }
+        .back-button:hover { color: var(--accent-bright); transform: translateX(-2px); }
+        /* DETAIL VIEW */
+        .detail-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-warm);
+        }
+        .detail-cover {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(145deg, #2a1a0e 0%, #1a0f06 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 4px 4px 12px rgba(0,0,0,.5), -1px -1px 4px rgba(212,165,116,.08);
+            border: 1px solid rgba(210,180,140,.15);
+        }
+        .detail-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .detail-info h2 { font-size: 1.2rem; margin-bottom: 0.3rem; font-family: 'Georgia', serif; }
+        .detail-info p { font-size: 0.88rem; color: var(--dim); margin-bottom: 0.4rem; }
+        /* VOCAB */
+        .word-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            margin-bottom: 0.7rem;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .word-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(212,165,116,.08);
+        }
+        .word-card.flipped {
+            background: rgba(212,165,116,.06);
+            border-color: var(--accent);
+        }
+        .word-term {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+            margin-bottom: 0.3rem;
+            font-family: 'Georgia', serif;
+        }
+        .word-definition {
+            font-size: 0.88rem;
+            color: var(--text);
+            line-height: 1.55;
+        }
+        .game-timer { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+        /* CASE STUDY */
+        .case-study {
+            background: rgba(240,192,64,.04);
+            border: 1px solid rgba(240,192,64,.2);
+            border-left: 4px solid var(--gold);
+            border-radius: 0 12px 12px 0;
+            padding: 1rem;
+            margin-bottom: 0.7rem;
+        }
+        .case-study-title { font-size: 0.92rem; font-weight: 700; color: var(--gold); margin-bottom: 0.4rem; }
+        .case-study-text { font-size: 0.9rem; line-height: 1.55; margin-bottom: 0.6rem; }
+        .recommendation {
+            background: rgba(107,203,119,.06);
+            border: 1px solid rgba(107,203,119,.2);
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .achievement { text-align: center; animation: bounce 0.6s ease-out; }
+        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .emoji-burst {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            animation: float-up 2s ease-out forwards;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(0.4); opacity: 0; }
+        }
+        /* BOOKSHELF */
+        .shelf-row {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 12px 14px 0;
+            min-height: 140px;
+            margin-bottom: 0;
+        }
+        .shelf-plank {
+            position: relative;
+            height: 14px;
+            background: linear-gradient(180deg, #5c3d2e 0%, #3e2a1e 40%, #2a1a10 100%);
+            border-radius: 0 0 3px 3px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.3), inset 0 1px 0 rgba(210,180,140,.15);
+            margin: 0 -2px;
+        }
+        .shelf-plank::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 8px; right: 8px;
+            height: 1px;
+            background: rgba(210,180,140,.12);
+        }
+        .shelf-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            font-family: -apple-system, sans-serif;
+            padding: 0.8rem 0.8rem 0.3rem;
+        }
+        .spine {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(.4,0,.2,1);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .spine:hover {
+            transform: translateY(-8px) scale(1.03);
+            z-index: 2;
+        }
+        .spine:hover .spine-glow {
+            opacity: 1;
+        }
+        .spine-glow {
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 8px;
+            background: radial-gradient(ellipse, rgba(212,165,116,.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .spine img {
+            display: block;
+            border-radius: 3px 5px 5px 3px;
+            box-shadow: 3px 2px 8px rgba(0,0,0,.5), -1px 0 2px rgba(0,0,0,.2), inset -2px 0 4px rgba(0,0,0,.15);
+            border-left: 2px solid rgba(255,255,255,.06);
+        }
+        .spine-emoji {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px 5px 5px 3px;
+            box-shadow: 3px 2px 8px rgba(0,0,0,.5), -1px 0 2px rgba(0,0,0,.2);
+            border-left: 2px solid rgba(255,255,255,.06);
+            font-size: 1.4rem;
+        }
+        .spine-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(0,0,0,.3);
+            border-radius: 0 0 5px 3px;
+            overflow: hidden;
+        }
+        .spine-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--teal));
+            transition: width 0.4s;
+        }
+        .spine-title {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.55rem;
+            color: var(--dim);
+            white-space: nowrap;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: -apple-system, sans-serif;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .spine:hover .spine-title { opacity: 1; }
+        /* NOURISH-STYLE COLLAPSIBLE PILLS */
+        .rc-pill{margin-bottom:0.6rem;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+        .rc-pill-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;transition:opacity .12s;}
+        .rc-pill-bar:active{opacity:.85;}
+        .rc-pill-icon{font-size:15px;}
+        .rc-pill-title{font-size:0.82rem;font-weight:700;color:#fff;font-family:-apple-system,sans-serif;letter-spacing:0.02em;}
+        .rc-pill-summary{margin-left:auto;font-size:0.7rem;color:rgba(255,255,255,.7);font-weight:600;font-family:-apple-system,sans-serif;}
+        .rc-pill-arrow{font-size:10px;color:rgba(255,255,255,.5);margin-left:4px;transition:transform .25s;}
+        .rc-pill.collapsed .rc-pill-arrow{transform:rotate(-90deg);}
+        .rc-pill-body{max-height:600px;overflow:hidden;transition:max-height .35s ease;padding:0 12px 10px;}
+        .rc-pill.collapsed .rc-pill-body{max-height:0;padding:0 12px;}
+        /* NOURISH-STYLE STAT CHIP ROW */
+        .rc-stat-row{display:flex;gap:6px;margin-bottom:0.6rem;}
+        .rc-stat-chip{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;transition:all .2s;cursor:default;}
+        .rc-stat-chip:hover{border-color:var(--border-warm);box-shadow:0 2px 8px rgba(0,0,0,.2);}
+        .rc-stat-val{font-size:1.1rem;font-weight:700;font-family:Georgia,serif;}
+        .rc-stat-lbl{font-size:0.52rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;font-family:-apple-system,sans-serif;}
+        /* Book detail enhanced */
+        .detail-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+            margin: 0.8rem 0;
+        }
+        .detail-stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.6rem;
+            text-align: center;
+        }
+        .detail-stat-num {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: Georgia, serif;
+        }
+        .detail-stat-label {
+            font-size: 0.58rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: -apple-system, sans-serif;
+            margin-top: 0.15rem;
+        }
+        .big-progress {
+            height: 12px;
+            background: rgba(212,165,116,.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0.6rem 0;
+            position: relative;
+        }
+        .big-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--gold) 50%, var(--teal) 100%);
+            border-radius: 6px;
+            transition: width 0.6s cubic-bezier(.4,0,.2,1);
+            position: relative;
+        }
+        .big-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.2) 50%, transparent 100%);
+            animation: shimmer 2.5s infinite;
+        }
+        .big-progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.6rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,.5);
+            font-family: -apple-system, sans-serif;
+            z-index: 1;
+        }
+        /* READING TIMER */
+        .timer-card {
+            background: linear-gradient(145deg, #1a1410 0%, #221a12 100%);
+            border: 1px solid var(--border-warm);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--gold), var(--teal));
+        }
+        .timer-display {
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-family: 'Georgia', serif;
+            color: var(--accent-bright);
+            letter-spacing: 0.05em;
+            margin: 0.5rem 0;
+            text-shadow: 0 0 20px rgba(212,165,116,.15);
+        }
+        .timer-display.running {
+            animation: timerPulse 2s ease-in-out infinite;
+        }
+        @keyframes timerPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(212,165,116,.15); }
+            50% { text-shadow: 0 0 30px rgba(212,165,116,.3); }
+        }
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 0.6rem;
+        }
+        .timer-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-warm);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: -apple-system, sans-serif;
+            transition: all 0.25s;
+        }
+        .timer-btn-start {
+            background: linear-gradient(135deg, var(--green) 0%, #4ade80 100%);
+            color: var(--bg);
+            border-color: var(--green);
+        }
+        .timer-btn-pause {
+            background: linear-gradient(135deg, var(--gold) 0%, #fbbf24 100%);
+            color: var(--bg);
+            border-color: var(--gold);
+        }
+        .timer-btn-stop {
+            background: rgba(231,76,76,.15);
+            color: var(--red);
+            border-color: rgba(231,76,76,.3);
+        }
+        .timer-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+        .timer-sessions {
+            margin-top: 0.7rem;
+            text-align: left;
+        }
+        .timer-session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.72rem;
+            font-family: -apple-system, sans-serif;
+        }
+        /* Scrollbar */
+        .main::-webkit-scrollbar { width: 4px; }
+        .main::-webkit-scrollbar-track { background: transparent; }
+        .main::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 2px; }
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--card-raised);
+            border: 1px solid var(--border-warm);
+            color: var(--accent-bright);
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-family: -apple-system, sans-serif;
+            z-index: 2000;
+            animation: toastIn 0.3s ease-out forwards;
+            box-shadow: 0 8px 24px rgba(0,0,0,.4);
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <a href="./index.html" style="text-decoration:none;color:inherit;"><h1>📚 Reading Companion</h1></a>
+    <div class="header-controls">
+        <button class="btn-icon" onclick="toggleSound()" id="soundBtn" title="Toggle Sound">🔊</button>
+        <button class="btn-icon back-button" onclick="goBack()" title="Back">← Back</button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="view-container">
+        <!-- SHELF VIEW -->
+        <div class="view active" id="shelf-view">
+            <div class="view-container">
+                <div id="books-container"></div>
+            </div>
+        </div>
+
+        <!-- JOURNAL VIEW -->
+        <div class="view" id="journal-view">
+            <div class="view-container">
+                <button class="btn" onclick="openAddEntryForm()" style="width:100%;margin-bottom:1rem;">+ Add Entry</button>
+                <div id="themes-section"></div>
+                <div id="vocabulary-section"></div>
+                <div id="entries-container"></div>
+            </div>
+        </div>
+
+        <!-- DISCOVER VIEW -->
+        <div class="view" id="discover-view">
+            <div class="view-container" style="padding-top:1rem;">
+                <div id="discover-container"></div>
+            </div>
+        </div>
+
+        <!-- GAMES VIEW -->
+        <div class="view" id="games-view">
+            <div class="view-container">
+                <div id="game-select" style="display:none;"></div>
+                <div id="game-play"></div>
+            </div>
+        </div>
+
+        <!-- STATS VIEW -->
+        <div class="view" id="stats-view">
+            <div class="view-container">
+                <div id="stats-container"></div>
+            </div>
+        </div>
+
+        <!-- PLANNER VIEW -->
+        <div class="view" id="planner-view">
+            <div class="view-container" style="padding-top:0.5rem;">
+                <div id="planner-container"></div>
+            </div>
+        </div>
+
+        <!-- LIBRARY VIEW (Think Pieces + Writing) -->
+        <div class="view" id="library-view">
+            <div class="view-container" style="padding-top:0.5rem;">
+                <div id="library-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="nav">
+    <button class="nav-item active" onclick="switchView('shelf')">📚<br>Shelf</button>
+    <button class="nav-item" onclick="switchView('journal')">✍️<br>Journal</button>
+    <button class="nav-item" onclick="switchView('planner')">📅<br>Planner</button>
+    <button class="nav-item" onclick="switchView('discover')">🔍<br>Discover</button>
+    <button class="nav-item" onclick="switchView('library')">📰<br>Library</button>
+    <button class="nav-item" onclick="switchView('games')">🎮<br>Games</button>
+    <button class="nav-item" onclick="switchView('stats')">📊<br>Stats</button>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div id="modal-content"></div>
+    </div>
+</div>
+
+<script>
+var SOUND_ENABLED = true;
+var CURRENT_VIEW = 'shelf';
+var CURRENT_BOOK_DETAIL = null;
+var CURRENT_GAME = null;
+var GAME_STATE = {};
+
+// Sound effects
+var audioCtx = null;
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+function playSound(type) {
+    if (!SOUND_ENABLED) return;
+    initAudio();
+    var now = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.setValueAtTime(1000, now + 0.1);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.setValueAtTime(0, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+    } else if (type === 'incorrect') {
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.setValueAtTime(200, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.setValueAtTime(0, now + 0.2);
+        osc.start(now);
+        osc.stop(now + 0.2);
+    } else if (type === 'complete') {
+        var freqs = [500, 630, 800];
+        for (var i = 0; i < freqs.length; i++) {
+            var osc2 = audioCtx.createOscillator();
+            var gain2 = audioCtx.createGain();
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.frequency.setValueAtTime(freqs[i], now + i * 0.15);
+            gain2.gain.setValueAtTime(0.2, now + i * 0.15);
+            gain2.gain.setValueAtTime(0, now + i * 0.15 + 0.2);
+            osc2.start(now + i * 0.15);
+            osc2.stop(now + i * 0.15 + 0.2);
+        }
+    }
+}
+function toggleSound() {
+    SOUND_ENABLED = !SOUND_ENABLED;
+    document.getElementById('soundBtn').textContent = SOUND_ENABLED ? '🔊' : '🔇';
+}
+
+// Auth check
+function checkAuth() {
+    var stored = localStorage.getItem('_hub_auth');
+    var OHASH = '98c48870ef49b40ee280122c4a6d3ecba747e8206f37a0de049d77a050d0da1c';
+    var GHASH = '5da17189a4eaf3392c7dccaa70dfe96b12bd8b79c47b9680ea4dd2488c699d87';
+    if (!stored || (stored !== OHASH && stored !== GHASH)) {
+        location.href = './bianca-ai-portfolio.html';
+    }
+}
+
+// Navigation
+function toggleRcPill(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('collapsed');
+    try {
+        var states = JSON.parse(localStorage.getItem('rc_pill_states') || '{}');
+        states[id] = el.classList.contains('collapsed');
+        localStorage.setItem('rc_pill_states', JSON.stringify(states));
+    } catch(e) {}
+}
+
+function restoreRcPills() {
+    try {
+        var states = JSON.parse(localStorage.getItem('rc_pill_states') || '{}');
+        Object.keys(states).forEach(function(id) {
+            if (states[id]) {
+                var el = document.getElementById(id);
+                if (el) el.classList.add('collapsed');
+            }
+        });
+    } catch(e) {}
+}
+
+function switchView(view) {
+    document.querySelectorAll('.view').forEach(function(el) {
+        el.classList.remove('active');
+    });
+    document.querySelectorAll('.nav-item').forEach(function(el) {
+        el.classList.remove('active');
+    });
+
+    document.getElementById(view + '-view').classList.add('active');
+    var navItems = document.querySelectorAll('.nav-item');
+    var viewMap = {shelf:0, journal:1, planner:2, discover:3, library:4, games:5, stats:6};
+    if (viewMap[view] !== undefined && navItems[viewMap[view]]) {
+        navItems[viewMap[view]].classList.add('active');
+    }
+    CURRENT_VIEW = view;
+
+    if (view === 'shelf') renderShelf();
+    else if (view === 'journal') renderJournal();
+    else if (view === 'planner') renderPlanner();
+    else if (view === 'discover') renderDiscover();
+    else if (view === 'library') renderLibrary();
+    else if (view === 'games') renderGames();
+    else if (view === 'stats') renderStats();
+
+    localStorage.setItem('rc_view', view);
+}
+
+function goBack() {
+    if (CURRENT_BOOK_DETAIL) {
+        CURRENT_BOOK_DETAIL = null;
+        renderShelf();
+    } else if (document.referrer && document.referrer.indexOf(location.origin) > -1) {
+        history.back();
+    } else {
+        location.href = './bianca-ai-portfolio.html';
+    }
+}
+
+// Data management
+function getBooks() {
+    var stored = localStorage.getItem('rc_books');
+    return stored ? JSON.parse(stored) : SEED_BOOKS.slice();
+}
+function saveBooks(books) {
+    localStorage.setItem('rc_books', JSON.stringify(books));
+    if (typeof refreshSuiteSync === 'function') refreshSuiteSync();
+}
+function getEntries() {
+    var stored = localStorage.getItem('rc_entries');
+    return stored ? JSON.parse(stored) : [];
+}
+function saveEntries(entries) {
+    localStorage.setItem('rc_entries', JSON.stringify(entries));
+}
+function getStats() {
+    var stored = localStorage.getItem('rc_stats');
+    return stored ? JSON.parse(stored) : {xp: 0, level: 1, streak: 0, lastReadDate: null};
+}
+function saveStats(stats) {
+    localStorage.setItem('rc_stats', JSON.stringify(stats));
+}
+
+// Seed data
+var SEED_BOOKS = [
+    {id: 1, title: 'Co-Intelligence', author: 'Ethan Mollick', isbn: '9780593593011', pages: 256, pagesRead: 245, status: 'reading', description: 'Human-AI collaboration framework', emoji: '🤝', coverUrl: 'https://covers.openlibrary.org/b/isbn/9780593593011-L.jpg'},
+    {id: 2, title: 'Weapons of Math Destruction', author: 'Cathy O\'Neil', isbn: '9780553418835', pages: 272, pagesRead: 272, status: 'done', description: 'Algorithmic harm at scale', emoji: '🎯', coverUrl: 'https://covers.openlibrary.org/b/isbn/9780553418835-L.jpg'},
+    {id: 3, title: 'The Psychology of Money', author: 'Morgan Housel', isbn: '9780857197689', pages: 256, pagesRead: 0, status: 'to-read', description: 'Behavior under uncertainty', emoji: '💰', coverUrl: 'https://covers.openlibrary.org/b/isbn/9780857197689-L.jpg'},
+    {id: 4, title: 'Thick', author: 'Tressie McMillan Cottom', isbn: '9781620973547', pages: 256, pagesRead: 200, status: 'reading', description: 'Critical analytical method', emoji: '✊', coverUrl: 'https://covers.openlibrary.org/b/isbn/9781620973547-L.jpg'},
+    {id: 5, title: 'The Fire Next Time', author: 'James Baldwin', isbn: '9780679744726', pages: 128, pagesRead: 128, status: 'done', description: 'Seeing clearly / structural truth', emoji: '🔥', coverUrl: 'https://covers.openlibrary.org/b/isbn/9780679744726-L.jpg'},
+    {id: 6, title: 'The White Album', author: 'Joan Didion', isbn: '9780374532079', pages: 224, pagesRead: 50, status: 'reading', description: 'Writing under uncertainty', emoji: '📝', coverUrl: 'https://covers.openlibrary.org/b/isbn/9780374532079-L.jpg'}
+];
+
+var THEMES = [
+    'Power structures', 'Algorithmic bias', 'Uncertainty', 'Systemic inequality',
+    'Human connection', 'Critical thinking', 'Structural truth', 'Personal narrative'
+];
+
+var CASE_STUDIES = [
+    {id: 1, bookId: 2, title: 'COMPAS Recidivism Algorithm', summary: 'Risk assessment tool used in US courts that showed racial bias, perpetuating systemic injustice through algorithmic decision-making.', book: 'Weapons of Math Destruction'},
+    {id: 2, bookId: 2, title: 'Predatory Lending & Subprime Crisis', summary: 'Algorithmic targeting of vulnerable borrowers by predatory lenders, leading to the 2008 financial collapse.', book: 'Weapons of Math Destruction'},
+    {id: 3, bookId: 1, title: 'Medical AI Diagnostics', summary: 'How AI systems trained on limited datasets can miss diagnoses in underrepresented populations, requiring human oversight.', book: 'Co-Intelligence'},
+    {id: 4, bookId: 4, title: 'Ferguson & Police Data', summary: 'How data collection itself can become a tool of oppression when the system collecting it is unjust.', book: 'Thick'},
+    {id: 5, bookId: 3, title: 'Investment Decision-Making', summary: 'How emotional bias affects financial decisions and why understanding behavior matters more than pure models.', book: 'The Psychology of Money'},
+    {id: 6, bookId: 5, title: 'Letter from Birmingham Jail', summary: 'Baldwin\'s analysis of structural racism and why moral clarity requires understanding systems, not just individuals.', book: 'The Fire Next Time'},
+    {id: 7, bookId: 6, title: 'The White Album Essay on Hollywood', summary: 'Didion\'s method of capturing uncertainty and cultural moments through precise observation and narrative.', book: 'The White Album'},
+    {id: 8, bookId: 1, title: 'GPT-4 & Content Moderation', summary: 'How AI systems trained to filter content can perpetuate bias and require human judgment to catch edge cases.', book: 'Co-Intelligence'}
+];
+
+// Deepen Your Knowledge: movies, docs, articles, podcasts per book
+var DEEPEN_RESOURCES = [
+    // Co-Intelligence (bookId: 1)
+    {bookId:1, type:'documentary', title:'AlphaGo (2017)', desc:'The story of DeepMind\'s AI beating the world Go champion. Shows human-AI collaboration in real time.', emoji:'🎬'},
+    {bookId:1, type:'podcast', title:'Hard Fork (NYT)', desc:'Weekly podcast on AI, tech, and the future of work. Practical, not hype.', emoji:'🎙️'},
+    {bookId:1, type:'article', title:'One Useful Thing (Substack)', desc:'Ethan Mollick\'s own newsletter on practical AI use. Directly from the author.', emoji:'📰'},
+    {bookId:1, type:'movie', title:'Her (2013)', desc:'Spike Jonze film about falling in love with an AI. Asks what collaboration with AI really means emotionally.', emoji:'🎥'},
+    // Weapons of Math Destruction (bookId: 2)
+    {bookId:2, type:'documentary', title:'Coded Bias (2020)', desc:'Joy Buolamwini\'s fight against facial recognition bias. Essential viewing.', emoji:'🎬'},
+    {bookId:2, type:'article', title:'Machine Bias (ProPublica)', desc:'The investigation that exposed COMPAS algorithm racial bias in criminal sentencing.', emoji:'📰'},
+    {bookId:2, type:'podcast', title:'Your Undivided Attention', desc:'Tristan Harris and Aza Raskin on how technology exploits human psychology.', emoji:'🎙️'},
+    {bookId:2, type:'movie', title:'The Social Dilemma (2020)', desc:'How recommendation algorithms manipulate behavior at scale.', emoji:'🎥'},
+    // The Psychology of Money (bookId: 3)
+    {bookId:3, type:'documentary', title:'Inside Job (2010)', desc:'Oscar-winning doc on the 2008 financial crisis. Behavior under uncertainty, on a global scale.', emoji:'🎬'},
+    {bookId:3, type:'podcast', title:'The Indicator (NPR)', desc:'Short, sharp daily episodes on economics and money behavior.', emoji:'🎙️'},
+    {bookId:3, type:'article', title:'Why We Overspend (Khe Hy)', desc:'Behavioral psychology of money decisions. Complements Housel perfectly.', emoji:'📰'},
+    {bookId:3, type:'movie', title:'The Big Short (2015)', desc:'How a few outsiders saw the financial crisis coming when the whole system was blind.', emoji:'🎥'},
+    // Thick (bookId: 4)
+    {bookId:4, type:'documentary', title:'13th (2016)', desc:'Ava DuVernay on mass incarceration and the 13th Amendment. Structural analysis in action.', emoji:'🎬'},
+    {bookId:4, type:'podcast', title:'Hear to Slay (Roxane Gay)', desc:'Pop culture, politics, and Blackness. Same analytical energy as McMillan Cottom.', emoji:'🎙️'},
+    {bookId:4, type:'article', title:'The Case for Reparations (Ta-Nehisi Coates)', desc:'The Atlantic longform essay on systemic racism and what America owes. Thick analysis at its best.', emoji:'📰'},
+    {bookId:4, type:'movie', title:'Get Out (2017)', desc:'Jordan Peele\'s horror-as-social-commentary. The "thick description" of liberal racism.', emoji:'🎥'},
+    // The Fire Next Time (bookId: 5)
+    {bookId:5, type:'documentary', title:'I Am Not Your Negro (2016)', desc:'Raoul Peck\'s documentary built from Baldwin\'s unfinished manuscript. Devastating and essential.', emoji:'🎬'},
+    {bookId:5, type:'podcast', title:'Scene on Radio: Seeing White', desc:'14-part series on whiteness and its construction in America. Deep structural analysis.', emoji:'🎙️'},
+    {bookId:5, type:'article', title:'Letter from Birmingham Jail (MLK Jr.)', desc:'The companion text to Baldwin. Both men writing about the same fire from different positions.', emoji:'📰'},
+    {bookId:5, type:'movie', title:'If Beale Street Could Talk (2018)', desc:'Barry Jenkins adapts Baldwin. Love, injustice, and moral clarity in every frame.', emoji:'🎥'},
+    // The White Album (bookId: 6)
+    {bookId:6, type:'documentary', title:'Joan Didion: The Center Will Not Hold (2017)', desc:'Netflix doc on Didion\'s life and method. Watch how she observes.', emoji:'🎬'},
+    {bookId:6, type:'podcast', title:'Longform Podcast', desc:'Interviews with nonfiction writers about craft, observation, and the essay form.', emoji:'🎙️'},
+    {bookId:6, type:'article', title:'Goodbye to All That (Joan Didion)', desc:'Her essay on leaving New York. The precision and emotional honesty that defines her method.', emoji:'📰'},
+    {bookId:6, type:'movie', title:'Lost in Translation (2003)', desc:'Sofia Coppola channels Didion\'s sensibility: observation, uncertainty, emotional precision.', emoji:'🎥'}
+];
+
+// "What to Read Next" suggestions (books NOT on her current shelf)
+var READ_NEXT_SUGGESTIONS = [
+    {title:'Race After Technology', author:'Ruha Benjamin', why:'If you loved Weapons of Math Destruction, this goes deeper into how tech designs inequality.', forBookId:2},
+    {title:'Automating Inequality', author:'Virginia Eubanks', why:'The ground-level view of algorithmic harm that O\'Neil maps from above.', forBookId:2},
+    {title:'The Alignment Problem', author:'Brian Christian', why:'Co-Intelligence made you curious about human-AI collaboration. This is the technical deep dive.', forBookId:1},
+    {title:'Thinking, Fast and Slow', author:'Daniel Kahneman', why:'The behavioral economics bible. Housel stands on Kahneman\'s shoulders.', forBookId:3},
+    {title:'Slouching Towards Bethlehem', author:'Joan Didion', why:'Her first essay collection. If The White Album moved you, start here.', forBookId:6},
+    {title:'Between the World and Me', author:'Ta-Nehisi Coates', why:'The spiritual successor to Baldwin\'s letter. Same fire, new century.', forBookId:5},
+    {title:'All About Love', author:'bell hooks', why:'Thick asks you to see clearly. hooks asks you to love clearly. Both demand intellectual honesty.', forBookId:4},
+    {title:'Algorithms of Oppression', author:'Safiya Umoja Noble', why:'Google search as a weapon of math destruction. Directly extends O\'Neil\'s thesis.', forBookId:2},
+    {title:'Atlas of AI', author:'Kate Crawford', why:'The physical, political, and environmental costs of AI that Co-Intelligence doesn\'t cover.', forBookId:1},
+    {title:'The Undoing Project', author:'Michael Lewis', why:'The story of Kahneman and Tversky. Makes Psychology of Money feel like chapter 1.', forBookId:3}
+];
+
+var GAME_QUOTES = [
+    {id: 1, text: 'The problem with algorithmic systems is that they scale human bias at inhuman speed.', theme: 'Algorithmic bias', bookId: 2},
+    {id: 2, text: 'Uncertainty is not a bug in human thinking, it\'s a feature of wisdom.', theme: 'Uncertainty', bookId: 3},
+    {id: 3, text: 'Language is power, and to speak clearly is to assert your humanity.', theme: 'Critical thinking', bookId: 6},
+    {id: 4, text: 'Systems don\'t fail because individuals are bad. They persist because they are structured.', theme: 'Power structures', bookId: 4},
+    {id: 5, text: 'AI is not neutral. It reflects the values of those who build it.', theme: 'Algorithmic bias', bookId: 2},
+    {id: 6, text: 'Money is not about returns. It\'s about what you believe about your future.', theme: 'Behavior under uncertainty', bookId: 3},
+    {id: 7, text: 'Observation is an act of love.', theme: 'Personal narrative', bookId: 6},
+    {id: 8, text: 'Intelligence without collaboration is just optimization.', theme: 'Human connection', bookId: 1},
+    {id: 9, text: 'The moment you stop seeing systems and start blaming individuals, you\'ve already lost.', theme: 'Structural truth', bookId: 5},
+    {id: 10, text: 'To write clearly is to think clearly.', theme: 'Critical thinking', bookId: 6},
+    {id: 11, text: 'Bias isn\'t a feature to remove, it\'s a design choice to acknowledge.', theme: 'Algorithmic bias', bookId: 2},
+    {id: 12, text: 'The best predictions come from understanding what you don\'t know.', theme: 'Uncertainty', bookId: 3},
+    {id: 13, text: 'Collaboration amplifies both human strengths and human blindspots.', theme: 'Human connection', bookId: 1},
+    {id: 14, text: 'Thick description requires time, attention, and moral clarity.', theme: 'Critical thinking', bookId: 4},
+    {id: 15, text: 'Every algorithm is a philosophy written in code.', theme: 'Power structures', bookId: 2}
+];
+
+var GAME_CONNECTIONS = [
+    {id: 1, book1Id: 2, book2Id: 1, statement: 'Both argue for human judgment in high-stakes decisions'},
+    {id: 2, book1Id: 1, book2Id: 3, statement: 'Both explore how to make good decisions under uncertainty'},
+    {id: 3, book1Id: 2, book2Id: 4, statement: 'Both show how systems harm marginalized communities'},
+    {id: 4, book1Id: 3, book2Id: 6, statement: 'Both examine behavior and emotional truth'},
+    {id: 5, book1Id: 4, book2Id: 5, statement: 'Both demand structural analysis and moral clarity'},
+    {id: 6, book1Id: 1, book2Id: 6, statement: 'Both value observation and description'},
+    {id: 7, book1Id: 2, book2Id: 5, statement: 'Both trace the roots of injustice systemically'},
+    {id: 8, book1Id: 3, book2Id: 4, statement: 'Both question narratives we assume to be neutral'},
+    {id: 9, book1Id: 1, book2Id: 4, statement: 'Both argue for context and relationality'},
+    {id: 10, book1Id: 5, book2Id: 6, statement: 'Both are essential essays on seeing clearly'}
+];
+
+// Modal system
+function openModal(content) {
+    document.getElementById('modal-content').innerHTML = content;
+    document.getElementById('modal-overlay').classList.add('active');
+}
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+}
+
+// SHELF VIEW — Visual Bookshelf
+function renderShelf() {
+    var books = getBooks();
+    var reading = books.filter(function(b) { return b.status === 'reading'; });
+    var toRead = books.filter(function(b) { return b.status === 'to-read'; });
+    var done = books.filter(function(b) { return b.status === 'done'; });
+    var dnf = books.filter(function(b) { return b.status === 'dnf'; });
+    var html = '';
+
+    // Add Book button
+    html += '<div style="padding:0.5rem 0.8rem;"><button class="btn" onclick="openAddBookForm()" style="width:100%;">+ Add Book</button></div>';
+
+    // Currently Reading shelf
+    if (reading.length > 0) {
+        html += '<div class="shelf-label">Currently Reading</div>';
+        html += '<div class="shelf-row">';
+        reading.forEach(function(book) { html += buildSpine(book, 120); });
+        html += '</div>';
+        html += '<div class="shelf-plank"></div>';
+    }
+
+    // To Read shelf
+    if (toRead.length > 0) {
+        html += '<div class="shelf-label" style="margin-top:0.3rem;">Up Next</div>';
+        html += '<div class="shelf-row">';
+        toRead.forEach(function(book) { html += buildSpine(book, 100); });
+        html += '</div>';
+        html += '<div class="shelf-plank"></div>';
+    }
+
+    // Finished shelf
+    if (done.length > 0) {
+        html += '<div class="shelf-label" style="margin-top:0.3rem;">Finished</div>';
+        html += '<div class="shelf-row">';
+        done.forEach(function(book) { html += buildSpine(book, 100); });
+        html += '</div>';
+        html += '<div class="shelf-plank"></div>';
+    }
+
+    // DNF shelf
+    if (dnf.length > 0) {
+        html += '<div class="shelf-label" style="margin-top:0.3rem;">Set Aside</div>';
+        html += '<div class="shelf-row" style="min-height:100px;">';
+        dnf.forEach(function(book) { html += buildSpine(book, 80); });
+        html += '</div>';
+        html += '<div class="shelf-plank"></div>';
+    }
+
+    // Reading stats summary (Nourish-style stat chip row)
+    var totalPages = 0;
+    var pagesRead = 0;
+    books.forEach(function(b) { totalPages += (b.pages || 0); pagesRead += (b.pagesRead || 0); });
+    html += '<div class="rc-stat-row" style="padding:0.5rem 0.8rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--accent-bright);">' + books.length + '</div><div class="rc-stat-lbl">Books</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--green);">' + pagesRead + '</div><div class="rc-stat-lbl">Pages read</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + done.length + '</div><div class="rc-stat-lbl">Finished</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--gold);">' + reading.length + '</div><div class="rc-stat-lbl">Reading</div></div>';
+    html += '</div>';
+
+    document.getElementById('books-container').innerHTML = html;
+}
+
+function buildSpine(book, height) {
+    var w = Math.round(height * 0.65);
+    var progress = book.pages > 0 ? Math.round((book.pagesRead / book.pages) * 100) : 0;
+    var spineColors = ['#8b4513','#2a1a0e','#1a3a2a','#1a1a3a','#3a1a1a','#2e1a3a'];
+    var bgColor = spineColors[book.id % spineColors.length];
+
+    var html = '<div class="spine" onclick="viewBookDetail(' + book.id + ')" style="width:' + w + 'px;">';
+    if (book.coverUrl) {
+        html += '<img src="' + book.coverUrl + '" width="' + w + '" height="' + height + '" alt="' + book.title + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">';
+        html += '<div class="spine-emoji" style="display:none;width:' + w + 'px;height:' + height + 'px;background:' + bgColor + ';">' + book.emoji + '</div>';
+    } else {
+        html += '<div class="spine-emoji" style="width:' + w + 'px;height:' + height + 'px;background:' + bgColor + ';">' + book.emoji + '</div>';
+    }
+    // Progress bar on bottom of spine
+    if (book.status === 'reading' && progress > 0 && progress < 100) {
+        html += '<div class="spine-progress"><div class="spine-progress-fill" style="width:' + progress + '%"></div></div>';
+    }
+    html += '<div class="spine-glow"></div>';
+    html += '<div class="spine-title">' + book.title.split(':')[0] + '</div>';
+    html += '</div>';
+    return html;
+}
+
+function viewBookDetail(bookId) {
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+    if (!book) return;
+
+    CURRENT_BOOK_DETAIL = book.id;
+    var entries = getEntries().filter(function(e) { return e.bookId === bookId; });
+    var progress = book.pages > 0 ? Math.round((book.pagesRead / book.pages) * 100) : 0;
+    var remaining = Math.max(0, (book.pages || 0) - (book.pagesRead || 0));
+    var targets = JSON.parse(localStorage.getItem('rc_targets') || '{}');
+    var targetDays = targets[book.id] || 30;
+    var ppd = remaining > 0 ? Math.ceil(remaining / targetDays) : 0;
+    var minsPerDay = Math.round(ppd * 1.5);
+    var paceColor = ppd <= 15 ? 'var(--green)' : ppd <= 30 ? 'var(--gold)' : 'var(--red)';
+
+    var html = '<button class="back-button" onclick="CURRENT_BOOK_DETAIL = null; renderShelf();" style="margin-bottom:0.4rem;">← Back to Shelf</button>';
+
+    // Cover + title header
+    html += '<div style="display:flex;gap:1rem;align-items:flex-start;margin-bottom:0.8rem;">';
+    html += '<div class="detail-cover">';
+    if (book.coverUrl) {
+        html += '<img src="' + book.coverUrl + '" alt="' + book.title + '" onerror="this.style.display=\'none\';this.parentNode.insertAdjacentHTML(\'beforeend\',\'' + book.emoji + '\')">';
+    } else {
+        html += book.emoji;
+    }
+    html += '</div>';
+    html += '<div style="flex:1;">';
+    html += '<h2 style="font-size:1.15rem;font-family:Georgia,serif;margin-bottom:0.2rem;">' + book.title + '</h2>';
+    html += '<div style="font-size:0.85rem;color:var(--accent);font-style:italic;margin-bottom:0.3rem;">' + book.author + '</div>';
+    html += '<span class="status-pill ' + book.status + '">' + book.status.replace('-', ' ') + '</span>';
+    html += '<div style="font-size:0.78rem;color:var(--dim);margin-top:0.3rem;line-height:1.5;">' + book.description + '</div>';
+    html += '</div></div>';
+
+    // Big progress bar
+    html += '<div class="big-progress">';
+    html += '<div class="big-progress-fill" style="width:' + progress + '%"></div>';
+    html += '<div class="big-progress-text">' + progress + '% complete</div>';
+    html += '</div>';
+
+    // Stats grid
+    html += '<div class="detail-stats">';
+    html += '<div class="detail-stat"><div class="detail-stat-num" style="color:var(--accent-bright);">' + book.pagesRead + '</div><div class="detail-stat-label">Pages Read</div></div>';
+    html += '<div class="detail-stat"><div class="detail-stat-num" style="color:var(--dim);">' + remaining + '</div><div class="detail-stat-label">Remaining</div></div>';
+    html += '<div class="detail-stat"><div class="detail-stat-num" style="color:var(--teal);">' + (book.pages || '?') + '</div><div class="detail-stat-label">Total Pages</div></div>';
+    html += '</div>';
+
+    // Pace section (only for reading)
+    if (book.status === 'reading' && remaining > 0) {
+        html += '<div style="background:rgba(212,165,116,.04);border:1px solid var(--border-warm);border-radius:12px;padding:0.7rem;margin-bottom:0.8rem;">';
+        html += '<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);font-family:-apple-system,sans-serif;margin-bottom:0.4rem;">Reading Pace</div>';
+        html += '<div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;">';
+        html += '<span style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;">Finish in</span>';
+        html += '<input type="number" value="' + targetDays + '" min="1" max="365" style="width:48px;padding:0.2rem;font-size:0.78rem;text-align:center;border-radius:6px;" onchange="setPaceTarget(' + book.id + ',this.value);viewBookDetail(' + book.id + ')">';
+        html += '<span style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;">days</span>';
+        html += '</div>';
+        html += '<div style="display:flex;gap:1rem;">';
+        html += '<div style="font-size:0.88rem;font-weight:700;color:' + paceColor + ';font-family:-apple-system,sans-serif;">' + ppd + ' pages/day</div>';
+        html += '<div style="font-size:0.82rem;color:var(--dim);font-family:-apple-system,sans-serif;">~' + minsPerDay + ' min/day</div>';
+        html += '</div></div>';
+    }
+
+    // Update controls
+    html += '<div style="display:flex;gap:0.5rem;margin-bottom:1rem;">';
+    html += '<input type="number" id="pages-input" placeholder="Pages read" value="' + book.pagesRead + '" min="0" max="' + (book.pages || 9999) + '" style="flex:1;font-size:0.88rem;">';
+    html += '<button class="btn btn-small" onclick="updatePages(' + bookId + ')">Update</button>';
+    html += '<button class="btn btn-secondary btn-small" onclick="changeStatus(' + bookId + ')">Status</button>';
+    html += '</div>';
+
+    // Reading timer (only for books being read)
+    if (book.status === 'reading') {
+        html += buildTimerWidget(bookId);
+    }
+
+    // Journal entries for this book
+    var chapterEntries = entries.filter(function(e) { return e.type === 'chapter'; }).sort(function(a, b) { return (a.chapter || 0) - (b.chapter || 0); });
+    var otherEntries = entries.filter(function(e) { return e.type !== 'chapter'; });
+
+    if (chapterEntries.length > 0) {
+        html += '<h3 class="section-title">Chapter Notes (' + chapterEntries.length + ')</h3>';
+        chapterEntries.forEach(function(e) {
+            html += '<div style="border-left:3px solid var(--teal);padding-left:0.6rem;margin-bottom:0.5rem;">';
+            html += '<div style="font-size:0.65rem;font-weight:700;color:var(--teal);font-family:-apple-system,sans-serif;">CHAPTER ' + (e.chapter || '?') + '</div>';
+            html += '<div style="font-size:0.82rem;line-height:1.55;font-family:Georgia,serif;">' + e.text + '</div>';
+            html += '</div>';
+        });
+    }
+
+    html += '<h3 class="section-title">Reflections (' + otherEntries.length + ')</h3>';
+    if (otherEntries.length > 0) {
+        otherEntries.forEach(function(e) {
+            var icon = e.type === 'reflection' ? '💭' : e.type === 'quote' ? '❝' : e.type === 'vocab' ? '📚' : e.type === 'booksummary' ? '📕' : '🏷';
+            html += '<div class="entry-card">';
+            html += '<div class="entry-meta">' + icon + ' ' + e.type.toUpperCase() + ' • ' + new Date(e.date).toLocaleDateString() + '</div>';
+            if (e.type === 'quote') {
+                html += '<div class="quote-text">"' + e.text + '"</div>';
+            } else {
+                html += '<div class="entry-text">' + e.text + '</div>';
+            }
+            html += '</div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);font-size:0.85rem;">No reflections yet. Add one from the Journal tab.</p>';
+    }
+
+    // Quick add entry button
+    html += '<button class="btn btn-secondary" onclick="switchView(\'journal\')" style="width:100%;margin-top:0.5rem;">✍️ Add Journal Entry</button>';
+
+    document.getElementById('shelf-view').innerHTML = html;
+}
+
+function updatePages(bookId) {
+    var newPages = parseInt(document.getElementById('pages-input').value);
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+    if (book && newPages >= 0 && newPages <= book.pages) {
+        book.pagesRead = newPages;
+        if (newPages >= book.pages && book.status === 'reading') {
+            book.status = 'done';
+            syncToCC('book_finished', {title: book.title, pages: book.pages});
+            playSound('complete');
+            emojiBurst(['📚', '🎉', '✅', '🌟']);
+        } else {
+            playSound('correct');
+        }
+        saveBooks(books);
+        syncToCC('pages_updated', {title: book.title, pages: newPages, total: book.pages});
+        viewBookDetail(bookId);
+    }
+}
+
+function changeStatus(bookId) {
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+    if (!book) return;
+
+    var statuses = ['to-read', 'reading', 'done', 'dnf'];
+    var currentIdx = statuses.indexOf(book.status);
+    book.status = statuses[(currentIdx + 1) % statuses.length];
+    saveBooks(books);
+    viewBookDetail(bookId);
+}
+
+function openAddBookForm() {
+    var html = '<h2>Add Book</h2>';
+    html += '<div class="form-group"><label>Title</label><input type="text" id="book-title" placeholder="Enter title"></div>';
+    html += '<div class="form-group"><label>Author</label><input type="text" id="book-author" placeholder="Enter author"></div>';
+    html += '<div class="form-group"><label>ISBN</label><input type="text" id="book-isbn" placeholder="Enter ISBN"></div>';
+    html += '<div class="form-group"><label>Total Pages</label><input type="number" id="book-pages" placeholder="Enter page count" value="300"></div>';
+    html += '<button class="btn" onclick="addBook()" style="width:100%;">Add Book</button>';
+    openModal(html);
+}
+
+function addBook() {
+    var title = document.getElementById('book-title').value;
+    var author = document.getElementById('book-author').value;
+    var isbn = document.getElementById('book-isbn').value;
+    var pages = parseInt(document.getElementById('book-pages').value);
+
+    if (!title || !author) return;
+
+    var books = getBooks();
+    var newBook = {
+        id: Math.max.apply(null, books.map(function(b) { return b.id; })) + 1,
+        title: title,
+        author: author,
+        isbn: isbn,
+        pages: pages || 300,
+        pagesRead: 0,
+        status: 'to-read',
+        description: 'New book',
+        emoji: '📖',
+        coverUrl: null
+    };
+    books.push(newBook);
+    saveBooks(books);
+    playSound('complete');
+    closeModal();
+    renderShelf();
+}
+
+// JOURNAL VIEW
+function renderJournal() {
+    var entries = getEntries();
+    var books = getBooks();
+
+    // Themes
+    var themes = {};
+    entries.filter(function(e) { return e.type === 'theme'; }).forEach(function(e) {
+        themes[e.text] = (themes[e.text] || 0) + 1;
+    });
+    var themesSorted = Object.keys(themes).sort(function(a, b) { return themes[b] - themes[a]; });
+
+    var html = '<h3 class="section-title">Themes I\'m Tracking (' + themesSorted.length + ')</h3>';
+    if (themesSorted.length > 0) {
+        html += '<div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;">';
+        themesSorted.forEach(function(theme) {
+            html += '<span class="status-pill to-read" style="background:rgba(167,139,250,0.2);color:var(--accent);">' + theme + '</span>';
+        });
+        html += '</div>';
+    } else {
+        html += '<p style="color:var(--dim);margin-bottom:1rem;">Log theme entries to track recurring ideas.</p>';
+    }
+
+    // Vocabulary
+    var words = entries.filter(function(e) { return e.type === 'vocab'; });
+    html += '<h3 class="section-title">Vocabulary (' + words.length + ')</h3>';
+    if (words.length > 0) {
+        words.slice(-5).forEach(function(word) {
+            html += '<div class="word-card">';
+            html += '<div class="word-term">' + word.text + '</div>';
+            html += '<div class="word-definition">' + (word.definition || 'Add definition...') + '</div>';
+            html += '</div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);margin-bottom:1rem;">Log vocabulary words as you encounter them.</p>';
+    }
+
+    // Chapter Summaries
+    var chapters = entries.filter(function(e) { return e.type === 'chapter'; });
+    html += '<h3 class="section-title">Chapter Summaries (' + chapters.length + ')</h3>';
+    if (chapters.length > 0) {
+        var chaptersByBook = {};
+        chapters.forEach(function(e) {
+            if (!chaptersByBook[e.bookId]) chaptersByBook[e.bookId] = [];
+            chaptersByBook[e.bookId].push(e);
+        });
+        Object.keys(chaptersByBook).forEach(function(bid) {
+            var book = books.find(function(b) { return b.id === parseInt(bid); });
+            var bChaps = chaptersByBook[bid].sort(function(a, b) { return (a.chapter || 0) - (b.chapter || 0); });
+            html += '<div style="background:rgba(34,211,238,0.05);border:1px solid rgba(34,211,238,0.15);border-radius:12px;padding:0.6rem;margin-bottom:0.6rem;">';
+            html += '<div style="font-size:0.8rem;font-weight:800;color:#22d3ee;margin-bottom:0.4rem;">📖 ' + (book ? book.title : 'Unknown') + '</div>';
+            bChaps.forEach(function(ch) {
+                html += '<div style="border-left:3px solid rgba(34,211,238,0.3);padding-left:0.5rem;margin-bottom:0.4rem;">';
+                html += '<div style="font-size:0.68rem;font-weight:700;color:var(--gold);">Chapter ' + (ch.chapter || '?') + '</div>';
+                html += '<div style="font-size:0.78rem;color:var(--text);line-height:1.45;">' + ch.text + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);margin-bottom:1rem;">Add chapter summaries as you read to track your journey through each book.</p>';
+    }
+
+    // Book Summaries
+    var bookSums = entries.filter(function(e) { return e.type === 'booksummary'; });
+    html += '<h3 class="section-title">Book Summaries (' + bookSums.length + ')</h3>';
+    if (bookSums.length > 0) {
+        bookSums.forEach(function(e) {
+            var book = books.find(function(b) { return b.id === e.bookId; });
+            html += '<div style="background:rgba(240,192,64,.04);border:1px solid rgba(240,192,64,.2);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:0.7rem;margin-bottom:0.6rem;">';
+            html += '<div style="font-size:0.82rem;font-weight:800;color:var(--gold);margin-bottom:0.3rem;">📕 ' + (book ? book.title : 'Unknown') + '</div>';
+            html += '<div style="font-size:0.82rem;color:var(--text);line-height:1.55;font-family:Georgia,serif;">' + e.text + '</div>';
+            html += '<div style="font-size:0.62rem;color:var(--dim);margin-top:0.3rem;font-family:-apple-system,sans-serif;">' + new Date(e.date).toLocaleDateString() + '</div>';
+            html += '</div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);margin-bottom:1rem;">Finish a book and write your overall take.</p>';
+    }
+
+    // All entries
+    html += '<h3 class="section-title">All Entries (' + entries.length + ')</h3>';
+    entries.slice().reverse().forEach(function(e) {
+        var book = books.find(function(b) { return b.id === e.bookId; });
+        var icon = e.type === 'reflection' ? '💭' : e.type === 'quote' ? '❝' : e.type === 'vocab' ? '📚' : e.type === 'chapter' ? '📖' : e.type === 'booksummary' ? '📕' : '🏷';
+        html += '<div class="entry-card">';
+        var chLabel = e.type === 'chapter' && e.chapter ? ' (Ch. ' + e.chapter + ')' : '';
+        var typeLabel = e.type === 'booksummary' ? 'BOOK SUMMARY' : e.type.toUpperCase();
+        html += '<div class="entry-meta">' + icon + ' ' + typeLabel + chLabel + ' from <strong>' + (book ? book.title : 'Unknown') + '</strong> • ' + new Date(e.date).toLocaleDateString() + '</div>';
+        if (e.type === 'quote') {
+            html += '<div class="quote-text">"' + e.text + '"</div>';
+        } else {
+            html += '<div class="entry-text">' + e.text + '</div>';
+        }
+        html += '</div>';
+    });
+
+    document.getElementById('journal-view').innerHTML = html;
+}
+
+function openAddEntryForm() {
+    var books = getBooks();
+    var html = '<h2>Add Entry</h2>';
+    html += '<div class="form-group"><label>Book</label><select id="entry-book">';
+    books.forEach(function(b) {
+        html += '<option value="' + b.id + '">' + b.title + '</option>';
+    });
+    html += '</select></div>';
+    html += '<div class="form-group"><label>Type</label><select id="entry-type">';
+    html += '<option value="reflection">💭 Reflection</option>';
+    html += '<option value="quote">❝ Quote</option>';
+    html += '<option value="vocab">📚 Vocabulary</option>';
+    html += '<option value="theme">🏷 Theme</option>';
+    html += '<option value="chapter">📖 Chapter Summary</option>';
+    html += '<option value="booksummary">📕 Book Summary</option>';
+    html += '</select></div>';
+    html += '<div class="form-group" id="chapter-group" style="display:none;"><label>Chapter Number</label><input type="number" id="entry-chapter" min="1" placeholder="e.g. 3"></div>';
+    html += '<div id="journal-prompt" style="background:rgba(212,165,116,.06);border:1px solid var(--border-warm);border-radius:10px;padding:0.6rem;margin-bottom:0.8rem;font-size:0.78rem;color:var(--accent);font-style:italic;font-family:Georgia,serif;display:none;"></div>';
+    html += '<div class="form-group"><label>Entry</label><textarea id="entry-text" placeholder="What did you think?"></textarea></div>';
+    html += '<div class="form-group" id="definition-group" style="display:none;"><label>Definition</label><input type="text" id="entry-definition" placeholder="Enter definition"></div>';
+    html += '<button class="btn" onclick="addEntry()" style="width:100%;">Save Entry</button>';
+
+    openModal(html);
+
+    document.getElementById('entry-type').addEventListener('change', function() {
+        document.getElementById('definition-group').style.display = this.value === 'vocab' ? 'block' : 'none';
+        document.getElementById('chapter-group').style.display = (this.value === 'chapter') ? 'block' : 'none';
+        var ta = document.getElementById('entry-text');
+        var prompt = document.getElementById('journal-prompt');
+        var prompts = {
+            reflection: ['What surprised you?', 'What would you tell someone who asked about this book?', 'Did anything challenge what you already believed?', 'What made you stop and think?', 'How does this connect to your own experience?'],
+            quote: ['What line made you pause?', 'Which sentence would you underline twice?'],
+            vocab: ['What new word or concept did you encounter?'],
+            theme: ['What pattern keeps showing up across your reading?', 'What big idea is the author circling around?'],
+            chapter: ['What was the main argument of this chapter?', 'If you had to summarize this chapter in one sentence for a friend, what would you say?', 'What question does this chapter raise for the next?'],
+            booksummary: ['In 3 sentences, what is this book really about?', 'What is the one idea from this book you will carry forward?', 'Who should read this, and why?', 'How did this book change how you think about something?']
+        };
+        var pList = prompts[this.value] || prompts.reflection;
+        var picked = pList[Math.floor(Math.random() * pList.length)];
+        prompt.style.display = 'block';
+        prompt.textContent = '💡 ' + picked;
+
+        if (this.value === 'chapter') ta.placeholder = 'Summarize this chapter...';
+        else if (this.value === 'booksummary') ta.placeholder = 'Your overall take on this book...';
+        else if (this.value === 'quote') ta.placeholder = 'Enter the quote...';
+        else if (this.value === 'vocab') ta.placeholder = 'Enter the word or phrase...';
+        else if (this.value === 'theme') ta.placeholder = 'Name the theme...';
+        else ta.placeholder = 'What did you think?';
+    });
+    // Show initial prompt
+    document.getElementById('entry-type').dispatchEvent(new Event('change'));
+}
+
+function addEntry() {
+    var bookId = parseInt(document.getElementById('entry-book').value);
+    var type = document.getElementById('entry-type').value;
+    var text = document.getElementById('entry-text').value;
+    var definition = document.getElementById('entry-definition').value;
+    var chapterNum = document.getElementById('entry-chapter') ? parseInt(document.getElementById('entry-chapter').value) || null : null;
+
+    if (!text) return;
+
+    var entries = getEntries();
+    entries.push({
+        id: entries.length + 1,
+        bookId: bookId,
+        type: type,
+        text: text,
+        definition: definition || null,
+        chapter: chapterNum,
+        date: new Date().toISOString()
+    });
+    saveEntries(entries);
+    var bookName = '';
+    var books = getBooks();
+    var matchBook = books.find(function(b) { return b.id === bookId; });
+    if (matchBook) bookName = matchBook.title;
+    syncToCC('journal_entry', {type: type, book: bookName, text: text.substring(0, 80)});
+    playSound('complete');
+    closeModal();
+    renderJournal();
+}
+
+// DISCOVER VIEW
+function renderDiscover() {
+    var books = getBooks();
+    var readingBooks = books.filter(function(b) { return b.status === 'reading' || b.status === 'done'; });
+    var typeIcons = {movie:'🎥', documentary:'🎬', article:'📰', podcast:'🎙️'};
+    var typeColors = {movie:'#f59e0b', documentary:'#ef4444', article:'#22d3ee', podcast:'#a78bfa'};
+
+    var html = '';
+
+    readingBooks.forEach(function(book) {
+        html += '<h3 class="section-title" style="margin-top:1.5rem;">📖 Because you\'re reading ' + book.title + '</h3>';
+
+        // Deepen Your Knowledge section
+        var resources = DEEPEN_RESOURCES.filter(function(r) { return r.bookId === book.id; });
+        if (resources.length > 0) {
+            html += '<div style="margin-bottom:1rem;">';
+            html += '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gold);margin-bottom:0.5rem;">🔍 Deepen Your Knowledge</div>';
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">';
+            resources.forEach(function(r) {
+                var c = typeColors[r.type] || 'var(--accent)';
+                html += '<div style="background:rgba(255,255,255,0.03);border:1px solid ' + c + '30;border-radius:10px;padding:0.5rem 0.6rem;cursor:pointer;" onclick="this.querySelector(\'.rc-desc\').style.display=this.querySelector(\'.rc-desc\').style.display===\'none\'?\'\':\'none\'">';
+                html += '<div style="display:flex;align-items:center;gap:0.3rem;">';
+                html += '<span style="font-size:1rem;">' + r.emoji + '</span>';
+                html += '<div><div style="font-size:0.75rem;font-weight:700;color:' + c + ';">' + r.title + '</div>';
+                html += '<div style="font-size:0.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:0.06em;">' + r.type + '</div></div>';
+                html += '</div>';
+                html += '<div class="rc-desc" style="display:none;font-size:0.72rem;color:var(--dim);margin-top:0.3rem;line-height:1.4;">' + r.desc + '</div>';
+                html += '</div>';
+            });
+            html += '</div></div>';
+        }
+
+        // Case studies
+        var bookCases = CASE_STUDIES.filter(function(c) { return c.bookId === book.id; });
+        if (bookCases.length > 0) {
+            html += '<div style="margin-bottom:1rem;">';
+            html += '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--red);margin-bottom:0.5rem;">📋 Case Studies</div>';
+            bookCases.forEach(function(caseStudy) {
+                html += '<div class="case-study">';
+                html += '<div class="case-study-title">' + caseStudy.title + '</div>';
+                html += '<div class="case-study-text">' + caseStudy.summary + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+        }
+
+        // Connected books from shelf
+        var connections = GAME_CONNECTIONS.filter(function(c) {
+            return (c.book1Id === book.id || c.book2Id === book.id);
+        });
+        if (connections.length > 0) {
+            html += '<div style="margin-bottom:1rem;">';
+            html += '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent);margin-bottom:0.5rem;">🔗 Connections on Your Shelf</div>';
+            connections.slice(0, 2).forEach(function(conn) {
+                var otherBookId = conn.book1Id === book.id ? conn.book2Id : conn.book1Id;
+                var otherBook = books.find(function(b) { return b.id === otherBookId; });
+                if (otherBook) {
+                    html += '<div style="background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.2);border-radius:10px;padding:0.5rem 0.6rem;margin-bottom:0.3rem;">';
+                    html += '<div style="font-size:0.8rem;font-weight:700;color:var(--accent);">' + otherBook.title + '</div>';
+                    html += '<div style="font-size:0.72rem;color:var(--dim);margin-top:0.2rem;">' + conn.statement + '</div>';
+                    html += '</div>';
+                }
+            });
+            html += '</div>';
+        }
+
+        html += '<hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">';
+    });
+
+    // What to Read Next section (books not on shelf)
+    var shelfTitles = books.map(function(b) { return b.title.toLowerCase(); });
+    var suggestions = READ_NEXT_SUGGESTIONS.filter(function(s) {
+        return shelfTitles.indexOf(s.title.toLowerCase()) === -1;
+    });
+    if (suggestions.length > 0) {
+        html += '<h3 class="section-title" style="margin-top:1.5rem;">✨ What to Read Next</h3>';
+        html += '<div style="display:grid;gap:0.5rem;">';
+        suggestions.forEach(function(s) {
+            var sourceBook = books.find(function(b) { return b.id === s.forBookId; });
+            var sourceTitle = sourceBook ? sourceBook.title : '';
+            html += '<div style="background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:0.6rem 0.7rem;">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
+            html += '<div><div style="font-size:0.85rem;font-weight:800;color:#fff;">' + s.title + '</div>';
+            html += '<div style="font-size:0.68rem;color:var(--gold);margin-top:0.1rem;">by ' + s.author + '</div></div>';
+            html += '<button onclick="addSuggestionToShelf(\'' + s.title.replace(/'/g, "\\'") + '\',\'' + s.author.replace(/'/g, "\\'") + '\')" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:8px;color:var(--gold);font-size:0.6rem;font-weight:700;padding:0.25rem 0.5rem;cursor:pointer;white-space:nowrap;">+ Add to Shelf</button>';
+            html += '</div>';
+            html += '<div style="font-size:0.72rem;color:var(--dim);margin-top:0.3rem;line-height:1.45;">' + s.why + '</div>';
+            if (sourceTitle) html += '<div style="font-size:0.6rem;color:var(--accent);margin-top:0.25rem;">Because you read ' + sourceTitle + '</div>';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    if (readingBooks.length === 0 && suggestions.length === 0) {
+        html += '<p style="color:var(--dim);padding:2rem;text-align:center;">Start a book to see personalized recommendations.</p>';
+    }
+
+    document.getElementById('discover-container').innerHTML = html;
+}
+
+// Add a suggested book to shelf
+function addSuggestionToShelf(title, author) {
+    var books = getBooks();
+    var exists = books.find(function(b) { return b.title === title; });
+    if (exists) { showToast('Already on your shelf!'); return; }
+    var newBook = {
+        id: Date.now(),
+        title: title,
+        author: author,
+        isbn: '',
+        totalPages: 0,
+        pagesRead: 0,
+        status: 'to-read',
+        dateAdded: new Date().toISOString().split('T')[0],
+        coverUrl: ''
+    };
+    books.push(newBook);
+    localStorage.setItem('rc_books', JSON.stringify(books));
+    sfxCorrect();
+    showToast('📚 Added "' + title + '" to your shelf!');
+    renderDiscover();
+}
+
+// GAMES VIEW
+var GAMES_LIST = [
+    {id: 1, name: 'Theme Detective', emoji: '🔎', desc: 'Identify which theme a quote represents'},
+    {id: 2, name: 'Connect the Dots', emoji: '🔗', desc: 'Find connections between books'},
+    {id: 3, name: 'Vocab Challenge', emoji: '📚', desc: 'Master words from your reading'},
+    {id: 4, name: 'Case Study Analyst', emoji: '🏛', desc: 'Apply book frameworks to real scenarios'},
+    {id: 5, name: 'Speed Recap', emoji: '⚡', desc: 'Recall key takeaways quickly'}
+];
+
+function renderGames() {
+    if (CURRENT_GAME === null) {
+        var html = '';
+        GAMES_LIST.forEach(function(game) {
+            html += '<div class="book-card" onclick="startGame(' + game.id + ')" style="cursor:pointer;">';
+            html += '<div style="font-size:2rem;margin-bottom:0.5rem;">' + game.emoji + '</div>';
+            html += '<div class="book-title">' + game.name + '</div>';
+            html += '<div style="font-size:0.9rem;color:var(--dim);">' + game.desc + '</div>';
+            html += '</div>';
+        });
+        document.getElementById('games-view').innerHTML = '<div class="view-container" style="padding-top:1rem;">' + html + '</div>';
+    }
+}
+
+function startGame(gameId) {
+    CURRENT_GAME = gameId;
+    GAME_STATE = {gameId: gameId, score: 0, current: 0, total: 0, correct: 0};
+
+    if (gameId === 1) playThemeDetective();
+    else if (gameId === 2) playConnectDots();
+    else if (gameId === 3) playVocabChallenge();
+    else if (gameId === 4) playCaseStudy();
+    else if (gameId === 5) playSpeedRecap();
+}
+
+function playThemeDetective() {
+    var quote = GAME_QUOTES[GAME_STATE.current];
+    var allThemes = THEMES.slice();
+    var wrongThemes = allThemes.filter(function(t) { return t !== quote.theme; });
+    var options = [quote.theme].concat(wrongThemes.sort(function() { return Math.random() - 0.5; }).slice(0, 3)).sort(function() { return Math.random() - 0.5; });
+
+    var html = '<button class="back-button" onclick="CURRENT_GAME=null;renderGames();">← Back</button>';
+    html += '<div style="text-align:center;margin-bottom:1.5rem;">';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">Question ' + (GAME_STATE.current + 1) + ' of ' + GAME_QUOTES.length + '</div>';
+    html += '<div class="game-timer" style="margin-top:0.5rem;">Score: ' + GAME_STATE.score + '</div>';
+    html += '</div>';
+    html += '<div class="question-box">';
+    html += '<div class="quote-text">"' + quote.text + '"</div>';
+    html += '<div style="font-size:0.9rem;color:var(--dim);margin-top:0.5rem;">Which theme does this reflect?</div>';
+    html += '</div>';
+    html += '<div class="options">';
+    options.forEach(function(opt) {
+        html += '<button class="option-btn" onclick="checkThemeAnswer(\'' + opt + '\',\'' + quote.theme + '\')">' + opt + '</button>';
+    });
+    html += '</div>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+}
+
+function checkThemeAnswer(selected, correct) {
+    var isCorrect = selected === correct;
+    if (isCorrect) {
+        GAME_STATE.score += 10;
+        playSound('correct');
+        emojiBurst(['✅', '💡', '🎯']);
+    } else {
+        playSound('incorrect');
+    }
+
+    GAME_STATE.current++;
+    if (GAME_STATE.current < GAME_QUOTES.length) {
+        playThemeDetective();
+    } else {
+        showGameComplete('Theme Detective', GAME_STATE.score, 1);
+    }
+}
+
+function playConnectDots() {
+    var connection = GAME_CONNECTIONS[GAME_STATE.current];
+    var book1 = SEED_BOOKS.find(function(b) { return b.id === connection.book1Id; });
+    var book2 = SEED_BOOKS.find(function(b) { return b.id === connection.book2Id; });
+
+    var wrongStatements = GAME_CONNECTIONS.filter(function(c) { return c.id !== connection.id; }).map(function(c) { return c.statement; }).sort(function() { return Math.random() - 0.5; }).slice(0, 2);
+    var options = [connection.statement].concat(wrongStatements).sort(function() { return Math.random() - 0.5; });
+
+    var html = '<button class="back-button" onclick="CURRENT_GAME=null;renderGames();">← Back</button>';
+    html += '<div style="text-align:center;margin-bottom:1.5rem;">';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">Question ' + (GAME_STATE.current + 1) + ' of ' + GAME_CONNECTIONS.length + '</div>';
+    html += '<div class="game-timer">Score: ' + GAME_STATE.score + '</div>';
+    html += '</div>';
+    html += '<div class="question-box">';
+    html += '<div style="font-weight:700;margin-bottom:0.5rem;">' + book1.title + ' + ' + book2.title + '</div>';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">How do these books connect?</div>';
+    html += '</div>';
+    html += '<div class="options">';
+    options.forEach(function(opt) {
+        html += '<button class="option-btn" onclick="checkConnectionAnswer(\'' + opt.replace(/'/g, '\\\'') + '\',\'' + connection.statement.replace(/'/g, '\\\'') + '\')">' + opt + '</button>';
+    });
+    html += '</div>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+}
+
+function checkConnectionAnswer(selected, correct) {
+    var isCorrect = selected === correct;
+    if (isCorrect) {
+        GAME_STATE.score += 15;
+        playSound('correct');
+        emojiBurst(['🔗', '✅', '🌟']);
+    } else {
+        playSound('incorrect');
+    }
+
+    GAME_STATE.current++;
+    if (GAME_STATE.current < GAME_CONNECTIONS.length) {
+        playConnectDots();
+    } else {
+        showGameComplete('Connect the Dots', GAME_STATE.score, 2);
+    }
+}
+
+function playVocabChallenge() {
+    var entries = getEntries().filter(function(e) { return e.type === 'vocab'; });
+    if (entries.length === 0) {
+        var html = '<div style="text-align:center;padding:2rem;">';
+        html += '<div style="font-size:1.5rem;margin-bottom:1rem;">📚</div>';
+        html += '<p>Add vocabulary entries in the Journal tab first!</p>';
+        html += '<button class="btn" onclick="CURRENT_GAME=null;renderGames();">Back to Games</button>';
+        html += '</div>';
+        document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+        return;
+    }
+
+    var word = entries[GAME_STATE.current];
+    var allWords = entries.map(function(e) { return e.text; });
+    var wrongWords = allWords.filter(function(w) { return w !== word.text; }).sort(function() { return Math.random() - 0.5; }).slice(0, 3);
+    var options = [word.text].concat(wrongWords).sort(function() { return Math.random() - 0.5; });
+
+    var html = '<button class="back-button" onclick="CURRENT_GAME=null;renderGames();">← Back</button>';
+    html += '<div style="text-align:center;margin-bottom:1.5rem;">';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">Question ' + (GAME_STATE.current + 1) + ' of ' + entries.length + '</div>';
+    html += '<div class="game-timer">Score: ' + GAME_STATE.score + '</div>';
+    html += '</div>';
+    html += '<div class="question-box">';
+    html += '<div style="font-weight:700;margin-bottom:0.5rem;">Definition:</div>';
+    html += '<div style="font-size:1rem;">' + (word.definition || 'Unknown') + '</div>';
+    html += '<div style="font-size:0.9rem;color:var(--dim);margin-top:0.8rem;">Which word matches?</div>';
+    html += '</div>';
+    html += '<div class="options">';
+    options.forEach(function(opt) {
+        html += '<button class="option-btn" onclick="checkVocabAnswer(\'' + opt + '\',\'' + word.text + '\')">' + opt + '</button>';
+    });
+    html += '</div>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+}
+
+function checkVocabAnswer(selected, correct) {
+    var isCorrect = selected === correct;
+    if (isCorrect) {
+        GAME_STATE.score += 10;
+        playSound('correct');
+        emojiBurst(['📚', '✅', '💯']);
+    } else {
+        playSound('incorrect');
+    }
+
+    var entries = getEntries().filter(function(e) { return e.type === 'vocab'; });
+    GAME_STATE.current++;
+    if (GAME_STATE.current < entries.length) {
+        playVocabChallenge();
+    } else {
+        showGameComplete('Vocab Challenge', GAME_STATE.score, 3);
+    }
+}
+
+function playCaseStudy() {
+    if (CASE_STUDIES.length === 0) {
+        var html = '<div style="text-align:center;padding:2rem;"><p>No case studies available yet.</p><button class="btn" onclick="CURRENT_GAME=null;renderGames();">Back</button></div>';
+        document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+        return;
+    }
+
+    var caseStudy = CASE_STUDIES[GAME_STATE.current];
+    var books = getBooks();
+    var options = books.filter(function(b) { return b.id !== caseStudy.bookId; }).sort(function() { return Math.random() - 0.5; }).slice(0, 3);
+    options.push(books.find(function(b) { return b.id === caseStudy.bookId; }));
+    options = options.sort(function() { return Math.random() - 0.5; });
+
+    var html = '<button class="back-button" onclick="CURRENT_GAME=null;renderGames();">← Back</button>';
+    html += '<div style="text-align:center;margin-bottom:1.5rem;">';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">Question ' + (GAME_STATE.current + 1) + ' of ' + CASE_STUDIES.length + '</div>';
+    html += '<div class="game-timer">Score: ' + GAME_STATE.score + '</div>';
+    html += '</div>';
+    html += '<div class="case-study">';
+    html += '<div class="case-study-title">' + caseStudy.title + '</div>';
+    html += '<div class="case-study-text">' + caseStudy.summary + '</div>';
+    html += '<div style="font-size:0.9rem;color:var(--dim);margin-top:0.8rem;font-weight:700;">Which book\'s framework helps analyze this?</div>';
+    html += '</div>';
+    html += '<div class="options">';
+    options.forEach(function(book) {
+        html += '<button class="option-btn" onclick="checkCaseAnswer(' + book.id + ',' + caseStudy.bookId + ')">' + book.title + '</button>';
+    });
+    html += '</div>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+}
+
+function checkCaseAnswer(selected, correct) {
+    var isCorrect = selected === correct;
+    if (isCorrect) {
+        GAME_STATE.score += 20;
+        playSound('correct');
+        emojiBurst(['🏛', '✅', '🧠']);
+    } else {
+        playSound('incorrect');
+    }
+
+    GAME_STATE.current++;
+    if (GAME_STATE.current < CASE_STUDIES.length) {
+        playCaseStudy();
+    } else {
+        showGameComplete('Case Study Analyst', GAME_STATE.score, 4);
+    }
+}
+
+function playSpeedRecap() {
+    if (GAME_STATE.current === 0) {
+        GAME_STATE.total = 60;
+        GAME_STATE.timeLeft = 60;
+        GAME_STATE.selected = [];
+    }
+
+    var books = getBooks();
+    var readingBooks = books.filter(function(b) { return b.status === 'reading' || b.status === 'done'; });
+    if (readingBooks.length === 0) {
+        var html = '<div style="text-align:center;padding:2rem;"><p>Start reading to unlock this game!</p><button class="btn" onclick="CURRENT_GAME=null;renderGames();">Back</button></div>';
+        document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+        return;
+    }
+
+    var book = readingBooks[Math.floor(Math.random() * readingBooks.length)];
+    var entries = getEntries().filter(function(e) { return e.bookId === book.id && (e.type === 'reflection' || e.type === 'theme'); });
+
+    var correctPoints = entries.slice(0, 3);
+    var distractors = entries.slice(3, 6);
+    var allOptions = correctPoints.concat(distractors).sort(function() { return Math.random() - 0.5; });
+
+    var html = '<button class="back-button" onclick="CURRENT_GAME=null;renderGames();">← Back</button>';
+    html += '<div style="text-align:center;margin-bottom:1rem;">';
+    html += '<div style="font-size:1.2rem;font-weight:700;color:var(--gold);">⏱ ' + GAME_STATE.timeLeft + 's</div>';
+    html += '<div style="font-size:0.9rem;color:var(--dim);">Key takeaways from ' + book.title + '?</div>';
+    html += '</div>';
+    html += '<div class="options">';
+    if (allOptions.length === 0) {
+        html += '<p style="color:var(--dim);">Log reflections about this book first!</p>';
+    }
+    allOptions.forEach(function(opt, idx) {
+        var isSelected = GAME_STATE.selected.indexOf(idx) > -1;
+        html += '<button class="option-btn' + (isSelected ? ' correct' : '') + '" onclick="toggleRecapOption(' + idx + ',' + correctPoints.length + ')" style="border:2px solid ' + (isSelected ? 'var(--green)' : 'var(--border)') + ';">';
+        html += (isSelected ? '✓ ' : '') + opt.text;
+        html += '</button>';
+    });
+    html += '</div>';
+    html += '<button class="btn" onclick="finishSpeedRecap(' + allOptions.length + ')" style="width:100%;margin-top:1rem;">Submit</button>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+
+    if (GAME_STATE.current === 0) {
+        GAME_STATE.current = 1;
+        var timer = setInterval(function() {
+            GAME_STATE.timeLeft--;
+            if (GAME_STATE.timeLeft <= 0) {
+                clearInterval(timer);
+                finishSpeedRecap(allOptions.length);
+            }
+        }, 1000);
+    }
+}
+
+function toggleRecapOption(idx, correctCount) {
+    var selectedIdx = GAME_STATE.selected.indexOf(idx);
+    if (selectedIdx > -1) {
+        GAME_STATE.selected.splice(selectedIdx, 1);
+    } else {
+        GAME_STATE.selected.push(idx);
+    }
+    playSpeedRecap();
+}
+
+function finishSpeedRecap(total) {
+    var correctSelected = GAME_STATE.selected.length <= 3 ? GAME_STATE.selected.length : 0;
+    GAME_STATE.score = correctSelected * 15;
+    showGameComplete('Speed Recap', GAME_STATE.score, 5);
+}
+
+function showGameComplete(gameName, score, gameId) {
+    var stats = getStats();
+    stats.xp += score;
+    stats.level = Math.floor(stats.xp / 100) + 1;
+    saveStats(stats);
+
+    var html = '<div style="text-align:center;padding:2rem;">';
+    html += '<div class="achievement">✅ Game Complete!</div>';
+    html += '<div style="font-size:2rem;margin:1rem 0;">' + gameName + '</div>';
+    html += '<div style="font-size:1.5rem;color:var(--gold);margin:1rem 0;"><span class="xp-badge">' + score + ' XP</span></div>';
+    html += '<p style="color:var(--dim);margin-bottom:1.5rem;">Total XP: ' + stats.xp + ' | Level: ' + stats.level + '</p>';
+    html += '<button class="btn" onclick="CURRENT_GAME=null;renderGames();" style="width:100%;">Play Again</button>';
+    html += '<button class="btn btn-secondary" onclick="switchView(\'stats\')" style="width:100%;margin-top:0.6rem;">View Stats</button>';
+    html += '</div>';
+
+    document.getElementById('games-view').innerHTML = '<div class="view-container">' + html + '</div>';
+    playSound('complete');
+    emojiBurst(['🎉', '🏆', '⭐', '✨']);
+}
+
+// STATS VIEW
+function renderStats() {
+    var books = getBooks();
+    var entries = getEntries();
+    var stats = getStats();
+
+    var reading = books.filter(function(b) { return b.status === 'reading'; }).length;
+    var done = books.filter(function(b) { return b.status === 'done'; }).length;
+    var totalPages = books.reduce(function(sum, b) { return sum + b.pagesRead; }, 0);
+    var vocabCount = entries.filter(function(e) { return e.type === 'vocab'; }).length;
+    var entryCount = entries.length;
+    var sessions = getReadingSessions();
+    var totalReadTime = sessions.reduce(function(sum, s) { return sum + s.duration; }, 0);
+    var totalSessionPages = sessions.reduce(function(sum, s) { return sum + (s.pagesRead || 0); }, 0);
+    var avgPpm = totalReadTime > 60 && totalSessionPages > 0 ? (totalSessionPages / (totalReadTime / 60)).toFixed(1) : '0';
+
+    var html = '';
+
+    // Top stat chip row (always visible)
+    html += '<div class="rc-stat-row" style="margin-top:0.5rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--accent-bright);">' + books.length + '</div><div class="rc-stat-lbl">Books</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--green);">' + totalPages + '</div><div class="rc-stat-lbl">Pages</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + done + '</div><div class="rc-stat-lbl">Finished</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--gold);">' + stats.xp + '</div><div class="rc-stat-lbl">XP</div></div>';
+    html += '</div>';
+
+    // Library pill
+    html += '<div class="rc-pill" id="stats-pill-library">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'stats-pill-library\')" style="background:linear-gradient(135deg,#2a1a0e,var(--accent));">';
+    html += '<span class="rc-pill-icon">📚</span><span class="rc-pill-title">Library</span>';
+    html += '<span class="rc-pill-summary">' + reading + ' reading, ' + done + ' done</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    html += '<div class="rc-stat-row" style="margin-top:0.5rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--green);">' + reading + '</div><div class="rc-stat-lbl">Reading</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + done + '</div><div class="rc-stat-lbl">Done</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--accent);">' + books.filter(function(b){return b.status==='to-read';}).length + '</div><div class="rc-stat-lbl">TBR</div></div>';
+    html += '</div>';
+    // Per-book progress bars for currently reading
+    var readingBooks = books.filter(function(b){return b.status==='reading';});
+    if (readingBooks.length > 0) {
+        readingBooks.forEach(function(b) {
+            var pct = b.pages > 0 ? Math.round((b.pagesRead / b.pages) * 100) : 0;
+            html += '<div style="margin-bottom:0.5rem;">';
+            html += '<div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:2px;">';
+            html += '<span style="font-family:Georgia,serif;font-weight:700;">' + b.title + '</span>';
+            html += '<span style="color:var(--dim);font-family:-apple-system,sans-serif;">' + pct + '%</span></div>';
+            html += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
+            html += '</div>';
+        });
+    }
+    html += '</div></div>';
+
+    // Writing & Growth pill
+    html += '<div class="rc-pill" id="stats-pill-writing">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'stats-pill-writing\')" style="background:linear-gradient(135deg,#1a3a2a,var(--teal));">';
+    html += '<span class="rc-pill-icon">✍️</span><span class="rc-pill-title">Writing & growth</span>';
+    html += '<span class="rc-pill-summary">' + entryCount + ' entries, ' + vocabCount + ' words</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    html += '<div class="rc-stat-row" style="margin-top:0.5rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--accent-bright);">' + entryCount + '</div><div class="rc-stat-lbl">Entries</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--gold);">' + vocabCount + '</div><div class="rc-stat-lbl">Words</div></div>';
+    var reflections = entries.filter(function(e){return e.type==='reflection'||e.type==='theme';}).length;
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + reflections + '</div><div class="rc-stat-lbl">Reflections</div></div>';
+    html += '</div></div></div>';
+
+    // Reading Time pill
+    html += '<div class="rc-pill" id="stats-pill-time">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'stats-pill-time\')" style="background:linear-gradient(135deg,#1a1a3a,var(--gold));">';
+    html += '<span class="rc-pill-icon">⏱</span><span class="rc-pill-title">Reading time</span>';
+    html += '<span class="rc-pill-summary">' + Math.round(totalReadTime / 60) + ' min total</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    html += '<div class="rc-stat-row" style="margin-top:0.5rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + sessions.length + '</div><div class="rc-stat-lbl">Sessions</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--gold);">' + Math.round(totalReadTime / 60) + '</div><div class="rc-stat-lbl">Minutes</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--green);">' + avgPpm + '</div><div class="rc-stat-lbl">Pages/min</div></div>';
+    html += '</div>';
+    // Session history (last 5)
+    if (sessions.length > 0) {
+        var recent = sessions.slice(-5).reverse();
+        recent.forEach(function(s) {
+            var d = new Date(s.date);
+            var label = d.toLocaleDateString([], {month:'short',day:'numeric'});
+            var mins = Math.round(s.duration / 60);
+            html += '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.72rem;font-family:-apple-system,sans-serif;">';
+            html += '<span style="color:var(--dim);">' + label + '</span>';
+            html += '<span style="color:var(--text);font-weight:600;">' + mins + ' min' + (s.pagesRead ? ' &middot; ' + s.pagesRead + 'p' : '') + '</span>';
+            html += '</div>';
+        });
+    }
+    html += '</div></div>';
+
+    // Game Stats pill
+    html += '<div class="rc-pill" id="stats-pill-games">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'stats-pill-games\')" style="background:linear-gradient(135deg,#3a1a1a,#ec4899);">';
+    html += '<span class="rc-pill-icon">🎮</span><span class="rc-pill-title">Games</span>';
+    html += '<span class="rc-pill-summary">Level ' + stats.level + ' &middot; ' + stats.xp + ' XP</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    html += '<div class="rc-stat-row" style="margin-top:0.5rem;">';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--gold);">' + stats.xp + '</div><div class="rc-stat-lbl">Total XP</div></div>';
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--accent-bright);">' + stats.level + '</div><div class="rc-stat-lbl">Level</div></div>';
+    var xpToNext = (stats.level + 1) * 100;
+    var xpPct = Math.min(100, Math.round((stats.xp / xpToNext) * 100));
+    html += '<div class="rc-stat-chip"><div class="rc-stat-val" style="color:var(--teal);">' + xpPct + '%</div><div class="rc-stat-lbl">To next</div></div>';
+    html += '</div>';
+    html += '<div class="big-progress" style="margin:0.4rem 0;"><div class="big-progress-fill" style="width:' + xpPct + '%;"></div>';
+    html += '<div class="big-progress-text">' + stats.xp + ' / ' + xpToNext + ' XP</div></div>';
+    html += '</div></div>';
+
+    document.getElementById('stats-view').innerHTML = '<div class="view-container">' + html + '</div>';
+    restoreRcPills();
+}
+
+// THINK PIECES & WRITING DATA
+var THINK_PIECES_RC = [
+    {id:1, title:'The Hidden Cost of Being Black in America', source:'American Progress', cat:'race', url:'https://www.americanprogress.org/article/systematic-inequality-and-economic-opportunity/', audio:null, podcast:'https://open.spotify.com/show/4XPl3uRBwxFKovmhMn3Pfl', summary:'How systemic inequality compounds across generations, affecting wealth, health, and opportunity.'},
+    {id:2, title:'The Myth of the Meritocracy', source:'The Atlantic', cat:'society', url:'https://www.theatlantic.com/business/archive/2017/07/the-myth-of-the-meritocracy/534585/', audio:null, podcast:null, summary:'Why the idea that hard work alone determines success ignores structural barriers.'},
+    {id:3, title:'On the Dangers of Stochastic Parrots', source:'FAccT 2021, Bender & Gebru', cat:'ai', url:'https://dl.acm.org/doi/10.1145/3442188.3445922', audio:null, podcast:'https://open.spotify.com/episode/1VzYKqMHolm8G3cBjEBLun', summary:'The landmark paper on environmental and social risks of large language models.'},
+    {id:4, title:'Machine Bias: Risk Assessments in Criminal Sentencing', source:'ProPublica', cat:'ai', url:'https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing', audio:null, podcast:null, summary:'ProPublica investigation into racial bias in recidivism algorithms used in courts.'},
+    {id:5, title:'The Digital Transformation That Worked', source:'Harvard Business Review', cat:'career', url:'https://hbr.org/2021/03/the-digital-transformation-that-worked', audio:null, podcast:'https://open.spotify.com/show/2D00CQAFGqIaEeIGk06N4U', summary:'How to lead technology adoption with humans at the center.'},
+    {id:6, title:'The Confidence Gap', source:'The Atlantic', cat:'psychology', url:'https://www.theatlantic.com/magazine/archive/2014/05/the-confidence-gap/359815/', audio:null, podcast:null, summary:'Evidence-based exploration of why competence does not always correlate with confidence.'},
+    {id:7, title:'Automating Inequality', source:'Virginia Eubanks', cat:'ai', url:'https://virginia-eubanks.com/automating-inequality/', audio:null, podcast:'https://open.spotify.com/episode/0e0GxNYnCr6bMV2VTbXVl1', summary:'How high-tech tools profile, police, and punish the poor.'},
+    {id:8, title:'The Mental Load: A Feminist Comic', source:'Emma (Translated)', cat:'society', url:'https://english.emmaclit.com/2017/05/20/you-shouldve-asked/', audio:null, podcast:null, summary:'Visual essay on invisible labor and the distribution of household management.'},
+    {id:9, title:'Race After Technology', source:'Ruha Benjamin', cat:'ai', url:'https://www.ruhabenjamin.com/race-after-technology', audio:null, podcast:'https://open.spotify.com/episode/3CjLwmPJYUGxjLhmlXfWcm', summary:'The New Jim Code: how seemingly neutral technologies can encode racial inequality.'},
+    {id:10, title:'The Avocado Toast Myth', source:'The Atlantic', cat:'economics', url:'https://www.theatlantic.com/business/archive/2017/05/its-not-millennials-its-the-economy/527936/', audio:null, podcast:null, summary:'Why blaming individual spending habits ignores structural economic changes.'},
+    {id:11, title:'AI and the Future of Work', source:'Stanford HAI', cat:'ai', url:'https://hai.stanford.edu/research/ai-and-future-work', audio:null, podcast:'https://open.spotify.com/show/1AxZNM7mozQplMb2TZCm8i', summary:'Research-based analysis of how AI will reshape jobs, not just replace them.'},
+    {id:12, title:'The Productivity Trap', source:'MIT Tech Review', cat:'psychology', url:'https://www.technologyreview.com/2023/02/14/1068510/why-productivity-is-a-trap/', audio:null, podcast:null, summary:'How optimizing for output can undermine creative thinking and wellbeing.'},
+    {id:13, title:'Diaspora Resilience', source:'BBC', cat:'culture', url:'https://www.bbc.com/future/article/20220301-how-diasporas-shape-the-world', audio:null, podcast:null, summary:'How displaced communities build cultural bridges and economic networks across borders.'},
+    {id:14, title:'The Wealth Gap and the Collapse of the Middle Class', source:'Brookings', cat:'economics', url:'https://www.brookings.edu/articles/the-wealth-gap-is-wider-than-ever-heres-why-that-matters/', audio:null, podcast:null, summary:'Why the racial wealth gap persists and how policy can address it.'},
+    {id:15, title:'Algorithmic Hiring and Civil Rights', source:'AI Now Institute', cat:'ai', url:'https://ainowinstitute.org/publication/hiring', audio:null, podcast:'https://open.spotify.com/show/47CJv3DhF8LvxEDh0dpwVn', summary:'How automated hiring tools can perpetuate discrimination at scale.'},
+    {id:16, title:'Grief and the Brain', source:'Harvard Health', cat:'health', url:'https://www.health.harvard.edu/mind-and-mood/grief-and-the-brain', audio:null, podcast:null, summary:'The neuroscience of loss and how grief reshapes our cognitive landscape.'},
+    {id:17, title:'Burnout Is Not a Badge of Honor', source:'HBR', cat:'health', url:'https://hbr.org/2022/05/burnout-is-not-a-badge-of-honor', audio:null, podcast:null, summary:'Reframing burnout from individual failing to systemic workplace issue.'},
+    {id:18, title:'Money Shame', source:'NPR', cat:'economics', url:'https://www.npr.org/2020/02/10/804393276/money-shame-the-silent-financial-emotion', audio:'https://www.npr.org/2020/02/10/804393276/money-shame-the-silent-financial-emotion', podcast:null, summary:'How shame around money prevents open conversation and better financial decisions.'},
+    {id:19, title:'The Case for Reparations', source:'The Atlantic', cat:'race', url:'https://www.theatlantic.com/magazine/archive/2014/06/the-case-for-reparations/361631/', audio:null, podcast:null, summary:'Ta-Nehisi Coates on 250 years of exploitation and why the debt is still owed.'},
+    {id:20, title:'Redlining: Still a Thing', source:'The Markup', cat:'race', url:'https://themarkup.org/denied/2021/08/25/the-secret-bias-hidden-in-mortgage-approval-algorithms', audio:null, podcast:null, summary:'Investigation revealing how modern lending algorithms continue redlining patterns.'}
+];
+
+var WRITING_REFS = [
+    {title:'Wes Kao', style:'Warm, specific, no filler', url:'https://newsletter.weskao.com/', type:'newsletter'},
+    {title:'Amanda Natividad', style:'Short declarative, real point', url:'https://www.amandanat.com/', type:'newsletter'},
+    {title:'Lenny Rachitsky', style:'Smart friend, plain language', url:'https://www.lennysnewsletter.com/', type:'newsletter'},
+    {title:'Drew Barksdale', style:'Scene, tension, action, result, principle', url:null, type:'mentor'},
+    {title:'Joan Didion', style:'Writing under uncertainty, precision', url:null, type:'author'},
+    {title:'James Baldwin', style:'Structural truth, moral clarity', url:null, type:'author'},
+    {title:'Tressie McMillan Cottom', style:'Critical analysis, personal essay', url:null, type:'author'}
+];
+
+// PLANNER VIEW
+function renderPlanner() {
+    var books = getBooks();
+    var reading = books.filter(function(b) { return b.status === 'reading'; });
+    var toRead = books.filter(function(b) { return b.status === 'to-read'; });
+    var html = '';
+
+    // PACE CALCULATOR (collapsible pill)
+    html += '<div class="rc-pill" id="plan-pill-pace">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'plan-pill-pace\')" style="background:linear-gradient(135deg,#2a1a0e,var(--accent));">';
+    html += '<span class="rc-pill-icon">🏃</span><span class="rc-pill-title">Reading pace</span>';
+    html += '<span class="rc-pill-summary">' + reading.length + ' active</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    if (reading.length > 0) {
+        reading.forEach(function(book) {
+            var remaining = (book.pages || 0) - (book.pagesRead || 0);
+            var stored = JSON.parse(localStorage.getItem('rc_targets') || '{}');
+            var targetDays = stored[book.id] || 30;
+            var ppd = remaining > 0 ? Math.ceil(remaining / targetDays) : 0;
+            var minsPerDay = Math.round(ppd * 1.5);
+            var pctDone = book.pages > 0 ? Math.round((book.pagesRead / book.pages) * 100) : 0;
+            var paceColor = ppd <= 15 ? 'var(--green)' : ppd <= 30 ? 'var(--gold)' : 'var(--red)';
+
+            html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.9rem;margin-bottom:0.8rem;">';
+            html += '<div style="display:flex;gap:0.7rem;align-items:center;margin-bottom:0.6rem;">';
+            if (book.coverUrl) {
+                html += '<img src="' + book.coverUrl + '" style="width:36px;height:54px;border-radius:3px;object-fit:cover;" onerror="this.style.display=\'none\'">';
+            }
+            html += '<div style="flex:1;">';
+            html += '<div style="font-size:0.9rem;font-weight:700;font-family:Georgia,serif;">' + book.title + '</div>';
+            html += '<div style="font-size:0.72rem;color:var(--dim);">' + book.pagesRead + ' / ' + book.pages + ' pages (' + pctDone + '%)</div>';
+            html += '</div></div>';
+
+            html += '<div class="progress-bar" style="margin-bottom:0.5rem;"><div class="progress-fill" style="width:' + pctDone + '%"></div></div>';
+
+            html += '<div style="display:flex;gap:0.4rem;align-items:center;margin-bottom:0.4rem;">';
+            html += '<span style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;">Finish in</span>';
+            html += '<input type="number" value="' + targetDays + '" min="1" max="365" style="width:50px;padding:0.25rem;font-size:0.8rem;text-align:center;border-radius:6px;" onchange="setPaceTarget(' + book.id + ',this.value)">';
+            html += '<span style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;">days</span>';
+            html += '</div>';
+
+            html += '<div style="display:flex;gap:0.8rem;flex-wrap:wrap;">';
+            html += '<div style="font-size:0.82rem;font-weight:700;color:' + paceColor + ';font-family:-apple-system,sans-serif;">' + ppd + ' pages/day</div>';
+            html += '<div style="font-size:0.78rem;color:var(--dim);font-family:-apple-system,sans-serif;">~' + minsPerDay + ' min/day</div>';
+            if (remaining <= 0) html += '<div style="font-size:0.78rem;color:var(--green);font-weight:700;">DONE!</div>';
+            html += '</div>';
+            html += '</div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);padding:0.5rem;">Start reading a book to see your pace.</p>';
+    }
+    html += '</div></div>';
+
+    // MONTHLY FORECAST (collapsible pill)
+    html += '<div class="rc-pill" id="plan-pill-forecast">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'plan-pill-forecast\')" style="background:linear-gradient(135deg,#1a1a3a,var(--teal));">';
+    html += '<span class="rc-pill-icon">📅</span><span class="rc-pill-title">Monthly forecast</span>';
+    html += '<span class="rc-pill-summary" id="forecast-summary"></span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    var avgPpd = parseInt(localStorage.getItem('rc_avg_ppd') || '20');
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.9rem;margin-bottom:0.8rem;">';
+    html += '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">';
+    html += '<span style="font-size:0.75rem;color:var(--accent);font-family:-apple-system,sans-serif;font-weight:700;">YOUR PACE:</span>';
+    html += '<input type="number" value="' + avgPpd + '" min="1" max="200" style="width:50px;padding:0.25rem;font-size:0.8rem;text-align:center;border-radius:6px;" onchange="setAvgPpd(this.value)">';
+    html += '<span style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;">pages/day</span>';
+    html += '</div>';
+
+    var pagesPerMonth = avgPpd * 30;
+    var allActive = reading.concat(toRead);
+    var monthBooks = [];
+    var pagesLeft = pagesPerMonth;
+    // First finish current reads
+    reading.forEach(function(b) {
+        var rem = (b.pages || 0) - (b.pagesRead || 0);
+        if (rem > 0 && rem <= pagesLeft) {
+            monthBooks.push({title: b.title, pages: rem, type: 'finish'});
+            pagesLeft -= rem;
+        } else if (rem > 0) {
+            monthBooks.push({title: b.title, pages: pagesLeft, type: 'partial'});
+            pagesLeft = 0;
+        }
+    });
+    // Then start new
+    toRead.forEach(function(b) {
+        if (pagesLeft <= 0) return;
+        if ((b.pages || 250) <= pagesLeft) {
+            monthBooks.push({title: b.title, pages: b.pages || 250, type: 'complete'});
+            pagesLeft -= (b.pages || 250);
+        } else {
+            monthBooks.push({title: b.title, pages: pagesLeft, type: 'start'});
+            pagesLeft = 0;
+        }
+    });
+
+    var finishCount = monthBooks.filter(function(m) { return m.type === 'finish' || m.type === 'complete'; }).length;
+    html += '<div style="font-size:1.3rem;font-weight:700;color:var(--accent-bright);text-align:center;margin-bottom:0.4rem;">' + finishCount + ' books this month</div>';
+    html += '<div style="font-size:0.72rem;color:var(--dim);text-align:center;margin-bottom:0.6rem;">' + pagesPerMonth + ' pages at ' + avgPpd + ' pages/day</div>';
+
+    monthBooks.forEach(function(m) {
+        var icon = m.type === 'finish' ? '✅' : m.type === 'complete' ? '📗' : m.type === 'start' ? '📖' : '📄';
+        var label = m.type === 'finish' ? 'Finish' : m.type === 'complete' ? 'Read cover to cover' : m.type === 'start' ? 'Start' : 'Continue';
+        html += '<div style="display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0;border-bottom:1px solid var(--border);">';
+        html += '<span>' + icon + '</span>';
+        html += '<span style="flex:1;font-size:0.82rem;font-family:Georgia,serif;">' + m.title + '</span>';
+        html += '<span style="font-size:0.68rem;color:var(--dim);font-family:-apple-system,sans-serif;">' + label + ' (' + m.pages + 'p)</span>';
+        html += '</div>';
+    });
+    html += '</div>';
+    html += '</div></div>';
+
+    // READING TIMELINE (collapsible pill)
+    html += '<div class="rc-pill" id="plan-pill-timeline">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'plan-pill-timeline\')" style="background:linear-gradient(135deg,#3a1a1a,var(--gold));">';
+    html += '<span class="rc-pill-icon">📈</span><span class="rc-pill-title">Reading timeline</span>';
+    html += '<span class="rc-pill-summary">' + books.filter(function(b){return b.status==="reading"||b.status==="done";}).length + ' books</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.9rem;margin-bottom:0.8rem;">';
+
+    var now = new Date();
+    var allBooks = books.filter(function(b) { return b.status === 'reading' || b.status === 'done'; });
+    var timelineColors = ['var(--accent)', 'var(--teal)', 'var(--gold)', 'var(--green)', 'var(--red)', '#ec4899'];
+
+    if (allBooks.length > 0) {
+        // Show horizontal timeline bars
+        html += '<div style="font-size:0.68rem;color:var(--dim);font-family:-apple-system,sans-serif;margin-bottom:0.6rem;">Books in progress and completed</div>';
+        allBooks.forEach(function(book, idx) {
+            var pct = book.pages > 0 ? Math.round((book.pagesRead / book.pages) * 100) : 0;
+            var col = timelineColors[idx % timelineColors.length];
+            var barWidth = Math.max(pct, 5);
+            html += '<div style="margin-bottom:0.6rem;">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.2rem;">';
+            html += '<span style="font-size:0.78rem;font-family:Georgia,serif;font-weight:700;">' + book.title + '</span>';
+            html += '<span style="font-size:0.65rem;color:var(--dim);font-family:-apple-system,sans-serif;">' + pct + '%</span>';
+            html += '</div>';
+            html += '<div style="width:100%;height:18px;background:rgba(255,255,255,.03);border-radius:9px;overflow:hidden;position:relative;">';
+            html += '<div style="width:' + barWidth + '%;height:100%;background:' + col + ';border-radius:9px;transition:width 0.5s;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;">';
+            if (pct >= 15) html += '<span style="font-size:0.55rem;font-weight:700;color:var(--bg);">' + book.pagesRead + 'p</span>';
+            html += '</div></div>';
+            html += '</div>';
+        });
+
+        // Simultaneous reading indicator
+        var simultaneous = books.filter(function(b) { return b.status === 'reading'; });
+        if (simultaneous.length > 1) {
+            html += '<div style="background:rgba(212,165,116,.06);border:1px solid var(--border-warm);border-radius:10px;padding:0.5rem;margin-top:0.4rem;text-align:center;">';
+            html += '<span style="font-size:0.75rem;color:var(--accent);font-family:-apple-system,sans-serif;font-weight:700;">📚 Reading ' + simultaneous.length + ' books simultaneously</span>';
+            html += '</div>';
+        }
+    } else {
+        html += '<p style="color:var(--dim);font-size:0.85rem;">Start reading to see your timeline.</p>';
+    }
+    html += '</div>';
+    html += '</div></div>';
+
+    // Up Next Queue (collapsible pill)
+    html += '<div class="rc-pill" id="plan-pill-tbr">';
+    html += '<div class="rc-pill-bar" onclick="toggleRcPill(\'plan-pill-tbr\')" style="background:linear-gradient(135deg,#1a3a2a,var(--green));">';
+    html += '<span class="rc-pill-icon">📖</span><span class="rc-pill-title">Up next</span>';
+    html += '<span class="rc-pill-summary">' + toRead.length + ' books</span>';
+    html += '<span class="rc-pill-arrow">▼</span></div>';
+    html += '<div class="rc-pill-body">';
+    if (toRead.length > 0) {
+        toRead.forEach(function(book, idx) {
+            html += '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:0.4rem;cursor:pointer;" onclick="viewBookDetail(' + book.id + ')">';
+            html += '<span style="font-size:0.85rem;font-weight:700;color:var(--accent);width:22px;text-align:center;font-family:-apple-system,sans-serif;">' + (idx + 1) + '</span>';
+            if (book.coverUrl) {
+                html += '<img src="' + book.coverUrl + '" style="width:28px;height:42px;border-radius:2px;object-fit:cover;" onerror="this.style.display=\'none\'">';
+            }
+            html += '<div style="flex:1;">';
+            html += '<div style="font-size:0.82rem;font-weight:700;font-family:Georgia,serif;">' + book.title + '</div>';
+            html += '<div style="font-size:0.68rem;color:var(--dim);font-style:italic;">' + book.author + ' &middot; ' + (book.pages || '?') + ' pages</div>';
+            html += '</div></div>';
+        });
+    } else {
+        html += '<p style="color:var(--dim);font-size:0.85rem;">No books in the queue. Add some from the Shelf or Discover tab.</p>';
+    }
+    html += '</div></div>';
+
+    document.getElementById('planner-container').innerHTML = html;
+    restoreRcPills();
+    // Update forecast summary
+    var fSum = document.getElementById('forecast-summary');
+    if (fSum) fSum.textContent = finishCount + ' books this month';
+}
+
+function setPaceTarget(bookId, days) {
+    var targets = JSON.parse(localStorage.getItem('rc_targets') || '{}');
+    targets[bookId] = parseInt(days) || 30;
+    localStorage.setItem('rc_targets', JSON.stringify(targets));
+    renderPlanner();
+}
+
+function setAvgPpd(val) {
+    localStorage.setItem('rc_avg_ppd', parseInt(val) || 20);
+    renderPlanner();
+}
+
+// LIBRARY VIEW (Think Pieces + Writing References)
+function renderLibrary() {
+    var html = '';
+    var catColors = {race:'#ef4444', ai:'#a78bfa', economics:'var(--gold)', society:'var(--teal)', psychology:'#ec4899', career:'var(--accent)', health:'var(--green)', culture:'#f59e0b'};
+    var catEmojis = {race:'✊', ai:'🤖', economics:'💰', society:'🏛', psychology:'🧠', career:'💼', health:'❤️', culture:'🌍'};
+
+    // Think Pieces
+    html += '<h3 class="section-title">Think Pieces</h3>';
+    html += '<div style="font-size:0.75rem;color:var(--dim);margin-bottom:0.6rem;font-family:-apple-system,sans-serif;">Curated reads that sharpen how you think about AI, equity, and the world.</div>';
+
+    // Category filters
+    var cats = [];
+    THINK_PIECES_RC.forEach(function(tp) { if (cats.indexOf(tp.cat) === -1) cats.push(tp.cat); });
+    html += '<div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.8rem;">';
+    html += '<button class="tp-filter active" onclick="filterTP(\'all\')" style="background:rgba(212,165,116,.15);border:1px solid var(--border-warm);border-radius:8px;padding:0.2rem 0.5rem;font-size:0.62rem;color:var(--accent);cursor:pointer;font-family:-apple-system,sans-serif;font-weight:700;">All</button>';
+    cats.forEach(function(cat) {
+        var c = catColors[cat] || 'var(--dim)';
+        html += '<button class="tp-filter" onclick="filterTP(\'' + cat + '\')" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:0.2rem 0.5rem;font-size:0.62rem;color:' + c + ';cursor:pointer;font-family:-apple-system,sans-serif;">' + (catEmojis[cat] || '') + ' ' + cat + '</button>';
+    });
+    html += '</div>';
+
+    html += '<div id="tp-list">';
+    THINK_PIECES_RC.forEach(function(tp) {
+        var c = catColors[tp.cat] || 'var(--dim)';
+        var read = JSON.parse(localStorage.getItem('rc_tp_read') || '[]');
+        var isRead = read.indexOf(tp.id) > -1;
+
+        html += '<div class="tp-card" data-cat="' + tp.cat + '" style="background:var(--card);border:1px solid var(--border);border-left:3px solid ' + c + ';border-radius:0 10px 10px 0;padding:0.7rem;margin-bottom:0.5rem;' + (isRead ? 'opacity:0.6;' : '') + '">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;">';
+        html += '<div style="flex:1;">';
+        html += '<div style="font-size:0.82rem;font-weight:700;font-family:Georgia,serif;margin-bottom:0.15rem;">' + tp.title + '</div>';
+        html += '<div style="font-size:0.65rem;color:var(--dim);font-family:-apple-system,sans-serif;">' + tp.source + '</div>';
+        html += '</div>';
+        if (isRead) html += '<span style="font-size:0.6rem;color:var(--green);font-weight:700;font-family:-apple-system,sans-serif;">READ</span>';
+        html += '</div>';
+
+        html += '<div style="font-size:0.78rem;color:var(--text);line-height:1.5;margin:0.35rem 0;">' + tp.summary + '</div>';
+
+        // Action buttons
+        html += '<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.3rem;">';
+        html += '<a href="' + tp.url + '" target="_blank" style="font-size:0.62rem;color:var(--accent);text-decoration:none;background:rgba(212,165,116,.08);padding:0.2rem 0.5rem;border-radius:6px;font-family:-apple-system,sans-serif;font-weight:600;">📖 Read</a>';
+
+        // TTS audio button
+        html += '<button onclick="readAloud(' + tp.id + ')" style="font-size:0.62rem;color:var(--teal);background:rgba(77,208,184,.08);padding:0.2rem 0.5rem;border-radius:6px;border:none;cursor:pointer;font-family:-apple-system,sans-serif;font-weight:600;">🔊 Listen</button>';
+
+        if (tp.podcast) {
+            html += '<a href="' + tp.podcast + '" target="_blank" style="font-size:0.62rem;color:var(--gold);text-decoration:none;background:rgba(240,192,64,.08);padding:0.2rem 0.5rem;border-radius:6px;font-family:-apple-system,sans-serif;font-weight:600;">🎙 Podcast</a>';
+        }
+        if (tp.audio) {
+            html += '<a href="' + tp.audio + '" target="_blank" style="font-size:0.62rem;color:var(--green);text-decoration:none;background:rgba(107,203,119,.08);padding:0.2rem 0.5rem;border-radius:6px;font-family:-apple-system,sans-serif;font-weight:600;">🎧 Audio</a>';
+        }
+
+        html += '<button onclick="markTPRead(' + tp.id + ')" style="font-size:0.62rem;color:var(--dim);background:rgba(255,255,255,.04);padding:0.2rem 0.5rem;border-radius:6px;border:none;cursor:pointer;font-family:-apple-system,sans-serif;">' + (isRead ? '↩ Unread' : '✓ Mark Read') + '</button>';
+        html += '</div>';
+        html += '</div>';
+    });
+    html += '</div>';
+
+    // WRITING REFERENCES
+    html += '<h3 class="section-title">Writing Voice References</h3>';
+    html += '<div style="font-size:0.75rem;color:var(--dim);margin-bottom:0.6rem;font-family:-apple-system,sans-serif;">Writers whose style informs your voice. Study these patterns.</div>';
+    WRITING_REFS.forEach(function(ref) {
+        var typeColor = ref.type === 'newsletter' ? 'var(--teal)' : ref.type === 'mentor' ? 'var(--gold)' : 'var(--accent)';
+        html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.6rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.5rem;">';
+        html += '<div style="flex:1;">';
+        html += '<div style="font-size:0.85rem;font-weight:700;font-family:Georgia,serif;">' + ref.title + '</div>';
+        html += '<div style="font-size:0.72rem;color:var(--dim);font-style:italic;">' + ref.style + '</div>';
+        html += '</div>';
+        html += '<span style="font-size:0.58rem;color:' + typeColor + ';font-family:-apple-system,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">' + ref.type + '</span>';
+        if (ref.url) html += '<a href="' + ref.url + '" target="_blank" style="font-size:0.72rem;color:var(--accent);text-decoration:none;font-weight:600;">Open</a>';
+        html += '</div>';
+    });
+
+    // WRITING RULES QUICK REF
+    html += '<h3 class="section-title">Your Writing Rules</h3>';
+    html += '<div style="background:rgba(212,165,116,.04);border:1px solid var(--border-warm);border-radius:12px;padding:0.8rem;font-size:0.78rem;line-height:1.6;font-family:Georgia,serif;">';
+    html += '<div style="margin-bottom:0.4rem;">Complete sentences only. No fragments.</div>';
+    html += '<div style="margin-bottom:0.4rem;">Vary sentence length. Short sentences land harder.</div>';
+    html += '<div style="margin-bottom:0.4rem;">Cut intensifiers: genuinely, truly, really, honestly.</div>';
+    html += '<div style="margin-bottom:0.4rem;">Never narrate conviction. Show it.</div>';
+    html += '<div style="color:var(--red);">Banned: results-driven, leveraged synergies, spearheaded, passionate about.</div>';
+    html += '</div>';
+
+    document.getElementById('library-container').innerHTML = html;
+}
+
+function filterTP(cat) {
+    var cards = document.querySelectorAll('.tp-card');
+    cards.forEach(function(card) {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    var btns = document.querySelectorAll('.tp-filter');
+    btns.forEach(function(b) { b.classList.remove('active'); b.style.background = 'transparent'; });
+    if (event && event.target) { event.target.classList.add('active'); event.target.style.background = 'rgba(212,165,116,.15)'; }
+}
+
+function markTPRead(id) {
+    var read = JSON.parse(localStorage.getItem('rc_tp_read') || '[]');
+    var idx = read.indexOf(id);
+    if (idx > -1) read.splice(idx, 1);
+    else read.push(id);
+    localStorage.setItem('rc_tp_read', JSON.stringify(read));
+    playSound('correct');
+    renderLibrary();
+}
+
+var _ttsUtterance = null;
+function readAloud(tpId) {
+    if (_ttsUtterance && speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        _ttsUtterance = null;
+        return;
+    }
+    var tp = THINK_PIECES_RC.find(function(t) { return t.id === tpId; });
+    if (!tp) return;
+    _ttsUtterance = new SpeechSynthesisUtterance(tp.title + '. ' + tp.summary);
+    var voices = speechSynthesis.getVoices();
+    var natural = voices.find(function(v) { return v.name.indexOf('Natural') > -1 || v.name.indexOf('Premium') > -1 || v.name.indexOf('Enhanced') > -1; });
+    if (!natural) natural = voices.find(function(v) { return v.lang.indexOf('en') === 0; });
+    if (natural) _ttsUtterance.voice = natural;
+    _ttsUtterance.rate = 0.95;
+    speechSynthesis.speak(_ttsUtterance);
+}
+
+// READING TIMER
+var _readTimer = {
+    interval: null,
+    seconds: 0,
+    running: false,
+    bookId: null,
+    startTime: null
+};
+
+function getReadingSessions() {
+    return JSON.parse(localStorage.getItem('rc_sessions') || '[]');
+}
+
+function formatTime(totalSec) {
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    if (h > 0) return h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function startReadingTimer(bookId) {
+    if (_readTimer.running) return;
+    _readTimer.bookId = bookId;
+    _readTimer.running = true;
+    _readTimer.startTime = Date.now();
+    _readTimer.interval = setInterval(function() {
+        _readTimer.seconds++;
+        var display = document.getElementById('timer-display');
+        if (display) {
+            display.textContent = formatTime(_readTimer.seconds);
+            display.classList.add('running');
+        }
+    }, 1000);
+    updateTimerUI();
+}
+
+function pauseReadingTimer() {
+    if (!_readTimer.running) return;
+    _readTimer.running = false;
+    clearInterval(_readTimer.interval);
+    _readTimer.interval = null;
+    var display = document.getElementById('timer-display');
+    if (display) display.classList.remove('running');
+    updateTimerUI();
+}
+
+function stopReadingTimer() {
+    if (_readTimer.seconds < 10) {
+        // Too short, just reset
+        resetTimer();
+        return;
+    }
+    pauseReadingTimer();
+    var duration = _readTimer.seconds;
+    var bookId = _readTimer.bookId;
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+
+    // Save session
+    var sessions = getReadingSessions();
+    sessions.push({
+        bookId: bookId,
+        bookTitle: book ? book.title : 'Unknown',
+        duration: duration,
+        date: new Date().toISOString(),
+        pagesStart: book ? book.pagesRead : 0
+    });
+    localStorage.setItem('rc_sessions', JSON.stringify(sessions));
+
+    // CC sync
+    syncToCC('reading_session', {
+        book: book ? book.title : 'Unknown',
+        duration: duration,
+        minutes: Math.round(duration / 60)
+    });
+
+    playSound('complete');
+    emojiBurst(['📖', '⏱️', '✨', '🔥']);
+
+    // Prompt for pages read
+    var minStr = Math.round(duration / 60);
+    showPagePrompt(bookId, minStr);
+
+    resetTimer();
+}
+
+function resetTimer() {
+    clearInterval(_readTimer.interval);
+    _readTimer = {interval: null, seconds: 0, running: false, bookId: null, startTime: null};
+    var display = document.getElementById('timer-display');
+    if (display) {
+        display.textContent = '0:00';
+        display.classList.remove('running');
+    }
+    updateTimerUI();
+}
+
+function updateTimerUI() {
+    var startBtn = document.getElementById('timer-start');
+    var pauseBtn = document.getElementById('timer-pause');
+    var stopBtn = document.getElementById('timer-stop');
+    if (!startBtn) return;
+    if (_readTimer.running) {
+        startBtn.style.display = 'none';
+        pauseBtn.style.display = '';
+        stopBtn.style.display = '';
+    } else if (_readTimer.seconds > 0) {
+        startBtn.style.display = '';
+        startBtn.textContent = '▶ Resume';
+        pauseBtn.style.display = 'none';
+        stopBtn.style.display = '';
+    } else {
+        startBtn.style.display = '';
+        startBtn.textContent = '▶ Start Reading';
+        pauseBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+    }
+}
+
+function showPagePrompt(bookId, minutes) {
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+    if (!book) return;
+    var html = '<h2 style="font-family:Georgia,serif;margin-bottom:0.5rem;">Great session!</h2>';
+    html += '<div style="font-size:0.85rem;color:var(--dim);margin-bottom:1rem;font-family:-apple-system,sans-serif;">You read for <strong style="color:var(--accent-bright);">' + minutes + ' minutes</strong>.</div>';
+    html += '<div class="form-group"><label>How many pages did you read?</label>';
+    html += '<div style="display:flex;gap:0.4rem;align-items:center;">';
+    html += '<span style="font-size:0.78rem;color:var(--dim);">From page ' + book.pagesRead + ' to</span>';
+    html += '<input type="number" id="session-pages" min="' + book.pagesRead + '" max="' + (book.pages || 9999) + '" value="' + book.pagesRead + '" style="width:80px;text-align:center;">';
+    html += '</div></div>';
+    html += '<div style="display:flex;gap:0.5rem;">';
+    html += '<button class="btn" onclick="saveSessionPages(' + bookId + ')" style="flex:1;">Save</button>';
+    html += '<button class="btn btn-secondary" onclick="closeModal()" style="flex:1;">Skip</button>';
+    html += '</div>';
+    openModal(html);
+}
+
+function saveSessionPages(bookId) {
+    var input = document.getElementById('session-pages');
+    var newPages = parseInt(input.value);
+    var books = getBooks();
+    var book = books.find(function(b) { return b.id === bookId; });
+    if (book && newPages > book.pagesRead) {
+        var pagesRead = newPages - book.pagesRead;
+        book.pagesRead = newPages;
+        if (newPages >= book.pages && book.status === 'reading') {
+            book.status = 'done';
+            syncToCC('book_finished', {title: book.title, pages: book.pages});
+            emojiBurst(['📚', '🎉', '✅', '🌟', '🏆']);
+        }
+        saveBooks(books);
+        syncToCC('pages_updated', {title: book.title, pages: newPages, total: book.pages, sessionPages: pagesRead});
+
+        // Update session with pages
+        var sessions = getReadingSessions();
+        if (sessions.length > 0) {
+            sessions[sessions.length - 1].pagesEnd = newPages;
+            sessions[sessions.length - 1].pagesRead = pagesRead;
+            localStorage.setItem('rc_sessions', JSON.stringify(sessions));
+        }
+
+        showToast('📖 Logged ' + pagesRead + ' pages!');
+    }
+    closeModal();
+    if (CURRENT_BOOK_DETAIL) viewBookDetail(bookId);
+}
+
+function buildTimerWidget(bookId) {
+    var sessions = getReadingSessions().filter(function(s) { return s.bookId === bookId; });
+    var totalTime = 0;
+    var totalSessionPages = 0;
+    sessions.forEach(function(s) {
+        totalTime += s.duration;
+        totalSessionPages += (s.pagesRead || 0);
+    });
+    var avgPpm = totalTime > 60 && totalSessionPages > 0 ? (totalSessionPages / (totalTime / 60)).toFixed(1) : null;
+
+    var html = '<div class="timer-card">';
+    html += '<div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-family:-apple-system,sans-serif;">Reading Timer</div>';
+
+    // Show current timer state
+    var currentTime = _readTimer.bookId === bookId ? _readTimer.seconds : 0;
+    html += '<div class="timer-display' + (_readTimer.running && _readTimer.bookId === bookId ? ' running' : '') + '" id="timer-display">' + formatTime(currentTime) + '</div>';
+
+    // Controls
+    html += '<div class="timer-controls">';
+    var isThisBook = _readTimer.bookId === bookId || !_readTimer.bookId;
+    if (isThisBook) {
+        html += '<button class="timer-btn timer-btn-start" id="timer-start" onclick="startReadingTimer(' + bookId + ')"' + (_readTimer.running ? ' style="display:none"' : '') + '>' + (_readTimer.seconds > 0 && _readTimer.bookId === bookId ? '▶ Resume' : '▶ Start Reading') + '</button>';
+        html += '<button class="timer-btn timer-btn-pause" id="timer-pause" onclick="pauseReadingTimer()"' + (!_readTimer.running ? ' style="display:none"' : '') + '>⏸ Pause</button>';
+        html += '<button class="timer-btn timer-btn-stop" id="timer-stop" onclick="stopReadingTimer()"' + (_readTimer.seconds === 0 ? ' style="display:none"' : '') + '>⏹ Done</button>';
+    } else {
+        html += '<div style="font-size:0.72rem;color:var(--dim);font-family:-apple-system,sans-serif;padding:0.3rem;">Timer active on another book</div>';
+    }
+    html += '</div>';
+
+    // Session stats
+    if (sessions.length > 0) {
+        html += '<div style="display:flex;gap:0.6rem;justify-content:center;margin-top:0.6rem;">';
+        html += '<div style="text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--teal);font-family:Georgia,serif;">' + sessions.length + '</div><div style="font-size:0.52rem;color:var(--dim);text-transform:uppercase;font-family:-apple-system,sans-serif;">Sessions</div></div>';
+        html += '<div style="text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--gold);font-family:Georgia,serif;">' + Math.round(totalTime / 60) + 'm</div><div style="font-size:0.52rem;color:var(--dim);text-transform:uppercase;font-family:-apple-system,sans-serif;">Total Time</div></div>';
+        if (avgPpm) html += '<div style="text-align:center;"><div style="font-size:1rem;font-weight:700;color:var(--green);font-family:Georgia,serif;">' + avgPpm + '</div><div style="font-size:0.52rem;color:var(--dim);text-transform:uppercase;font-family:-apple-system,sans-serif;">Pages/Min</div></div>';
+        html += '</div>';
+
+        // Recent sessions
+        html += '<div class="timer-sessions">';
+        html += '<div style="font-size:0.6rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;font-family:-apple-system,sans-serif;">Recent Sessions</div>';
+        sessions.slice(-3).reverse().forEach(function(s) {
+            var d = new Date(s.date);
+            var dateStr = d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+            var durStr = Math.round(s.duration / 60) + ' min';
+            var pgStr = s.pagesRead ? '+' + s.pagesRead + 'p' : '';
+            html += '<div class="timer-session-item">';
+            html += '<span style="color:var(--dim);">' + dateStr + '</span>';
+            html += '<span style="color:var(--accent-bright);">' + durStr + '</span>';
+            if (pgStr) html += '<span style="color:var(--green);font-weight:700;">' + pgStr + '</span>';
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
+// ── SMART SUITE SYNC ──
+var SYNC_KEY = 'smart_suite_sync';
+function readSync() { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || {}; } catch(e) { return {}; } }
+function writeSync(data) { var d = readSync(); var rc = d.reading || {}; Object.assign(rc, data); d.reading = rc; localStorage.setItem(SYNC_KEY, JSON.stringify(d)); }
+
+function refreshSuiteSync() {
+    var books = getBooks();
+    var reading = books.filter(function(b) { return b.status === 'reading'; });
+    var done = books.filter(function(b) { return b.status === 'done'; });
+    var totalPages = 0;
+    books.forEach(function(b) { totalPages += (b.pagesRead || 0); });
+    var sessions = JSON.parse(localStorage.getItem('rc_sessions') || '[]');
+    var todayStr = new Date().toISOString().split('T')[0];
+    var todaySessions = sessions.filter(function(s) { return s.date && s.date.indexOf(todayStr) === 0; });
+    var todayMin = 0;
+    todaySessions.forEach(function(s) { todayMin += (s.duration || 0); });
+    writeSync({
+        currentlyReading: reading.length,
+        booksFinished: done.length,
+        totalPagesRead: totalPages,
+        readingMinToday: Math.round(todayMin / 60),
+        lastDate: todayStr
+    });
+    renderSyncPanel();
+}
+
+function renderSyncPanel() {
+    var sync = readSync();
+    var fs = sync.fitsmart || {};
+    var ft = sync.focus || {};
+    var nr = sync.nourish || {};
+    // Subtle cross-app insights — no dedicated panel, just enrich the reading experience
+}
+
+// CC SYNC: Write events to shared localStorage for Command Center to pick up
+function syncToCC(eventType, data) {
+    try {
+        var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+        events.unshift({
+            app: 'reading',
+            type: eventType,
+            data: data,
+            ts: new Date().toISOString()
+        });
+        if (events.length > 50) events = events.slice(0, 50);
+        localStorage.setItem('cc_app_events', JSON.stringify(events));
+    } catch(e) {}
+}
+
+// Toast
+function showToast(msg) {
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function() { el.remove(); }, 3000);
+}
+
+// Utilities
+function emojiBurst(emojis) {
+    for (var i = 0; i < 8; i++) {
+        var emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        var el = document.createElement('div');
+        el.className = 'emoji-burst';
+        el.textContent = emoji;
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = '50%';
+        document.body.appendChild(el);
+        setTimeout(function(elem) { elem.remove(); }, 2000, el);
+    }
+}
+
+// Backfill covers from SEED_BOOKS into localStorage data
+function backfillCovers() {
+    var books = getBooks();
+    var changed = false;
+    books.forEach(function(book) {
+        if (!book.coverUrl && book.isbn) {
+            var seed = SEED_BOOKS.find(function(s) { return s.id === book.id; });
+            if (seed && seed.coverUrl) {
+                book.coverUrl = seed.coverUrl;
+                changed = true;
+            } else {
+                book.coverUrl = 'https://covers.openlibrary.org/b/isbn/' + book.isbn + '-L.jpg';
+                changed = true;
+            }
+        }
+    });
+    if (changed) saveBooks(books);
+}
+
+// Initialize
+(function() {
+    checkAuth();
+    backfillCovers();
+    var stored = localStorage.getItem('rc_view') || 'shelf';
+    switchView(stored);
+    refreshSuiteSync();
+})();
+</script>
+</body>
+</html>

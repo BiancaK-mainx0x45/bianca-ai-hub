@@ -6,23 +6,28 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Morning Brief">
-<meta name="theme-color" content="#0a0a18">
+<meta name="theme-color" content="#0f0b07">
 <title>Morning Brief</title>
 <style>
 :root {
-  --bg: #0a0a18;
-  --card: #111128;
-  --card2: #0e0e24;
-  --border: rgba(255,255,255,.07);
-  --purple: #c084fc;
-  --cyan: #00d4ff;
-  --gold: #f5c842;
-  --green: #2ecc71;
-  --amber: #f39c12;
-  --red: #e74c3c;
-  --pink: #ff6b9d;
-  --muted: #5a5a8a;
-  --text: #dde0f0;
+  --bg: #0f0b07;
+  --bg2: #1a1208;
+  --bg3: #251c0e;
+  --card: #1a1410;
+  --accent: #f97316;
+  --accent2: #ea580c;
+  --accent3: #c2410c;
+  --text: #fef3c7;
+  --text2: #d4b896;
+  --text3: #8a6d4a;
+  --border: #2e2010;
+  --cyan: #22d3ee;
+  --gold: #fbbf24;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --pink: #ec4899;
+  --muted: #8a6d4a;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bot: env(safe-area-inset-bottom, 0px);
 }
@@ -49,7 +54,7 @@ body {
 .date-day   { font-size: 2.8rem; font-weight: 800; line-height: 1; color: var(--text); }
 .date-meta  { font-size: .8rem; color: var(--muted); margin-top: 4px; }
 .date-right { text-align: right; }
-.date-phase { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); }
+.date-phase { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
 .date-xp    { font-size: .78rem; color: var(--muted); margin-top: 3px; }
 
 /* SECTION */
@@ -95,23 +100,23 @@ body {
 .pill-due     { background: rgba(243,156,18,.18); color: var(--amber); }
 .pill-today   { background: rgba(0,212,255,.15);  color: var(--cyan); }
 .pill-ok      { background: rgba(46,204,113,.12); color: var(--green); }
-.pill-post    { background: rgba(192,132,252,.15);color: var(--purple); }
+.pill-post    { background: rgba(249,115,22,.15);color: var(--accent); }
 
 /* LINKEDIN POST CARD */
 .post-card {
-  background: linear-gradient(135deg, rgba(192,132,252,.08) 0%, rgba(0,212,255,.05) 100%);
-  border: 1px solid rgba(192,132,252,.2);
+  background: linear-gradient(135deg, rgba(249,115,22,.08) 0%, rgba(34,211,238,.05) 100%);
+  border: 1px solid rgba(249,115,22,.2);
   border-radius: 14px;
   padding: 16px;
 }
-.post-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; }
+.post-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
 .post-title { font-size: .95rem; font-weight: 800; margin-bottom: 6px; }
 .post-hook  { font-size: .8rem; color: var(--muted); font-style: italic; margin-bottom: 12px; line-height: 1.5; }
 .post-meta  { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .post-chip  { font-size: .68rem; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 6px; padding: 3px 9px; color: var(--muted); }
 .post-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn-post    { background: var(--purple); color: #0a0a18; font-weight: 800; }
-.btn-draft   { background: rgba(192,132,252,.12); color: var(--purple); border: 1px solid rgba(192,132,252,.25); font-weight: 700; }
+.btn-post    { background: var(--accent); color: #0f0b07; font-weight: 800; }
+.btn-draft   { background: rgba(249,115,22,.12); color: var(--accent); border: 1px solid rgba(249,115,22,.25); font-weight: 700; }
 
 /* FOLLOW-UPS */
 .followup-row {
@@ -151,10 +156,10 @@ body {
 .claude-btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   width: 100%; padding: 16px;
-  background: linear-gradient(135deg, rgba(192,132,252,.12), rgba(0,212,255,.08));
-  border: 1px solid rgba(192,132,252,.25);
+  background: linear-gradient(135deg, rgba(249,115,22,.12), rgba(34,211,238,.08));
+  border: 1px solid rgba(249,115,22,.25);
   border-radius: 14px;
-  color: var(--purple); font-size: .88rem; font-weight: 700;
+  color: var(--accent); font-size: .88rem; font-weight: 700;
   text-decoration: none; cursor: pointer;
   transition: opacity .15s;
   margin-bottom: 20px;
@@ -180,21 +185,21 @@ body {
 /* TASKS */
 .task-open-btn {
   width:100%; padding:10px 14px;
-  background:rgba(192,132,252,.06);
-  border:1px dashed rgba(192,132,252,.22);
-  border-radius:11px; color:var(--purple);
+  background:rgba(249,115,22,.06);
+  border:1px dashed rgba(249,115,22,.22);
+  border-radius:11px; color:var(--accent);
   font-size:.8rem; font-weight:700; cursor:pointer;
   text-align:left; display:flex; align-items:center; gap:8px;
   margin-bottom:10px; transition:background .15s; box-sizing:border-box;
 }
-.task-open-btn:active { background:rgba(192,132,252,.12); }
+.task-open-btn:active { background:rgba(249,115,22,.12); }
 .task-form {
-  background:var(--card2); border:1px solid rgba(192,132,252,.18);
+  background:var(--bg2); border:1px solid rgba(249,115,22,.18);
   border-radius:12px; padding:14px; margin-bottom:10px;
 }
 .task-input {
-  width:100%; background:#0a0a1f;
-  border:1px solid rgba(167,139,250,.22);
+  width:100%; background:#1a1410;
+  border:1px solid rgba(249,115,22,.22);
   border-radius:8px; padding:.6rem .9rem;
   color:var(--text); font-size:.88rem; outline:none;
   margin-bottom:10px; font-family:inherit; box-sizing:border-box;
@@ -207,7 +212,7 @@ body {
   border:1px solid var(--border); background:transparent; color:var(--muted);
   cursor:pointer; transition:all .15s;
 }
-.chip.sel { background:var(--purple); border-color:var(--purple); color:#0a0a18; }
+.chip.sel { background:var(--accent); border-color:var(--accent); color:#0f0b07; }
 .slot-row { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:12px; }
 .slot-btn {
   font-size:.65rem; font-weight:700; padding:7px 4px; border-radius:8px;
@@ -219,7 +224,7 @@ body {
 .slot-btn.sel[data-s="evening"]   { color:var(--cyan);  background:rgba(0,212,255,.08);   border-color:rgba(0,212,255,.3); }
 .slot-btn.sel[data-s="pinned"]    { color:var(--pink);  background:rgba(255,107,157,.08); border-color:rgba(255,107,157,.3); }
 .add-btn {
-  width:100%; padding:.62rem; background:var(--purple); color:#0a0a18;
+  width:100%; padding:.62rem; background:var(--accent); color:#0f0b07;
   border:none; border-radius:8px; font-weight:800; font-size:.85rem; cursor:pointer;
 }
 .bucket-hd {
@@ -237,7 +242,7 @@ body {
   display:flex; align-items:center; justify-content:center; font-size:.65rem;
   transition:all .15s;
 }
-.t-check.done { background:var(--green); border-color:var(--green); color:#0a0a18; }
+.t-check.done { background:var(--green); border-color:var(--green); color:#0f0b07; }
 .t-body { flex:1; min-width:0; }
 .t-text { font-size:.82rem; line-height:1.4; word-break:break-word; }
 .t-text.done { text-decoration:line-through; color:var(--muted); }
@@ -247,8 +252,8 @@ body {
 .t-btn:active { color:var(--text); }
 .slot-picker {
   display:flex; gap:5px; flex-wrap:wrap; padding:6px 10px 8px;
-  border:1px solid rgba(192,132,252,.18); border-top:none;
-  border-radius:0 0 10px 10px; background:rgba(192,132,252,.04);
+  border:1px solid rgba(249,115,22,.18); border-top:none;
+  border-radius:0 0 10px 10px; background:rgba(249,115,22,.04);
   margin-top:-6px; margin-bottom:6px;
 }
 .sp-label { font-size:.63rem; color:var(--muted); align-self:center; margin-right:4px; }
@@ -270,33 +275,33 @@ body {
 </style>
 </head>
 <body>
-<a href="./bianca-ai-portfolio.html" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(13,13,26,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(167,139,250,.22);color:#a78bfa;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Portfolio</a>
-<div id="auth-gate" style="position:fixed;inset:0;background:#0D0D1A;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
-  <div style="background:#13132a;border:1px solid rgba(167,139,250,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
+<a href="#" onclick="event.preventDefault();if(document.referrer&&document.referrer.indexOf(location.origin)>-1){history.back();}else{location.href='./bianca-ai-portfolio.html';}" id="back-btn" style="position:fixed;top:calc(.65rem + env(safe-area-inset-top));left:.75rem;z-index:9998;background:rgba(15,11,7,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(249,115,22,.22);color:#f97316;font-size:.72rem;font-weight:700;padding:.32rem .72rem;border-radius:99px;text-decoration:none;display:flex;align-items:center;gap:.28rem;box-shadow:0 2px 12px rgba(0,0,0,.4);">← Back</a>
+<div id="auth-gate" style="position:fixed;inset:0;background:#0f0b07;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;">
+  <div style="background:#1a1410;border:1px solid rgba(249,115,22,.35);border-radius:16px;padding:2.5rem 2rem;width:min(340px,90vw);text-align:center;box-shadow:0 24px 64px rgba(0,0,0,.6);">
     <div style="font-size:2.2rem;margin-bottom:.4rem;">🔒</div>
-    <div style="color:#a78bfa;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
-    <div style="color:#5a5a90;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
+    <div style="color:#f97316;font-weight:800;font-size:1.1rem;margin-bottom:.2rem;letter-spacing:.02em;">Private Access</div>
+    <div style="color:#8a6d4a;font-size:.78rem;margin-bottom:1.5rem;">Enter your password to continue.</div>
     <div style="position:relative;width:100%;margin-bottom:.3rem;">
       <input id="auth-input" type="password" placeholder="Password"
-        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.3);border-radius:8px;padding:.7rem 3.8rem .7rem 1rem;color:#e0e0ff;font-size:.95rem;outline:none;"
+        style="width:100%;box-sizing:border-box;background:#1a1410;border:1px solid rgba(249,115,22,.3);border-radius:8px;padding:.7rem 3.8rem .7rem 1rem;color:#fef3c7;font-size:.95rem;outline:none;"
         onkeydown="if(event.key==='Enter')_checkAuth()"/>
       <button onclick="togglePwVisible()" title="Show/hide"
-        style="position:absolute;right:2.2rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#7070a8;cursor:pointer;font-size:.9rem;padding:.2rem;line-height:1;">👁</button>
+        style="position:absolute;right:2.2rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#8a6d4a;cursor:pointer;font-size:.9rem;padding:.2rem;line-height:1;">👁</button>
       <button onclick="pastePassword()" title="Paste password"
-        style="position:absolute;right:.4rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#7070a8;cursor:pointer;font-size:.85rem;padding:.2rem;line-height:1;">📋</button>
+        style="position:absolute;right:.4rem;top:50%;transform:translateY(-50%);background:none;border:none;color:#8a6d4a;cursor:pointer;font-size:.85rem;padding:.2rem;line-height:1;">📋</button>
     </div>
     <div id="ul-paste-tip" style="color:#6b7280;font-size:.68rem;min-height:.9rem;margin-bottom:.3rem;text-align:left;"></div>
-    <div id="auth-err" style="color:#f87171;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
+    <div id="auth-err" style="color:#ef4444;font-size:.76rem;min-height:1.1rem;margin-bottom:.4rem;"></div>
         <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:.45rem;cursor:pointer;">
-      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#a78bfa;"/>
-      <span style="color:#7070a8;font-size:.76rem;">👁 Show password as I type</span>
+      <input type="checkbox" id="pw-show" onchange="(function(){var f=document.getElementById('auth-input');if(f)f.type=this.checked?'text':'password';})()" style="accent-color:#f97316;"/>
+      <span style="color:#8a6d4a;font-size:.76rem;">👁 Show password as I type</span>
     </label>
 <label style="display:flex;align-items:center;gap:6px;justify-content:center;margin-bottom:1.1rem;cursor:pointer;">
-      <input type="checkbox" id="auth-rem" checked style="accent-color:#a78bfa;"/>
-      <span style="color:#7070a8;font-size:.76rem;">Remember this device</span>
+      <input type="checkbox" id="auth-rem" checked style="accent-color:#f97316;"/>
+      <span style="color:#8a6d4a;font-size:.76rem;">Remember this device</span>
     </label>
     <button onclick="_checkAuth()"
-      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
+      style="width:100%;padding:.72rem;background:linear-gradient(135deg,#f97316,#ea580c);border:none;border-radius:8px;color:#fef3c7;font-weight:700;font-size:.93rem;cursor:pointer;letter-spacing:.02em;">
       Unlock →
     </button>
   </div>
@@ -407,15 +412,15 @@ function _hubLogout(){
 </a>
 
 <!-- Guest context — subtle, informative, no personal data referenced -->
-<div id="guest-context-banner" style="display:none;margin:0 0 1.25rem;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.13);border-radius:12px;padding:.85rem 1rem;">
-  <div style="font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6a5a9a;margin-bottom:.45rem;">About Morning Brief</div>
-  <div style="font-size:.77rem;color:#7a7aaa;line-height:1.75;">
+<div id="guest-context-banner" style="display:none;margin:0 0 1.25rem;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.13);border-radius:12px;padding:.85rem 1rem;">
+  <div style="font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#c2410c;margin-bottom:.45rem;">About Morning Brief</div>
+  <div style="font-size:.77rem;color:#d4b896;line-height:1.75;">
     Bianca's daily AI study companion — auto-loads the right content by day of week.
     The full version includes a structured
-    <span style="color:#a78bfa;font-weight:600;">daily study focus</span>,
-    <span style="color:#a78bfa;font-weight:600;">LinkedIn content brief</span> on publishing days, and
-    <span style="color:#a78bfa;font-weight:600;">live curriculum tracking</span> across all four phases.
-    Explore the full build in the <a href="bianca-ai-portfolio.html" style="color:#38bdf8;text-decoration:none;font-weight:600;">AI Portfolio →</a>
+    <span style="color:#f97316;font-weight:600;">daily study focus</span>,
+    <span style="color:#f97316;font-weight:600;">LinkedIn content brief</span> on publishing days, and
+    <span style="color:#f97316;font-weight:600;">live curriculum tracking</span> across all four phases.
+    Explore the full build in the <a href="bianca-ai-portfolio.html" style="color:#22d3ee;text-decoration:none;font-weight:600;">AI Portfolio →</a>
   </div>
 </div>
 
@@ -445,7 +450,7 @@ function _hubLogout(){
       <button class="slot-btn" data-s="evening" onclick="selSlot(this,'evening')">🌙<br>Evening</button>
       <button class="slot-btn" data-s="pinned" onclick="selSlot(this,'pinned')">📌<br>Pin</button>
     </div>
-    <div id="voice-tip" style="display:none;font-size:.7rem;color:var(--purple);margin-bottom:8px;text-align:center;padding:5px 10px;background:rgba(192,132,252,.07);border-radius:7px;"></div>
+    <div id="voice-tip" style="display:none;font-size:.7rem;color:var(--accent);margin-bottom:8px;text-align:center;padding:5px 10px;background:rgba(249,115,22,.07);border-radius:7px;"></div>
     <button class="add-btn" onclick="submitTask()">Add to today →</button>
   </div>
   <div id="bucket-morning"></div>
@@ -511,13 +516,13 @@ function _hubLogout(){
     <div id="fb-form-wrap">
       <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Got a question or comment? Send it directly.</div>
       <textarea id="fb-text" rows="3"
-        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.22);border-radius:8px;padding:.65rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;resize:vertical;margin-bottom:6px;"
+        style="width:100%;box-sizing:border-box;background:#1a1410;border:1px solid rgba(249,115,22,.22);border-radius:8px;padding:.65rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;resize:vertical;margin-bottom:6px;"
         placeholder="Ask something or leave a note..."></textarea>
       <input id="fb-name" type="text"
-        style="width:100%;box-sizing:border-box;background:#0a0a1f;border:1px solid rgba(167,139,250,.22);border-radius:8px;padding:.6rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;margin-bottom:10px;"
+        style="width:100%;box-sizing:border-box;background:#1a1410;border:1px solid rgba(249,115,22,.22);border-radius:8px;padding:.6rem .9rem;color:var(--text);font-size:.82rem;outline:none;font-family:inherit;margin-bottom:10px;"
         placeholder="Your name (optional)"/>
       <button onclick="submitFeedback()"
-        style="width:100%;padding:.62rem;background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.25);border-radius:8px;color:var(--purple);font-weight:700;font-size:.82rem;cursor:pointer;">
+        style="width:100%;padding:.62rem;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);border-radius:8px;color:var(--accent);font-weight:700;font-size:.82rem;cursor:pointer;">
         Send message →
       </button>
     </div>
@@ -586,6 +591,16 @@ const THOUGHTS = [
   { text: 'The transition isn\'t from finance to AI. It\'s from one kind of rigour to another. The rigour is the constant. The domain is the variable.', attr: 'Your narrative, March 2026' },
   { text: 'Every tool you build is an argument you don\'t have to make in an interview. The dashboard, the games hub, the research paper — they speak before you do.', attr: 'Portfolio-first principle' },
 ];
+
+// ── CC SYNC ──────────────────────────────────────────────────────────────────
+function syncToCC(eventType, data) {
+  try {
+    var events = JSON.parse(localStorage.getItem('cc_app_events') || '[]');
+    events.push({ app: 'morning-brief', type: eventType, data: data, timestamp: new Date().toISOString() });
+    if (events.length > 50) events = events.slice(-50);
+    localStorage.setItem('cc_app_events', JSON.stringify(events));
+  } catch(e) {}
+}
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 const today = new Date();
@@ -711,8 +726,10 @@ function submitTask(){
   const text = document.getElementById('task-text').value.trim();
   if(!text) return;
   const tasks = lsGetTasks();
-  tasks.push({ id: Date.now(), text, est: _tEst, slot: _tSlot || autoSlot(), date: todayStr, done: false });
+  const newTask = { id: Date.now(), text, est: _tEst, slot: _tSlot || autoSlot(), date: todayStr, done: false };
+  tasks.push(newTask);
   lsSaveTasks(tasks);
+  syncToCC('task_created', { text: text, slot: newTask.slot });
   document.getElementById('task-text').value = '';
   _tEst = '';
   document.querySelectorAll('#est-row .chip').forEach(c => c.classList.remove('sel'));
@@ -727,7 +744,10 @@ function submitTask(){
 function toggleDone(id){
   const tasks = lsGetTasks();
   const item = tasks.find(t => t.id === id);
-  if(item) item.done = !item.done;
+  if(item) {
+    item.done = !item.done;
+    syncToCC('task_completed', { text: item.text, done: item.done });
+  }
   lsSaveTasks(tasks);
   renderTasks();
 }
@@ -927,7 +947,7 @@ function submitFeedback(){
 // ── APPLY GUEST MODE (runs after all rendering) ────────────────────────────────
 applyGuestMode();
 </script>
-<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(13,13,30,.85);border:1px solid rgba(167,139,250,.25);border-radius:99px;color:#a78bfa;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
+<button onclick="_hubLogout()" title="Sign out" id="signout-btn" style="display:none;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:100000;background:rgba(15,11,7,.85);border:1px solid rgba(249,115,22,.25);border-radius:99px;color:#f97316;font-size:.68rem;font-weight:700;padding:.32rem .8rem;cursor:pointer;letter-spacing:.04em;backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(0,0,0,.4);">Sign out</button>
 <script>
 document.addEventListener('keydown',function(e){
   if(e.key!=='Enter') return;
